@@ -1,4 +1,4 @@
-dhis2.py - minimalistic DHIS2 API wrapper for Python
+dhis2.py - minimalistic wrapper around the DHIS2 API
 =====================================================
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
