@@ -66,18 +66,18 @@ Load from a auth file. Must have the following structure:
 
 If no path is specified, it tries to find a file called ``dish.json`` in:
 
-    1. the ``DHIS_HOME`` environment variable
-    2. your Home folder
+1. the ``DHIS_HOME`` environment variable
+2. your Home folder
 
 
 
-Load JSON / CSV files
-^^^^^^^^^^^^^^^^^^^^^^^
+Load JSON file
+^^^^^^^^^^^^^^^
 
 .. code:: python
 
     from dhis2 import Dhis
-    from dhis2 import load_csv, load_json
+    from dhis2 import load_json
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
@@ -89,6 +89,14 @@ Load JSON / CSV files
     print(p.text)
     # <DHIS2 response>
 
+
+Load CSV file
+^^^^^^^^^^^^^^
+
+.. code:: python
+
+    from dhis2 import Dhis
+    from dhis2 import load_csv
 
     for row in load_csv('/path/to/file.csv'):
         print(row)
