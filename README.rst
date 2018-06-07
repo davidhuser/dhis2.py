@@ -115,7 +115,7 @@ Validate UID
 
 .. code:: python
 
-    from dhis2py import valid_uid
+    from dhis2 import valid_uid
 
     print(valid_uid('Rp268JB6Ne4')
     # True
@@ -129,7 +129,7 @@ Generate UIDs
 
 .. code:: python
 
-    from dhis2py import generate_uids
+    from dhis2 import generate_uids
 
     uids = generate_uids(20000)
     print(uids)
