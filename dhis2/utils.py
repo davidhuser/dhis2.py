@@ -10,7 +10,7 @@ else:
     import csv
 
 
-def load_csv(path):
+def load_csv(path, delimiter=','):
     """Load CSV file efficiently.
     Detects delimiter automatically.
 
@@ -19,13 +19,12 @@ def load_csv(path):
     for row in load_csv('/path/to/file'):
         print(row)
 
+    :type delimiter: char
     :param path: file path
     :return: row (from generator)
     """
-    with open(path, 'rb') as csvfile:
-        dialect = csv.Sniffer().sniff(csvfile.read(), delimiters=';,')
-        csvfile.seek(0)
-        reader = csv.DictReader(csvfile, dialect=dialect)
+    with open(path, 'r') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=delimiter)
         for row in reader:
             yield row
 

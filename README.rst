@@ -106,6 +106,9 @@ Load CSV file
         print(p.text)
         # <DHIS2 response>
 
+    # or for a normal list
+    data = list(load_csv('/path/to/file.csv'))
+
 
 Validate UID
 ^^^^^^^^^^^^^
