@@ -1,10 +1,29 @@
-class Dhis2PyException(Exception):
-    """Base Exception all other exceptions inherit from"""
+import requests
 
 
-class APIException(Dhis2PyException):
-    """Indicate exception that involve responses from DHIS2's API."""
+class APIException(requests.RequestException):
+    """DHIS2 API call error"""
+
+    def __init__(self, code, url, description, *args, **kwargs):
+        super(APIException, self).__init__(*args, **kwargs)
+        self.code = code
+        self.url = url
+        self.description = description
+
+    def __repr__(self):
+        return "Dhis2ApiException({}, '{}', '{}')".format(
+            self.code,
+            self.url,
+            self.description
+        )
+
+    def __str__(self):
+        return 'code: {}, url: {}, description: {}'.format(
+            self.code,
+            self.url,
+            self.description
+        )
 
 
-class ClientException(Dhis2PyException):
-    """Indicate exceptions that don't involve interaction with DHIS2's API."""
+class ClientException(Exception):
+    """Exceptions not involving DHIS2's API."""

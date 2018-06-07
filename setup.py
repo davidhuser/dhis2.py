@@ -2,10 +2,10 @@
 
 import os
 import sys
-
 from codecs import open
+from shutil import rmtree
 
-from setuptools import setup, find_packages
+from setuptools import setup
 from setuptools.command.test import test as TestCommand
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -36,6 +36,10 @@ class PyTest(TestCommand):
 
 # 'setup.py publish' shortcut.
 if sys.argv[-1] == 'publish':
+    try:
+        rmtree(os.path.join(here, 'dist'))
+    except (OSError, IOError):
+        pass
     os.system('python setup.py sdist bdist_wheel')
     os.system('twine upload dist/*')
     sys.exit()
@@ -65,7 +69,7 @@ setup(
     author_email=about['__author_email__'],
     url=about['__url__'],
     keywords='dhis2',
-    packages=find_packages('dhis2'),
+    packages=['dhis2'],
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=requires,
     license=about['__license__'],

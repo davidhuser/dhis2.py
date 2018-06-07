@@ -17,14 +17,32 @@ class Dhis(object):
             self.base_url = 'http://{}'.format(server)
         elif not server.startswith('https://'):
             self.base_url = 'https://{}'.format(server)
-        self.__auth = (username, password)
+        self._auth = (username, password)
 
         if api_version:
             self.api_url = '{}/api/{}'.format(self.base_url, api_version)
         else:
             self.api_url = '{}/api'.format(self.base_url)
 
-        self.session = requests.Session()
+        self._session = requests.Session()
+
+    @property
+    def session(self):
+        return self._session
+
+    @staticmethod
+    def _validate_response(response):
+
+        if response.status_code == requests.codes.ok:
+            return response
+        else:
+            try:
+                response.raise_for_status()
+            except requests.TooManyRedirects:
+                raise APIException(
+                    code=response.status_code,
+                    url=response.url,
+                    description=response.text)
 
     def get(self, endpoint, file_type='json', params=None):
         """GET from DHIS2
@@ -34,13 +52,8 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}.{}'.format(self.api_url, endpoint, file_type)
-        r = self.session.get(url, params=params, auth=self.__auth)
-        try:
-            r.raise_for_status()
-        except requests.RequestException as e:
-            raise APIException(e)
-        else:
-            return r
+        r = self._session.get(url, params=params, auth=self._auth)
+        return self._validate_response(r)
 
     def post(self, endpoint, data, params=None):
         """POST to DHIS2
@@ -50,13 +63,8 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.post(url=url, json=data, params=params, auth=self.__auth)
-        try:
-            r.raise_for_status()
-        except requests.RequestException as e:
-            raise APIException(e)
-        else:
-            return r
+        r = self._session.post(url=url, json=data, params=params, auth=self._auth)
+        return self._validate_response(r)
 
     def put(self, endpoint, data, params=None):
         """PUT to DHIS2
@@ -66,13 +74,8 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.put(url=url, json=data, params=params, auth=self.__auth)
-        try:
-            r.raise_for_status()
-        except requests.RequestException as e:
-            raise APIException(e)
-        else:
-            return r
+        r = self._session.put(url=url, json=data, params=params, auth=self._auth)
+        return self._validate_response(r)
 
     def patch(self, endpoint, data, params=None):
         """PATCH to DHIS2
@@ -82,13 +85,8 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.patch(url=url, json=data, params=params, auth=self.__auth)
-        try:
-            r.raise_for_status()
-        except requests.RequestException as e:
-            raise APIException(e)
-        else:
-            return r
+        r = self._session.patch(url=url, json=data, params=params, auth=self._auth)
+        return self._validate_response(r)
 
     def delete(self, endpoint):
         """DELETE from DHIS2
@@ -96,13 +94,8 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.delete(url=url, auth=self.__auth)
-        try:
-            r.raise_for_status()
-        except requests.RequestException as e:
-            raise APIException(e)
-        else:
-            return r
+        r = self._session.delete(url=url, auth=self._auth)
+        return self._validate_response(r)
 
     def get_paged(self, endpoint, params=None):
         """GET with paging (for large payloads)

@@ -35,7 +35,7 @@ def load_json(path):
     :param path: file path
     :return: dict
     """
-    with open(path, 'rb') as json_file:
+    with open(path, 'r') as json_file:
         try:
             return json.load(json_file)
         except ValueError:
