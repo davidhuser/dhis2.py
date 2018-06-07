@@ -76,8 +76,7 @@ Load JSON file
 
 .. code:: python
 
-    from dhis2 import Dhis
-    from dhis2 import load_json
+    from dhis2 import Dhis, load_json
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
@@ -95,8 +94,7 @@ Load CSV file
 
 .. code:: python
 
-    from dhis2 import Dhis
-    from dhis2 import load_csv
+    from dhis2 import Dhis, load_csv
 
     for row in load_csv('/path/to/file.csv'):
         print(row)
@@ -117,10 +115,10 @@ Validate UID
 
     from dhis2 import valid_uid
 
-    print(valid_uid('Rp268JB6Ne4')
+    print(valid_uid('Rp268JB6Ne4'))
     # True
 
-    print(valid_uid('bleep')
+    print(valid_uid('bleep'))
     # False
 
 
