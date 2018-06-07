@@ -15,6 +15,8 @@ class Dhis(object):
         self.base_url = ''
         if server.startswith('localhost') or server.startswith('127.0.0.1'):
             self.base_url = 'http://{}'.format(server)
+        elif server.startswith('http://'):
+            self.base_url = server
         elif not server.startswith('https://'):
             self.base_url = 'https://{}'.format(server)
         self._auth = (username, password)
