@@ -19,7 +19,6 @@ class Dhis(object):
             self.base_url = server
         elif not server.startswith('https://'):
             self.base_url = 'https://{}'.format(server)
-        self._auth = (username, password)
 
         if api_version:
             self.api_url = '{}/api/{}'.format(self.base_url, api_version)
@@ -27,6 +26,7 @@ class Dhis(object):
             self.api_url = '{}/api'.format(self.base_url)
 
         self._session = requests.Session()
+        self._session.auth = (username, password)
 
     @property
     def session(self):
@@ -54,7 +54,7 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}.{}'.format(self.api_url, endpoint, file_type)
-        r = self._session.get(url, params=params, auth=self._auth)
+        r = self._session.get(url, params=params)
         return self._validate_response(r)
 
     def post(self, endpoint, data, params=None):
@@ -65,7 +65,7 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.post(url=url, json=data, params=params, auth=self._auth)
+        r = self._session.post(url=url, json=data, params=params)
         return self._validate_response(r)
 
     def put(self, endpoint, data, params=None):
@@ -76,7 +76,7 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.put(url=url, json=data, params=params, auth=self._auth)
+        r = self._session.put(url=url, json=data, params=params)
         return self._validate_response(r)
 
     def patch(self, endpoint, data, params=None):
@@ -87,7 +87,7 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.patch(url=url, json=data, params=params, auth=self._auth)
+        r = self._session.patch(url=url, json=data, params=params)
         return self._validate_response(r)
 
     def delete(self, endpoint):
@@ -96,7 +96,7 @@ class Dhis(object):
         :return: requests object
         """
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.delete(url=url, auth=self._auth)
+        r = self._session.delete(url=url)
         return self._validate_response(r)
 
     def get_paged(self, endpoint, params=None):
