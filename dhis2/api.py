@@ -38,7 +38,7 @@ class Dhis(object):
         else:
             try:
                 response.raise_for_status()
-            except requests.TooManyRedirects:
+            except requests.RequestException:
                 raise APIException(
                     code=response.status_code,
                     url=response.url,
