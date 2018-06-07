@@ -168,3 +168,25 @@ class Dhis(object):
             return int(version.split('.')[1])
         except ValueError:
             raise ClientException("Cannot handle DHIS2 version '{}'".format(version))
+
+    def generate_uids(self, amount):
+        """
+        Create UIDs on the server even if it's more than the limit of 10000
+        :param amount: the number of UIDs to generate
+        :return: list of UIDs
+        """
+        def chunk(number):
+            steps = 10000
+            if number > steps:
+                for i in range(0, number, steps):
+                    if i != 0:
+                        yield i
+                yield number - steps
+            else:
+                yield number
+
+        uids = []
+        for limit in chunk(amount):
+            codes = self.get('system/id', params={'limit': limit}).json()['codes']
+            uids += codes
+        return uids
