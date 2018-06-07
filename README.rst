@@ -121,3 +121,15 @@ Validate UID
     # False
 
 
+Generate UIDs
+^^^^^^^^^^^^^
+
+.. code:: python
+
+    from dhis2py import generate_uids
+
+    uids = generate_uids(20000)
+    print(uids)
+    # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
+
+
