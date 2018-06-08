@@ -34,7 +34,11 @@ class Dhis(object):
 
     @staticmethod
     def _validate_response(response):
-
+        """
+        Return if ok, raise APIException if not ok
+        :param response: requests.response object
+        :return: requests.response object
+        """
         if response.status_code == requests.codes.ok:
             return response
         else:
@@ -121,7 +125,7 @@ class Dhis(object):
         else:
             for p in range(2, no_of_pages + 1):
                 params['page'] = p
-                next_page = self.get(endpoint='events', params=params).json()
+                next_page = self.get(endpoint=endpoint, params=params).json()
                 yield next_page
 
     @classmethod
@@ -137,7 +141,7 @@ class Dhis(object):
                         auth_file = os.path.join(root, dish)
                         break
         if not auth_file:
-            raise ClientException("'dish.json' not found - searches in $DHIS_HOME and in home folder")
+            raise ClientException("'dish.json' not found - searched in $DHIS_HOME and in home folder")
 
         a = load_json(auth_file)
         try:
@@ -175,15 +179,12 @@ class Dhis(object):
         :param amount: the number of UIDs to generate
         :return: list of UIDs
         """
-        def chunk(number):
-            steps = 10000
-            if number > steps:
-                for i in range(0, number, steps):
-                    if i != 0:
-                        yield i
-                yield number - steps
-            else:
-                yield number
+
+        def chunk(num, thresh=10000):
+            while num:
+                to_yield = min(num, thresh)
+                yield to_yield
+                num -= to_yield
 
         uids = []
         for limit in chunk(amount):

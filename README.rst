@@ -4,7 +4,7 @@ dhis2.py - minimalistic wrapper around the DHIS2 API
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
 - HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ object
-- File loading (CSV, JSON)
+- Some utils like file loading (CSV, JSON), UID generation/validation
 
 Install
 --------
@@ -45,7 +45,7 @@ Basic
 Load authentication from file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Load from a auth file. Must have the following structure:
+Load from a auth JSON file. Must have the following structure:
 
 .. code:: json
 
