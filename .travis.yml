@@ -1,18 +1,11 @@
 after_success: coveralls
 language: python
-matrix:
-  include:
-  - os: linux
-    dist: trusty
-    python: '2.7'
-  - os: linux
-    dist: trusty
-    python: '3.5'
-  - os: linux
-    dist: trusty
-    python: '3.6'
+python:
+  - '2.7'
+  - '3.5'
+  - '3.6'
 install:
-  - pip install coveralls
+  - "pip install coveralls"
   - "make"
 script:
   - "make test"
