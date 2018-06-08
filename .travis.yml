@@ -1,3 +1,4 @@
+after_success: coveralls
 language: python
 matrix:
   include:
@@ -10,7 +11,9 @@ matrix:
   - os: linux
     dist: trusty
     python: '3.6'
-install: "make"
+install:
+  - pip install coveralls
+  - "make"
 script:
   - "make test"
 notifications:
