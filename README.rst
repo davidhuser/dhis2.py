@@ -1,7 +1,7 @@
 dhis2.py - minimalistic wrapper around the DHIS2 API
 =====================================================
 
-|Build| |PyVersion| |Coverage|
+|Build| |PyVersion| |PyPi| |Coverage|
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
@@ -129,6 +129,9 @@ Generate UIDs (not limited to 10000):
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
 .. |PyVersion| image:: https://img.shields.io/pypi/pyversions/dhis2.py.svg
+   :target: https://pypi.org/project/dhis2.py
+
+.. |PyPi| image:: https://img.shields.io/pypi/v/dhis2.py.svg
    :target: https://pypi.org/project/dhis2.py
 
 .. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
