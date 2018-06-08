@@ -17,7 +17,9 @@ class Dhis(object):
             self.base_url = 'http://{}'.format(server)
         elif server.startswith('http://'):
             self.base_url = server
-        elif not server.startswith('https://'):
+        elif server.startswith('https://'):
+            self.base_url = server
+        else:
             self.base_url = 'https://{}'.format(server)
 
         if api_version:
@@ -25,8 +27,9 @@ class Dhis(object):
         else:
             self.api_url = '{}/api'.format(self.base_url)
 
+        self.username = username
         self._session = requests.Session()
-        self._session.auth = (username, password)
+        self._session.auth = (self.username, password)
 
     @property
     def session(self):
@@ -156,7 +159,10 @@ class Dhis(object):
             return cls(server=baseurl, username=username, password=password)
 
     def __str__(self):
-        return 'DHIS2 server: {}'.format(self.base_url)
+        s = 'DHIS2 server: {}\n' \
+            'API URL: {}\n' \
+            'Username: {}'.format(self.base_url, self.api_url, self.username)
+        return s
 
     def info(self):
         return json.dumps(self.get(endpoint='system/info').json(), indent=2)
@@ -170,24 +176,30 @@ class Dhis(object):
             version = version.replace('-SNAPSHOT', '')
         try:
             return int(version.split('.')[1])
-        except ValueError:
+        except (ValueError, IndexError):
             raise ClientException("Cannot handle DHIS2 version '{}'".format(version))
+
+    @staticmethod
+    def _chunk(num, thresh=10000):
+        """
+        Chunk a number into a list of numbers
+        :param num: the number to chunk
+        :param thresh: the maximum value of a chunk
+        """
+        while num:
+            to_yield = min(num, thresh)
+            yield to_yield
+            num -= to_yield
 
     def generate_uids(self, amount):
         """
-        Create UIDs on the server even if it's more than the limit of 10000
+        Create UIDs on the server
         :param amount: the number of UIDs to generate
         :return: list of UIDs
         """
 
-        def chunk(num, thresh=10000):
-            while num:
-                to_yield = min(num, thresh)
-                yield to_yield
-                num -= to_yield
-
         uids = []
-        for limit in chunk(amount):
+        for limit in self._chunk(amount):
             codes = self.get('system/id', params={'limit': limit}).json()['codes']
-            uids += codes
+            uids.extend(codes)
         return uids

@@ -5,44 +5,63 @@ import sys
 from codecs import open
 from shutil import rmtree
 
-from setuptools import setup
-from setuptools.command.test import test as TestCommand
+from setuptools import setup, Command
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-class PyTest(TestCommand):
-    user_options = [('pytest-args=', 'a', "Arguments to pass into py.test")]
+class PublishCommand(Command):
+    """Support setup.py publish."""
+
+    description = 'Build and publish the package.'
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('\033[1m{0}\033[0m'.format(s))
 
     def initialize_options(self):
-        TestCommand.initialize_options(self)
-        try:
-            from multiprocessing import cpu_count
-            self.pytest_args = ['-n', str(cpu_count()), '--boxed']
-        except (ImportError, NotImplementedError):
-            self.pytest_args = ['-n', '1', '--boxed']
+        pass
 
     def finalize_options(self):
-        TestCommand.finalize_options(self)
-        self.test_args = []
-        self.test_suite = True
-
-    def run_tests(self):
-        import pytest
-
-        errno = pytest.main(self.pytest_args)
-        sys.exit(errno)
-
-
-# 'setup.py publish' shortcut.
-if sys.argv[-1] == 'publish':
-    try:
-        rmtree(os.path.join(here, 'dist'))
-    except (OSError, IOError):
         pass
-    os.system('python setup.py sdist bdist_wheel')
-    os.system('twine upload dist/*')
-    sys.exit()
+
+    def run(self):
+        try:
+            self.status('Removing previous builds...')
+            rmtree(os.path.join(here, 'dist'))
+        except (OSError, IOError):
+            pass
+
+        self.status('Building Source and Wheel (universal) distribution...')
+        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+
+        self.status('Uploading the package to PyPi via Twine...')
+        os.system('twine upload dist/*')
+
+        sys.exit()
+
+
+class TestCommand(Command):
+    description = 'Run Unit tests.'
+    user_options = []
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('\033[1m{0}\033[0m'.format(s))
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        self.status('Testing with pytest...')
+        os.system('pipenv run python -m pytest --cov=dhis2 --cov-report term-missing tests -vv')
+
 
 requires = [
     'requests',
@@ -51,7 +70,8 @@ requires = [
 
 test_requirements = [
     'pytest-cov',
-    'pytest'
+    'pytest',
+    'responses'
 ]
 
 about = {}
@@ -65,6 +85,7 @@ setup(
     name=about['__title__'],
     version=about['__version__'],
     description=about['__description__'],
+    long_description=readme,
     author=about['__author__'],
     author_email=about['__author_email__'],
     url=about['__url__'],
@@ -82,9 +103,10 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy'
     ),
-    cmdclass={'test': PyTest},
+    cmdclass={
+        'publish': PublishCommand,
+        'test': TestCommand
+    },
     tests_require=test_requirements,
 )

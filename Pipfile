@@ -5,7 +5,11 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 pytest-coverage = "*"
+responses = "*"
 
 [packages]
 unicodecsv = "*"
 requests = "*"
+
+[scripts]
+tests = "python setup.py test"

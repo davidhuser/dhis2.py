@@ -1,0 +1,17 @@
+language: python
+matrix:
+  include:
+  - os: linux
+    dist: trusty
+    python: '2.7'
+  - os: linux
+    dist: trusty
+    python: '3.5'
+  - os: linux
+    dist: trusty
+    python: '3.6'
+install: "make"
+script:
+  - "make test"
+notifications:
+  email: false

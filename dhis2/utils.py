@@ -4,6 +4,7 @@ import sys
 
 from .exceptions import ClientException
 
+# unicode support is already ok for Py3
 if sys.version_info < (3,):
     import unicodecsv as csv
 else:
@@ -23,10 +24,13 @@ def load_csv(path, delimiter=','):
     :param path: file path
     :return: row (from generator)
     """
-    with open(path, 'r') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=delimiter)
-        for row in reader:
-            yield row
+    try:
+        with open(path, 'r') as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=delimiter)
+            for row in reader:
+                yield row
+    except FileNotFoundError:
+        raise ClientException("File not found: {}".format(path))
 
 
 def load_json(path):
@@ -34,17 +38,8 @@ def load_json(path):
     :param path: file path
     :return: dict
     """
-    with open(path, 'r') as json_file:
-        try:
+    try:
+        with open(path, 'r') as json_file:
             return json.load(json_file)
-        except ValueError:
-            raise ClientException("File empty: {}".format(path))
-        except IOError:
-            raise ClientException("File not found: {}".format(path))
-
-
-def valid_uid(uid):
-    """Check if string matches DHIS2 UID pattern
-    :return: bool
-    """
-    return re.compile("^[A-Za-z][A-Za-z0-9]{10}$").match(uid)
+    except FileNotFoundError:
+        raise ClientException("File not found: {}".format(path))

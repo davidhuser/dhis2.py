@@ -4,7 +4,7 @@ dhis2.py - minimalistic wrapper around the DHIS2 API
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
 - HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ object
-- Some utils like file loading (CSV, JSON), UID generation/validation
+- Some utils like file loading (CSV, JSON), UID generation
 
 Install
 --------
@@ -108,22 +108,10 @@ Load CSV file
     data = list(load_csv('/path/to/file.csv'))
 
 
-Validate UID
-^^^^^^^^^^^^^
-
-.. code:: python
-
-    from dhis2 import valid_uid
-
-    print(valid_uid('Rp268JB6Ne4'))
-    # True
-
-    print(valid_uid('bleep'))
-    # False
-
-
 Generate UIDs
 ^^^^^^^^^^^^^
+
+Generate UIDs (not limited to 10000):
 
 .. code:: python
 
