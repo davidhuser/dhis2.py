@@ -16,11 +16,8 @@ Install
     pipenv install dhis2.py --user --upgrade
 
 
-Examples
-----------
-
 Basics
-^^^^^^
+-------
 
 .. code:: python
 
@@ -74,7 +71,7 @@ If no argument is specified, it tries to find a file called ``dish.json`` in:
 
 
 
-Load JSON file
+Load a JSON file
 ^^^^^^^^^^^^^^^
 
 .. code:: python
@@ -92,7 +89,7 @@ Load JSON file
     # <DHIS2 response>
 
 
-Load CSV file
+Load a CSV file
 ^^^^^^^^^^^^^^
 
 .. code:: python
@@ -114,7 +111,7 @@ Load CSV file
 Generate UIDs
 ^^^^^^^^^^^^^
 
-Generate UIDs from server (not limited to 10000)
+Get server-generated UIDs (not limited to 10000)
 
 .. code:: python
 
@@ -130,7 +127,7 @@ Generate UIDs from server (not limited to 10000)
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
 .. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
-   :target: https://ci.appveyor.com/project/davidhuser/dhis2.py
+   :target: https://ci.appveyor.com/project/d4h-va/dhis2-py
 
 .. |PyVersion| image:: https://img.shields.io/pypi/pyversions/dhis2.py.svg
    :target: https://pypi.org/project/dhis2.py
@@ -145,7 +142,7 @@ Generate UIDs from server (not limited to 10000)
 Exceptions
 ^^^^^^^^^^^
 
-There should only be two exceptions thrown:
+There should be only two exceptions:
 
 - ``APIException``: DHIS2 didn't like what you requested
 - ``ClientException``: something didn't work with the client not involving DHIS2
