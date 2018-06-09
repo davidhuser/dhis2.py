@@ -157,6 +157,7 @@ Testing
 Contribute
 -----------
 
+- Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
 - Fork, test, add code, add tests, test, push, Pull Request
 
 
