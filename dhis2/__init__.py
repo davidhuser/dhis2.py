@@ -15,11 +15,6 @@ __all__ = (
     'ClientException'
 )
 
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError  # py2
-
 
 # Set default logging handler to avoid "No handler found" warnings.
 import logging

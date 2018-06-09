@@ -10,6 +10,11 @@ if sys.version_info < (3,):
 else:
     import csv
 
+try:
+    FileNotFoundError  # py3
+except NameError:
+    FileNotFoundError = IOError  # py2
+
 
 def load_csv(path, delimiter=','):
     """Load CSV file efficiently.
