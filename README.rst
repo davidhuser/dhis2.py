@@ -5,8 +5,7 @@ dhis2.py - minimalistic DHIS2 API wrapper
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
-- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_
-response object, so you can use any operation on it: `r.text`, `r.json()`, `r.status_code` etc.
+- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object, so you can use any operation on it: ``r.text``, ``r.json()``, ``r.status_code`` etc.
 - Some utils like file loading (CSV, JSON) and UID generation
 
 Install
@@ -148,14 +147,14 @@ Exceptions
 
 There should only be two exceptions thrown:
 
-- `APIException`: DHIS2 didn't like what you requested
-- `ClientException`: something didn't work with the client not involving DHIS2
+- ``APIException``: DHIS2 didn't like what you requested
+- ``ClientException``: something didn't work with the client not involving DHIS2
 
 
 Testing
 --------
 
-`pipenv run tests`
+``pipenv run tests``
 
 
 Contribute
