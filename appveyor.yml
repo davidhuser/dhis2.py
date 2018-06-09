@@ -33,7 +33,7 @@ install:
   - "python -m pip install pip==9.0.3 --user --disable-pip-version-check"
   - "python -m pip install pipenv --user --disable-pip-version-check"
   - "python -m pipenv install --dev"
-  - "python -m pipenv install funcsigs --dev
+  - "python -m pipenv install funcsigs --dev"
 
 test_script:
   - "python -m pipenv run python -m pytest tests"
