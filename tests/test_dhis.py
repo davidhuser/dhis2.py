@@ -1,5 +1,6 @@
 import json
 import os
+import tempfile
 
 import pytest
 import requests
@@ -45,7 +46,8 @@ def auth_file():
             "password": "district"
         }
     }
-    filename = '/tmp/auth_test.json'
+    tmp = tempfile.gettempdir()
+    filename = os.path.join(tmp, 'auth_test.json')
     with open(filename, 'w') as f:
         json.dump(content, f)
     yield filename
@@ -53,7 +55,9 @@ def auth_file():
 
 
 def test_from_auth_file(auth_file):
-    api = Dhis.from_auth_file('/tmp/auth_test.json')
+    tmp = tempfile.gettempdir()
+    filename = os.path.join(tmp, 'auth_test.json')
+    api = Dhis.from_auth_file(filename)
     assert api.base_url == "https://play.dhis2.org/demo"
 
 
@@ -65,7 +69,8 @@ def auth_file_invalid():
             "password": "district"
         }
     }
-    filename = '/tmp/auth_test_invalid.json'
+    tmp = tempfile.gettempdir()
+    filename = os.path.join(tmp, 'auth_test_invalid.json')
     with open(filename, 'w') as f:
         json.dump(content, f)
     yield filename
@@ -74,7 +79,9 @@ def auth_file_invalid():
 
 def test_from_auth_file_not_valid(auth_file_invalid):
     with pytest.raises(exceptions.ClientException):
-        Dhis.from_auth_file('/tmp/auth_test_invalid.json')
+        tmp = tempfile.gettempdir()
+        filename = os.path.join(tmp, 'auth_test_invalid.json')
+        Dhis.from_auth_file(filename)
 
 
 @pytest.fixture()

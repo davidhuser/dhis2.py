@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 import pytest
 
@@ -12,7 +13,9 @@ def csv_file():
         '1,2',
         '3,4'
     ]
-    filename = '/tmp/file.csv'
+    tmp = tempfile.gettempdir()
+    filename = os.path.join(tmp, 'file.csv')
+
     import csv
     with open(filename, 'w') as f:
         w = csv.writer(f, delimiter=',')
@@ -26,7 +29,9 @@ def test_load_csv(csv_file):
         {"abc": "1", "def": "2"},
         {"abc": "3", "def": "4"}
     ]
-    loaded = list(load_csv('/tmp/file.csv'))
+    tmp = tempfile.gettempdir()
+    filename = os.path.join(tmp, 'file.csv')
+    loaded = list(load_csv(filename))
     assert loaded == expected
 
 
