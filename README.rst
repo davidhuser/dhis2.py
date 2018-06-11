@@ -35,9 +35,9 @@ Basics
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
 
     # use paging for large GET requests (JSON only)
-    for page in api.get_paged('organisationUnits', params={'paging': False}, page_size=100):
+    for page in api.get_paged('organisationUnits', page_size=100):
          print(page)
-         # { "organisationUnits": [ {...}, {...} ] }
+         # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
 
 
 Load authentication from file

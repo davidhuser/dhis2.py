@@ -188,6 +188,26 @@ def test_page_size_zero():
             pass
 
 
+@responses.activate
+def test_paging_with_params():
+    api = Dhis(BASEURL, 'admin', 'district')
+    url = '{}/organisationUnits.json?pageSize=50&paging=False'.format(API_URL)
+    r = {
+        "pager": {
+            "page": 1,
+            "pageCount": 1,
+            "total": 0,
+            "pageSize": 50
+        },
+        "organisationUnits": []
+    }
+    responses.add(responses.GET, url, json=r, status=200)
+    with pytest.raises(exceptions.ClientException):
+        params = {'paging': False}
+        for _ in api.get_paged('organisationUnits', params=params):
+            pass
+
+
 @pytest.mark.parametrize("from_server,integer", [
     ("2.29", 29),
     ("2.30", 30),

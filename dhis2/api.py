@@ -114,10 +114,12 @@ class Dhis(object):
         :return: requests object
         :rtype: dict (generator)
         """
-        if page_size < 1:
-            raise ClientException("Can't set page_size to < 1")
         if not params:
             params = {}
+        if page_size < 1:
+            raise ClientException("Can't set page_size to < 1")
+        if 'paging' in params:
+            raise ClientException("Can't set paging manually in params when using get_paged")
         params['pageSize'] = page_size
         page_counter = 1
         page = self.get(endpoint=endpoint, file_type='json', params=params).json()
