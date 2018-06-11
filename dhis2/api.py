@@ -106,30 +106,27 @@ class Dhis(object):
         r = self._session.delete(url=url)
         return self._validate_response(r)
 
-    def get_paged(self, endpoint, params=None):
+    def get_paged(self, endpoint, params=None, page_size=50):
         """GET with paging (for large payloads)
+        :param page_size: how many objects per page
         :param endpoint: DHIS2 API endpoint
         :param params: HTTP parameters (dict), defaults to None
         :return: requests object
         :rtype: dict (generator)
         """
+        if page_size < 1:
+            raise ClientException("Can't set page_size to < 1")
         if not params:
             params = {}
-        params['pageSize'] = 50
-        params['totalPages'] = True
-
-        first_page = self.get(endpoint=endpoint, file_type='json', params=params).json()
-        yield first_page
-
-        try:
-            no_of_pages = first_page['pager']['pageCount']
-        except KeyError:
-            yield None
-        else:
-            for p in range(2, no_of_pages + 1):
-                params['page'] = p
-                next_page = self.get(endpoint=endpoint, params=params).json()
-                yield next_page
+        params['pageSize'] = page_size
+        page_counter = 1
+        page = self.get(endpoint=endpoint, file_type='json', params=params).json()
+        yield page
+        while page['pager'].get('nextPage') is not None:
+            page_counter += 1
+            params['page'] = page_counter
+            page = self.get(endpoint=endpoint, file_type='json', params=params).json()
+            yield page
 
     @classmethod
     def from_auth_file(cls, auth_file=''):

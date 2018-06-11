@@ -34,11 +34,10 @@ Basics
     print(api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'}).json())
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
 
-    # use paging for large GET requests (50 items per page) - JSON only
-    for page in api.get_paged('organisationUnits', params={'paging': False}):
-        if page and page.get('organisationUnits'):
-            print(page)
-            # { "organisationUnits": [ {...}, {...} ] }
+    # use paging for large GET requests (JSON only)
+    for page in api.get_paged('organisationUnits', params={'paging': False}, page_size=100):
+         print(page)
+         # { "organisationUnits": [ {...}, {...} ] }
 
 
 Load authentication from file

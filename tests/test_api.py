@@ -1,4 +1,5 @@
 import json
+import uuid
 
 import pytest
 import responses
@@ -104,6 +105,87 @@ def test_info():
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == url
     assert responses.calls[0].response.text == json.dumps(r)
+
+
+@pytest.mark.parametrize("page_size", [
+    50, 100
+])
+@responses.activate
+def test_get_paged(page_size):
+    """
+    first page: $page_size
+    second page: $page_size minus overflow
+    """
+    overflow = 5
+    page_count = 2
+
+    first_page = {
+        "pager": {
+            "page": 1,
+            "pageCount": page_count,
+            "total": page_size + overflow,
+            "pageSize": page_size,
+            "nextPage": "{}/organisationUnits?page=2".format(API_URL)
+        },
+        "organisationUnits": [str(uuid.uuid4()) for _ in range(page_size)]
+    }
+    url = '{}/organisationUnits.json?pageSize={}'.format(API_URL, page_size)
+    responses.add(responses.GET, url, json=first_page, status=200)
+
+    second_page_count = page_size - overflow
+    second_page = {
+        "pager": {
+            "page": 2,
+            "pageCount": page_count,
+            "total": page_size + overflow,
+            "pageSize": page_size
+        },
+        "organisationUnits": [str(uuid.uuid4()) for _ in range(second_page_count)]
+    }
+    url = '{}/organisationUnits.json?pageSize={}&page=2'.format(API_URL, page_size)
+    responses.add(responses.GET, url, json=second_page, status=200)
+
+    api = Dhis(BASEURL, 'admin', 'district')
+    counter = 0
+    uid_list = []
+    for page in api.get_paged('organisationUnits', page_size=page_size):
+        counter += len(page['organisationUnits'])
+        uid_list.extend(page['organisationUnits'])
+    assert counter == page_count * page_size - overflow
+    assert len(set(uid_list)) == len(uid_list)
+    assert len(responses.calls) == page_count
+
+
+@responses.activate
+def test_get_paged_empty():
+    page_size = 50
+
+    first_page = {
+        "pager": {
+            "page": 1,
+            "pageCount": 2,
+            "total": 0,
+            "pageSize": page_size
+        },
+        "organisationUnits": []
+    }
+    url = '{}/organisationUnits.json?pageSize={}'.format(API_URL, page_size)
+    responses.add(responses.GET, url, json=first_page, status=200)
+
+    api = Dhis(BASEURL, 'admin', 'district')
+    counter = 0
+    for page in api.get_paged('organisationUnits', page_size=50):
+        counter += len(page['organisationUnits'])
+    assert counter == 0
+    assert len(responses.calls) == 1
+
+
+@responses.activate
+def test_page_size_zero():
+    api = Dhis(BASEURL, 'admin', 'district')
+    with pytest.raises(exceptions.ClientException):
+        for _ in api.get_paged('organisationUnits', page_size=0):
+            pass
 
 
 @pytest.mark.parametrize("from_server,integer", [
