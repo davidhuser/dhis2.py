@@ -1,13 +1,16 @@
-after_success: coveralls
 language: python
 python:
   - '2.7'
   - '3.5'
   - '3.6'
+  - '3.7-dev'
 install:
-  - "pip install coveralls"
-  - "make"
+  - pip install coveralls
+  - pip install tox-travis
+  - make
 script:
-  - "make test"
+  - make test
+  - tox
 notifications:
   email: false
+after_success: coveralls
