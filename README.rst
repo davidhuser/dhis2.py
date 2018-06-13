@@ -7,7 +7,7 @@ Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object, so you can use any operation on it: ``r.text``, ``r.json()``, ``r.status_code`` etc.
 - Some utils like file loading (CSV, JSON) and UID generation
-- Supported: Python 2.7, 3.5+ on all OS
+- Supported: Python 2.7, 3.4-3.6
 
 Install
 --------
