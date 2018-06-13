@@ -6,6 +6,7 @@ verify_ssl = true
 pytest = "*"
 pytest-coverage = "*"
 responses = "*"
+tox = "*"
 
 [packages]
 unicodecsv = "*"

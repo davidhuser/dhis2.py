@@ -133,7 +133,7 @@ There should be only two exceptions:
 
 Testing
 --------
-
+``pipenv install --dev``
 ``pipenv run tests``
 
 
