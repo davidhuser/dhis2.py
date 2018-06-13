@@ -107,43 +107,58 @@ def test_info():
     assert responses.calls[0].response.text == json.dumps(r)
 
 
-@pytest.mark.parametrize("page_size", [
-    50, 100
+@pytest.mark.parametrize("page_size,no_of_pages,expected_amount", [
+    [50, 2, 95],
+    [100, 2, 195],
+    [20, 1, 15]
 ])
 @responses.activate
-def test_get_paged(page_size):
+def test_get_paged(page_size, no_of_pages, expected_amount):
     """
     first page: $page_size
     second page: $page_size minus overflow
     """
     overflow = 5
-    page_count = 2
 
-    first_page = {
-        "pager": {
-            "page": 1,
-            "pageCount": page_count,
-            "total": page_size + overflow,
-            "pageSize": page_size,
-            "nextPage": "{}/organisationUnits?page=2".format(API_URL)
-        },
-        "organisationUnits": [str(uuid.uuid4()) for _ in range(page_size)]
-    }
-    url = '{}/organisationUnits.json?pageSize={}'.format(API_URL, page_size)
-    responses.add(responses.GET, url, json=first_page, status=200)
+    if no_of_pages > 1:
+        first_page = {
+            "pager": {
+                "page": 1,
+                "pageCount": no_of_pages,
+                "total": expected_amount,
+                "pageSize": page_size,
+                "nextPage": "{}/organisationUnits?page=2".format(API_URL)
+            },
+            "organisationUnits": [str(uuid.uuid4()) for _ in range(page_size)]
+        }
+        url = '{}/organisationUnits.json?pageSize={}'.format(API_URL, page_size)
+        responses.add(responses.GET, url, json=first_page, status=200)
 
-    second_page_count = page_size - overflow
-    second_page = {
-        "pager": {
-            "page": 2,
-            "pageCount": page_count,
-            "total": page_size + overflow,
-            "pageSize": page_size
-        },
-        "organisationUnits": [str(uuid.uuid4()) for _ in range(second_page_count)]
-    }
-    url = '{}/organisationUnits.json?pageSize={}&page=2'.format(API_URL, page_size)
-    responses.add(responses.GET, url, json=second_page, status=200)
+        second_page_count = page_size - overflow
+        second_page = {
+            "pager": {
+                "page": 2,
+                "pageCount": no_of_pages,
+                "total": page_size + overflow,
+                "pageSize": page_size
+            },
+            "organisationUnits": [str(uuid.uuid4()) for _ in range(second_page_count)]
+        }
+        url = '{}/organisationUnits.json?pageSize={}&page=2'.format(API_URL, page_size)
+        responses.add(responses.GET, url, json=second_page, status=200)
+
+    if no_of_pages == 1:
+        first_page = {
+            "pager": {
+                "page": 1,
+                "pageCount": no_of_pages,
+                "total": expected_amount,
+                "pageSize": page_size
+            },
+            "organisationUnits": [str(uuid.uuid4()) for _ in range(expected_amount)]
+        }
+        url = '{}/organisationUnits.json?pageSize={}'.format(API_URL, page_size)
+        responses.add(responses.GET, url, json=first_page, status=200)
 
     api = Dhis(BASEURL, 'admin', 'district')
     counter = 0
@@ -151,9 +166,9 @@ def test_get_paged(page_size):
     for page in api.get_paged('organisationUnits', page_size=page_size):
         counter += len(page['organisationUnits'])
         uid_list.extend(page['organisationUnits'])
-    assert counter == page_count * page_size - overflow
+    assert counter == expected_amount
     assert len(set(uid_list)) == len(uid_list)
-    assert len(responses.calls) == page_count
+    assert len(responses.calls) == no_of_pages
 
 
 @responses.activate
