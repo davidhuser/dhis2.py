@@ -1,12 +1,13 @@
-dhis2.py - minimalistic DHIS2 API wrapper
-==========================================
+dhis2.py - Minimalistic Python wrapper for DHIS2
+=================================================
 
-|Build| |BuildWin| |PyVersion| |PyPi| |Coverage|
+|Build| |BuildWin| |Coverage| |PyPi|
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object, so you can use any operation on it: ``r.text``, ``r.json()``, ``r.status_code`` etc.
 - Some utils like file loading (CSV, JSON) and UID generation
+- Supported: Python 2.7, 3.5+ on all OS
 
 Install
 --------
@@ -121,23 +122,6 @@ Get server-generated UIDs (not limited to 10000)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
 
 
-
-.. |Build| image:: https://travis-ci.org/davidhuser/dhis2.py.svg?branch=master
-   :target: https://travis-ci.org/davidhuser/dhis2.py
-
-.. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
-   :target: https://ci.appveyor.com/project/d4h-va/dhis2-py
-
-.. |PyVersion| image:: https://img.shields.io/pypi/pyversions/dhis2.py.svg
-   :target: https://pypi.org/project/dhis2.py
-
-.. |PyPi| image:: https://img.shields.io/pypi/v/dhis2.py.svg
-   :target: https://pypi.org/project/dhis2.py
-
-.. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
-   :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
-
-
 Exceptions
 ^^^^^^^^^^^
 
@@ -159,4 +143,15 @@ Contribute
 - Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
 - Fork, test, add code, add tests, test, push, Pull Request
 
+.. |Build| image:: https://travis-ci.org/davidhuser/dhis2.py.svg?branch=master
+   :target: https://travis-ci.org/davidhuser/dhis2.py
+
+.. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
+   :target: https://ci.appveyor.com/project/d4h-va/dhis2-py
+
+.. |PyPi| image:: https://img.shields.io/pypi/v/dhis2.py.svg
+   :target: https://pypi.org/project/dhis2.py
+
+.. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
+   :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
 

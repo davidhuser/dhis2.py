@@ -131,21 +131,20 @@ class Dhis(object):
             yield page
 
     @classmethod
-    def from_auth_file(cls, auth_file=''):
-        if not auth_file:
-            dish = 'dish.json'
+    def from_auth_file(cls, auth_file_path='', dish_filename='dish.json'):
+        if not auth_file_path:
             if 'DHIS_HOME' in os.environ:
-                auth_file = os.path.join(os.environ['DHIS_HOME'], dish)
+                auth_file_path = os.path.join(os.environ['DHIS_HOME'], dish_filename)
             else:
                 home_path = os.path.expanduser(os.path.join('~'))
                 for root, dirs, files in os.walk(home_path):
-                    if dish in files:
-                        auth_file = os.path.join(root, dish)
+                    if dish_filename in files:
+                        auth_file_path = os.path.join(root, dish_filename)
                         break
-        if not auth_file:
+        if not auth_file_path:
             raise ClientException("'dish.json' not found - searched in $DHIS_HOME and in home folder")
 
-        a = load_json(auth_file)
+        a = load_json(auth_file_path)
         try:
             section = a['dhis']
             baseurl = section['baseurl']
@@ -153,7 +152,7 @@ class Dhis(object):
             password = section['password']
             assert all([baseurl, username, password])
         except (KeyError, AssertionError):
-            raise ClientException("Auth file found but not valid: {}".format(auth_file))
+            raise ClientException("Auth file found but not valid: {}".format(auth_file_path))
         else:
             return cls(server=baseurl, username=username, password=password)
 
