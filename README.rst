@@ -5,12 +5,14 @@ dhis2.py - Minimalistic Python wrapper for DHIS2
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
-- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object, so you can use any operation on it: ``r.text``, ``r.json()``, ``r.status_code`` etc.
+- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object
 - Some utils like file loading (CSV, JSON) and UID generation
-- Supported: Python 2.7, 3.4-3.6
+- Supported: Python 2.7, 3.4-3.6 and all DHIS2 versions
 
 Install
 --------
+
+Simply use `pipenv <https://docs.pipenv.org>`_ (or ``pip``):
 
 .. code:: bash
 
@@ -20,11 +22,18 @@ Install
 Basics
 -------
 
+Create an API object:
+
 .. code:: python
 
     from dhis2 import Dhis
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+
+
+Then run requests on it:
+
+.. code:: python
 
     print(api.dhis_version())
     # 28
@@ -32,13 +41,17 @@ Basics
     print(api.info())
     # { "serverDate": "2018-07-25T08:47:48.911", ... }
 
-    print(api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'}).json())
+    r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
+
+    print(r.json())
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
 
-    # use paging for large GET requests (JSON only)
-    for page in api.get_paged('organisationUnits', page_size=100):
-         print(page)
-         # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
+    print(r.text)
+    # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
+
+    print(r.status_code)
+    # 200
+
 
 
 Load authentication from file
@@ -108,6 +121,22 @@ Load a CSV file
     data = list(load_csv('/path/to/file.csv'))
 
 
+API paging
+^^^^^^^^^^^
+
+Paging for large GET requests (JSON only)
+
+.. code:: python
+
+    from dhis2 import Dhis, load_csv
+
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+
+       for page in api.get_paged('organisationUnits', page_size=100):
+            print(page)
+            # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
+
+
 Generate UIDs
 ^^^^^^^^^^^^^
 
@@ -127,7 +156,7 @@ Exceptions
 
 There should be only two exceptions:
 
-- ``APIException``: DHIS2 didn't like what you requested
+- ``APIException``: DHIS2 didn't like what you requested. See the exception's ``code``, ``url`` and ``description``
 - ``ClientException``: something didn't work with the client not involving DHIS2
 
 
@@ -149,9 +178,9 @@ Contribute
 .. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
    :target: https://ci.appveyor.com/project/d4h-va/dhis2-py
 
-.. |PyPi| image:: https://img.shields.io/pypi/v/dhis2.py.svg
-   :target: https://pypi.org/project/dhis2.py
-
 .. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
+
+.. |PyPi| image:: https://img.shields.io/pypi/v/dhis2.py.svg
+   :target: https://pypi.org/project/dhis2.py
 
