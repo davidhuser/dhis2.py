@@ -1,7 +1,11 @@
 import requests
 
 
-class APIException(requests.RequestException):
+class Dhis2PyException(Exception):
+    """ Base exception for all"""
+
+
+class APIException(Dhis2PyException, requests.RequestException):
     """DHIS2 API call error"""
 
     def __init__(self, code, url, description, *args, **kwargs):
@@ -25,5 +29,5 @@ class APIException(requests.RequestException):
         )
 
 
-class ClientException(Exception):
+class ClientException(Dhis2PyException):
     """Exceptions not involving DHIS2's API."""

@@ -121,12 +121,11 @@ class Dhis(object):
         if 'paging' in params:
             raise ClientException("Can't set paging manually in params when using get_paged")
         params['pageSize'] = page_size
-        page_counter = 1
+        params['page'] = 1
         page = self.get(endpoint=endpoint, file_type='json', params=params).json()
         yield page
-        while page['pager'].get('nextPage') is not None:
-            page_counter += 1
-            params['page'] = page_counter
+        while page['pager'].get('nextPage'):
+            params['page'] += 1
             page = self.get(endpoint=endpoint, file_type='json', params=params).json()
             yield page
 
@@ -142,7 +141,7 @@ class Dhis(object):
                         auth_file_path = os.path.join(root, dish_filename)
                         break
         if not auth_file_path:
-            raise ClientException("'dish.json' not found - searched in $DHIS_HOME and in home folder")
+            raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(dish_filename))
 
         a = load_json(auth_file_path)
         try:
