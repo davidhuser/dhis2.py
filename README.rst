@@ -132,9 +132,9 @@ Paging for large GET requests (JSON only)
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
-       for page in api.get_paged('organisationUnits', page_size=100):
-            print(page)
-            # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
+    for page in api.get_paged('organisationUnits', page_size=100):
+        print(page)
+        # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
 
 
 Generate UIDs
@@ -162,8 +162,11 @@ There should be only two exceptions:
 
 Testing
 --------
-``pipenv install --dev``
-``pipenv run tests``
+
+.. code:: bash
+
+    pipenv install --dev
+    pipenv run tests
 
 
 Contribute
