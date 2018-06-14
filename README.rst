@@ -156,9 +156,10 @@ Exceptions
 
 There should be only two exceptions:
 
-- ``APIException``: DHIS2 didn't like what you requested. See the exception's ``code``, ``url`` and ``description``
-- ``ClientException``: something didn't work with the client not involving DHIS2
+- ``APIException``: DHIS2 didn't like what you requested. See the exception's ``code``, ``url`` and ``description``.
+- ``ClientException``: Something didn't work with the client not involving DHIS2.
 
+They both inherit from ``Dhis2PyException``.
 
 Testing
 --------
