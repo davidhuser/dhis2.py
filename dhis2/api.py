@@ -141,7 +141,7 @@ class Dhis(object):
                         auth_file_path = os.path.join(root, dish_filename)
                         break
         if not auth_file_path:
-            raise ClientException("'dish.json' not found - searched in $DHIS_HOME and in home folder")
+            raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(dish_filename))
 
         a = load_json(auth_file_path)
         try:
