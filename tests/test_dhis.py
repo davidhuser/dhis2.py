@@ -36,6 +36,7 @@ def override_environ(**kwargs):
 def test_api_url(entered, expected):
     api = Dhis(entered, 'admin', 'district')
     assert api.base_url == expected
+    assert api.username == 'admin'
     assert '{}/api'.format(api.base_url) == '{}/api'.format(expected)
 
 
@@ -47,6 +48,7 @@ def test_base_url_with_api():
 def test_base_url_api_version():
     api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29)
     assert api.api_url == 'https://play.dhis2.org/demo/api/29'
+    assert api.username == 'admin'
 
 
 def test_session():
@@ -54,7 +56,7 @@ def test_session():
     assert isinstance(api.session, requests.Session)
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_file():
     content = {
         "dhis": {
@@ -75,16 +77,19 @@ def test_from_auth_file_named(auth_file):
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'auth_test.json')
     api = Dhis.from_auth_file(auth_file_path=filename)
-    assert api.base_url == "https://play.dhis2.org/demo"
+    assert api.base_url == 'https://play.dhis2.org/demo'
+    assert api.username == 'admin'
 
 
 def test_from_auth_file_not_named(auth_file):
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'auth_test.json')
     api = Dhis.from_auth_file(filename)
-    assert api.base_url == "https://play.dhis2.org/demo"
+    assert api.base_url == 'https://play.dhis2.org/demo'
+    assert api.username == 'admin'
 
-@pytest.fixture()
+
+@pytest.fixture
 def auth_file_invalid():
     content = {
         "dhis": {
@@ -107,7 +112,7 @@ def test_from_auth_file_not_valid(auth_file_invalid):
         Dhis.from_auth_file(auth_file_path=filename)
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_file_home():
     content = {
         "dhis": {
@@ -125,7 +130,8 @@ def auth_file_home():
 
 def test_from_auth_file_in_home(auth_file_home):
     api = Dhis.from_auth_file()
-    assert api.base_url == "https://play.dhis2.org/demo"
+    assert api.base_url == 'https://play.dhis2.org/demo'
+    assert api.username == 'admin'
 
 
 @pytest.fixture
@@ -158,7 +164,8 @@ def test_from_auth_file_in_dhishome(auth_file_in_dhishome):
     kwargs = {'DHIS_HOME': dhis_home}
     with override_environ(**kwargs):
         api = Dhis.from_auth_file()
-        assert api.base_url == "https://play.dhis2.org/demo"
+        assert api.base_url == 'https://play.dhis2.org/demo'
+        assert api.username == 'admin'
 
 
 def test_from_auth_file_not_found():
