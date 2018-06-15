@@ -28,8 +28,8 @@ Create an API object:
 
     from dhis2 import Dhis
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
-
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
+    
 
 Then run requests on it:
 
