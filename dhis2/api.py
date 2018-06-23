@@ -160,6 +160,12 @@ class Dhis(object):
             yield page
 
     def get_sqlview(self, uid, execute=False, var=None, criteria=None):
+        """GET SQL View data
+        :param uid: sqlView UID
+        :param execute: materialize sqlView before downloading its data
+        :param var: for QUERY types, a dict of variables to query the sqlView
+        :param criteria: for VIEW / MATERIALIZED_VIEW types, a dict of criteria to filter the sqlView
+        """
         params = {}
         sqlview_type = self.get('sqlViews/{}'.format(uid), params={'fields': 'type'}).json().get('type')
         if sqlview_type == 'QUERY':
