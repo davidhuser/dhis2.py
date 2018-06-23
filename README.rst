@@ -40,7 +40,7 @@ Then run requests on it:
     # 29
 
     print(api.info())
-    # { "serverDate": "2018-10-25T08:47:48.911", ... }
+    # { "systemName": "DHIS 2 Demo - Sierra Leone", "version": "2.29", ... }
 
     r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
 
@@ -108,15 +108,11 @@ Load a CSV file
 
 .. code:: python
 
-    from dhis2 import Dhis, load_csv
+    from dhis2 import load_csv
 
     for row in load_csv('/path/to/file.csv'):
         print(row)
         # { "id": ... }
-
-        r = api.patch('organisationUnits/{}'.format(row['id']), data=row)
-        print(r.text)
-        # <DHIS2 response>
 
     # or for a normal list
     data = list(load_csv('/path/to/file.csv'))
@@ -141,7 +137,7 @@ Paging for large GET requests (JSON only)
 SQL Views
 ^^^^^^^^^^
 
-Get SQL View data as if you'd open a CSV file.
+Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
 
 .. code:: python
 
@@ -161,7 +157,8 @@ Get SQL View data as if you'd open a CSV file.
     # again, if you want a list directly:
     data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
 
-Beginning of 2.26 you can also use normal filtering on sqlViews.
+Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
+to use the ``stream`` parameter of the ``Dhis.get()`` method.
 
 
 Generate UIDs
