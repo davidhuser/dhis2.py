@@ -161,6 +161,9 @@ Get SQL View data as if you'd open a CSV file.
     # again, if you want a list directly:
     data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
 
+Beginning of 2.26 you can also use normal filtering on sqlViews.
+
+
 Generate UIDs
 ^^^^^^^^^^^^^
 
