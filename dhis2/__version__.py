@@ -1,5 +1,5 @@
 __title__ = 'dhis2.py'
-__description__ = 'Minimalistic wrapper around the DHIS2 API'
+__description__ = 'Python wrapper for DHIS2'
 __url__ = 'https://github.com/davidhuser/dhis2.py'
 __version__ = '0.29.13'
 __author__ = 'David Huser'

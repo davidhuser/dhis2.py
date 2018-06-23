@@ -1,10 +1,13 @@
 import json
 import os
+import codecs
+from contextlib import closing
 
 import requests
 
+from .common import *
 from .exceptions import ClientException, APIException
-from .utils import load_json
+from .utils import load_json, chunk
 
 
 class Dhis(object):
@@ -35,6 +38,32 @@ class Dhis(object):
     def session(self):
         return self._session
 
+    @classmethod
+    def from_auth_file(cls, auth_file_path='', dish_filename='dish.json'):
+        if not auth_file_path:
+            if 'DHIS_HOME' in os.environ:
+                auth_file_path = os.path.join(os.environ['DHIS_HOME'], dish_filename)
+            else:
+                home_path = os.path.expanduser(os.path.join('~'))
+                for root, dirs, files in os.walk(home_path):
+                    if dish_filename in files:
+                        auth_file_path = os.path.join(root, dish_filename)
+                        break
+        if not auth_file_path:
+            raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(dish_filename))
+
+        a = load_json(auth_file_path)
+        try:
+            section = a['dhis']
+            baseurl = section['baseurl']
+            username = section['username']
+            password = section['password']
+            assert all([baseurl, username, password])
+        except (KeyError, AssertionError):
+            raise ClientException("Auth file found but not valid: {}".format(auth_file_path))
+        else:
+            return cls(server=baseurl, username=username, password=password)
+
     @staticmethod
     def _validate_response(response):
         """
@@ -53,15 +82,16 @@ class Dhis(object):
                     url=response.url,
                     description=response.text)
 
-    def get(self, endpoint, file_type='json', params=None):
+    def get(self, endpoint, file_type='json', params=None, stream=False):
         """GET from DHIS2
         :param endpoint: DHIS2 API endpoint
         :param file_type: DHIS2 API File Type (json, xml, csv), defaults to JSON
         :param params: HTTP parameters (dict), defaults to None
+        :param stream: use requests' stream parameter
         :return: requests object
         """
         url = '{}/{}.{}'.format(self.api_url, endpoint, file_type)
-        r = self._session.get(url, params=params)
+        r = self._session.get(url, params=params, stream=stream)
         return self._validate_response(r)
 
     def post(self, endpoint, data, params=None):
@@ -129,31 +159,31 @@ class Dhis(object):
             page = self.get(endpoint=endpoint, file_type='json', params=params).json()
             yield page
 
-    @classmethod
-    def from_auth_file(cls, auth_file_path='', dish_filename='dish.json'):
-        if not auth_file_path:
-            if 'DHIS_HOME' in os.environ:
-                auth_file_path = os.path.join(os.environ['DHIS_HOME'], dish_filename)
-            else:
-                home_path = os.path.expanduser(os.path.join('~'))
-                for root, dirs, files in os.walk(home_path):
-                    if dish_filename in files:
-                        auth_file_path = os.path.join(root, dish_filename)
-                        break
-        if not auth_file_path:
-            raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(dish_filename))
+    def get_sqlview(self, uid, execute=False, var=None, criteria=None):
+        params = {}
+        sqlview_type = self.get('sqlViews/{}'.format(uid), params={'fields': 'type'}).json().get('type')
+        if sqlview_type == 'QUERY':
+            if not isinstance(var, dict):
+                raise ClientException("Use a dict to submit variables: e.g. var={'key1': 'value1', 'key2': 'value2'}")
+            var = ['{}:{}'.format(k, v) for k, v in var.items()]
+            params['var'] = var
+            if execute:
+                raise ClientException("SQL view of type QUERY, no view to create (no execute=True)")
 
-        a = load_json(auth_file_path)
-        try:
-            section = a['dhis']
-            baseurl = section['baseurl']
-            username = section['username']
-            password = section['password']
-            assert all([baseurl, username, password])
-        except (KeyError, AssertionError):
-            raise ClientException("Auth file found but not valid: {}".format(auth_file_path))
-        else:
-            return cls(server=baseurl, username=username, password=password)
+        else:  # MATERIALIZED_VIEW / VIEW
+            if criteria:
+                if not isinstance(criteria, dict):
+                    raise ClientException("Use a dict to submit criteria: { 'col1': 'value1', 'col2': 'value2' }")
+                criteria = ['{}:{}'.format(k, v) for k, v in criteria.items()]
+                params['criteria'] = criteria
+
+            if execute:  # materialize
+                self.post('sqlViews/{}/execute'.format(uid), data=None)
+
+        with closing(self.get('sqlViews/{}/data'.format(uid), file_type='csv', params=params, stream=True)) as r:
+            reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
+            for row in reader:
+                yield row
 
     def __str__(self):
         s = 'DHIS2 server: {}\n' \
@@ -162,31 +192,19 @@ class Dhis(object):
         return s
 
     def info(self):
-        return json.dumps(self.get(endpoint='system/info').json(), indent=2)
+        return json.dumps(self.get('system/info').json(), indent=2)
 
     def dhis_version(self):
         """
         :return: DHIS2 Version as Integer (e.g. 28)
         """
-        version = self.get(endpoint='system/info').json().get('version')
+        version = self.get('system/info').json().get('version')
         if '-SNAPSHOT' in version:
             version = version.replace('-SNAPSHOT', '')
         try:
             return int(version.split('.')[1])
         except (ValueError, IndexError):
             raise ClientException("Cannot handle DHIS2 version '{}'".format(version))
-
-    @staticmethod
-    def _chunk(num, thresh=10000):
-        """
-        Chunk a number into a list of numbers
-        :param num: the number to chunk
-        :param thresh: the maximum value of a chunk
-        """
-        while num:
-            to_yield = min(num, thresh)
-            yield to_yield
-            num -= to_yield
 
     def generate_uids(self, amount):
         """
@@ -196,7 +214,7 @@ class Dhis(object):
         """
 
         uids = []
-        for limit in self._chunk(amount):
+        for limit in chunk(amount):
             codes = self.get('system/id', params={'limit': limit}).json()['codes']
             uids.extend(codes)
         return uids

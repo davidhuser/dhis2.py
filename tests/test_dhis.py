@@ -7,7 +7,8 @@ import tempfile
 import pytest
 import requests
 
-from dhis2 import Dhis, exceptions
+from dhis2.api import Dhis
+from dhis2 import exceptions
 
 
 @contextlib.contextmanager

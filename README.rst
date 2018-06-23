@@ -1,13 +1,15 @@
-dhis2.py - Minimalistic Python wrapper for DHIS2
-=================================================
+dhis2.py - Python wrapper for DHIS2
+====================================
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object
-- Some utils like file loading (CSV, JSON) and UID generation
-- Supported: Python 2.7, 3.4-3.6 and all DHIS2 versions
+- CSV/JSON file loading
+- Server-side UID generation
+- SQLViews
+- Supported: Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
 --------
@@ -136,6 +138,29 @@ Paging for large GET requests (JSON only)
         print(page)
         # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
 
+
+SQL Views
+^^^^^^^^^^
+
+Get SQL View data as if you'd open a CSV file.
+
+.. code:: python
+
+    from dhis2 import Dhis
+
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+
+    # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
+    for data in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
+        print(data)
+        # {'code': 'COC_358963', 'name': '0-11m'}
+
+    # similarly, poll a sqlView of type QUERY:
+    for data in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
+        print(data)
+
+    # again, if you want a list directly:
+    data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
 
 Generate UIDs
 ^^^^^^^^^^^^^

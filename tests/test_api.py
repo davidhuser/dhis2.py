@@ -4,7 +4,8 @@ import uuid
 import pytest
 import responses
 
-from dhis2 import Dhis, exceptions
+from dhis2 import exceptions
+from dhis2.api import Dhis
 
 BASEURL = 'https://play.dhis2.org/2.29'
 API_URL = '{}/api'.format(BASEURL)
@@ -13,6 +14,10 @@ API_URL = '{}/api'.format(BASEURL)
 @pytest.fixture
 def api():
     return Dhis(BASEURL, 'admin', 'district')
+
+# ------------------
+# GENERAL API STUFF
+# ------------------
 
 
 @pytest.mark.parametrize("status_code", [
@@ -105,6 +110,10 @@ def test_info(api):
     assert responses.calls[0].request.url == url
     assert responses.calls[0].response.text == json.dumps(r)
 
+# ------------------
+# PAGING
+# ------------------
+
 
 @pytest.mark.parametrize("page_size,no_of_pages,expected_amount", [
     [50, 2, 95],
@@ -143,7 +152,7 @@ def test_get_paged(api, page_size, no_of_pages, expected_amount):
                     "pageCount": page_size,
                     "total": expected_amount,
                     "pageSize": page_size,
-                    "nextPage": "{}/organisationUnits?page={}".format(API_URL, i+1)
+                    "nextPage": "{}/organisationUnits?page={}".format(API_URL, i + 1)
                 },
                 "organisationUnits": [str(uuid.uuid4()) for _ in range(page_size)]
             }
@@ -253,16 +262,9 @@ def test_dhis_version_invalid(api):
     with pytest.raises(exceptions.ClientException):
         api.dhis_version()
 
-
-@pytest.mark.parametrize("amount,expected", [
-    (100, [100]),
-    (10000, [10000]),
-    (13000, [10000, 3000]),
-    (23000, [10000, 10000, 3000])
-])
-def test_chunk(amount, expected):
-    c = Dhis._chunk(amount)
-    assert (set(c) == set(expected))
+# ------------------
+# UID GENERATION
+# ------------------
 
 
 @responses.activate
@@ -273,3 +275,94 @@ def test_generate_uids(api):
     responses.add_passthru(url)
     uids = api.generate_uids(amount)
     assert (len(uids) == amount)
+
+
+# ------------------
+# SQL VIEW
+# ------------------
+
+SQL_VIEW = 'YOaOY605rzh'
+
+
+@pytest.fixture
+def sql_view_view():
+    url = '{}/sqlViews/{}'.format(API_URL, SQL_VIEW)
+    r = {'type': 'VIEW'}
+    responses.add(responses.GET, "{}.json?fields=type".format(url), json=r, status=200)
+    return url
+
+
+@pytest.fixture
+def sql_view_query():
+    url = '{}/sqlViews/{}'.format(API_URL, SQL_VIEW)
+    r = {'type': 'QUERY'}
+    responses.add(responses.GET, "{}.json?fields=type".format(url), json=r, status=200)
+    return url
+
+
+@responses.activate
+def test_get_sqlview(api, sql_view_view):
+
+    # execute
+    responses.add(responses.POST, '{}/execute'.format(sql_view_view), status=200)
+
+    # get data
+    r = """
+name,code
+0-11m,COC_358963
+0-11m,
+0-4y,COC_358907
+    """
+    responses.add(responses.GET, '{}/data.csv'.format(sql_view_view), json=r, status=200)
+
+    expected = [
+        {'name': '0-11m', 'code': 'COC_358963'},
+        {'name': '0-11m'},
+        # don't include this {'name': '0-4y', 'code': 'COC_358907'}
+    ]
+    for index, row in enumerate(api.get_sqlview(SQL_VIEW, True, criteria={'name': '0-11m'})):
+        assert row == expected[index]
+
+
+def test_get_sqlview_criteria(api, sql_view_view):
+    with pytest.raises(exceptions.ClientException):
+        for _ in api.get_sqlview(SQL_VIEW, True, criteria='code:name'):
+            pass
+
+
+def test_get_sqlview_criteria_none(api, sql_view_view):
+        for _ in api.get_sqlview(SQL_VIEW, True):
+            pass
+
+
+@responses.activate
+def test_get_sqlview_variable_query(api, sql_view_query):
+
+    r = """
+dataelementid,name,valueType
+1151060,Inpatient cases,INTEGER
+1151042,MNCH vacuum/forceps delivery,INTEGER    
+    """
+    responses.add(responses.GET, '{}/data.csv'.format(sql_view_query), json=r, status=200)
+
+    expected = [
+        {'dataelementid': '1151060', 'name': 'Inpatient cases', 'valueType': 'INTEGER'},
+        {'dataelementid': '1151042', 'name': 'MNCH vacuum / forceps delivery', 'valueType': 'INTEGER'}
+    ]
+    for index, row in enumerate(api.get_sqlview(SQL_VIEW, var={'valueType': 'INTEGER'})):
+        assert row == expected[index]
+
+
+@responses.activate
+def test_get_sqlview_variable_query_execute_throws(api, sql_view_query):
+    with pytest.raises(exceptions.ClientException):
+        for _ in api.get_sqlview(SQL_VIEW, execute=True, var={'valueType': 'INTEGER'}):
+            pass
+
+
+@responses.activate
+def test_get_sqlview_variable_query_no_dict(api, sql_view_query):
+    with pytest.raises(exceptions.ClientException):
+        for _ in api.get_sqlview(SQL_VIEW, var='NODICT'):
+            pass
+
