@@ -30,18 +30,17 @@ Create an API object:
 
     from dhis2 import Dhis
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
-
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
 
 Then run requests on it:
 
 .. code:: python
 
     print(api.dhis_version())
-    # 28
+    # 29
 
     print(api.info())
-    # { "serverDate": "2018-07-25T08:47:48.911", ... }
+    # { "serverDate": "2018-10-25T08:47:48.911", ... }
 
     r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
 
@@ -99,8 +98,8 @@ Load a JSON file
     print(json_data)
     # { "id": ... }
 
-    p = api.post('metadata', data=json_data, params={'preheatCache': False})
-    print(p.text)
+    r = api.post('metadata', data=json_data, params={'preheatCache': False})
+    print(r.text)
     # <DHIS2 response>
 
 
@@ -115,8 +114,8 @@ Load a CSV file
         print(row)
         # { "id": ... }
 
-        p = api.patch('organisationUnits/{}'.format(row['id']), data=row)
-        print(p.text)
+        r = api.patch('organisationUnits/{}'.format(row['id']), data=row)
+        print(r.text)
         # <DHIS2 response>
 
     # or for a normal list
@@ -130,7 +129,7 @@ Paging for large GET requests (JSON only)
 
 .. code:: python
 
-    from dhis2 import Dhis, load_csv
+    from dhis2 import Dhis
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
