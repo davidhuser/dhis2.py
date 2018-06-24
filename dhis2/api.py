@@ -1,7 +1,7 @@
 import json
 import os
 import codecs
-from urllib.parse import urlparse, urlunparse, urljoin
+from urllib.parse import urlparse, urlunparse
 from contextlib import closing
 
 import requests
@@ -9,12 +9,18 @@ import requests
 from .common import *
 from .exceptions import ClientException, APIException
 from .utils import load_json, chunk
-from .__version__ import __version__
 
 
 class Dhis(object):
 
     def __init__(self, server, username, password, api_version=None):
+        """
+        Dhis API class
+        :param server: baseurl, e.g. 'play.dhis2.org/demo'
+        :param username: DHIS2 username
+        :param password: DHIS2 password
+        :param api_version: optional, creates a url like /api/29/schemas
+        """
         o = urlparse(server)
         scheme = 'https'
         if 'localhost' in (o.netloc + o.path) or '127.0.0.1' in (o.netloc + o.path):  # only allow http for localhost
@@ -48,10 +54,22 @@ class Dhis(object):
 
     @property
     def session(self):
+        """
+        Property getter for session
+        """
         return self._session
 
     @classmethod
     def from_auth_file(cls, auth_file_path='', dish_filename='dish.json'):
+        """
+        Alternative constructor to load from JSON file.
+        If auth_file_path is not specified, it tries to find `dish_filename` in:
+        - the DHIS_HOME environment variable
+        - Home folder
+        :param auth_file_path: authentication file path
+        :param dish_filename: file_name to search for in env var or home folder
+        :return: Dhis instance
+        """
         if not auth_file_path:
             if 'DHIS_HOME' in os.environ:
                 auth_file_path = os.path.join(os.environ['DHIS_HOME'], dish_filename)
