@@ -1,8 +1,12 @@
 import json
 import os
 import codecs
-from urllib.parse import urlparse, urlunparse
 from contextlib import closing
+
+try:
+    from urllib.parse import urlparse, urlunparse  # py3
+except ImportError:
+     from urlparse import urlparse, urlunparse  # py2
 
 import requests
 
