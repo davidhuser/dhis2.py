@@ -32,7 +32,7 @@ def override_environ(**kwargs):
     ('localhost:8080', 'http://localhost:8080'),
     ('127.0.0.1:8080', 'http://127.0.0.1:8080'),
     ('http://localhost:8080', 'http://localhost:8080'),
-    ('http://example.com', 'http://example.com'),
+    ('http://example.com', 'https://example.com'),
 ])
 def test_api_url(entered, expected):
     api = Dhis(entered, 'admin', 'district')
@@ -50,6 +50,16 @@ def test_base_url_api_version():
     api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29)
     assert api.api_url == 'https://play.dhis2.org/demo/api/29'
     assert api.username == 'admin'
+
+
+def test_base_url_api_version_non_integer():
+    with pytest.raises(exceptions.ClientException):
+        Dhis('https://play.dhis2.org/demo', 'admin', 'district', '123notanumber')
+
+
+def test_base_url_api_version_below_25():
+    with pytest.raises(exceptions.ClientException):
+        Dhis('https://play.dhis2.org/demo', 'admin', 'district', 24)
 
 
 def test_session():

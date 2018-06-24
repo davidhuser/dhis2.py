@@ -1,6 +1,7 @@
 import json
 import os
 import codecs
+from urllib.parse import urlparse, urlunparse, urljoin
 from contextlib import closing
 
 import requests
@@ -8,25 +9,36 @@ import requests
 from .common import *
 from .exceptions import ClientException, APIException
 from .utils import load_json, chunk
+from .__version__ import __version__
 
 
 class Dhis(object):
 
     def __init__(self, server, username, password, api_version=None):
-        if '/api' in server:
-            raise ClientException("Do not specify /api/ in baseurl")
-        self.base_url = ''
-        if server.startswith('localhost') or server.startswith('127.0.0.1'):
-            self.base_url = 'http://{}'.format(server)
-        elif server.startswith('http://'):
-            self.base_url = server
-        elif server.startswith('https://'):
-            self.base_url = server
-        else:
-            self.base_url = 'https://{}'.format(server)
+        o = urlparse(server)
+        scheme = 'https'
+        if 'localhost' in (o.netloc + o.path) or '127.0.0.1' in (o.netloc + o.path):  # only allow http for localhost
+            scheme = 'http'
 
+        if not o.scheme and not o.netloc and o.path:
+            base = o.path
+            path = ''
+        else:
+            base = o.netloc
+            path = o.path
+        self.base_url = urlunparse((scheme, base, path, '', '', ''))
+
+        if '/api' in self.base_url:
+            raise ClientException("Do not include /api/ in the DHIS2 URL")
         if api_version:
-            self.api_url = '{}/api/{}'.format(self.base_url, api_version)
+            try:
+                api_version = int(api_version)
+                if api_version < 25:
+                    raise ValueError
+            except ValueError:
+                raise ClientException("api_version must be 25 or greater: {}".format(api_version))
+            else:
+                self.api_url = '{}/api/{}'.format(self.base_url, api_version)
         else:
             self.api_url = '{}/api'.format(self.base_url)
 
