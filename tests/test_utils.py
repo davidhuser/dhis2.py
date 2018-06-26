@@ -3,7 +3,8 @@ import tempfile
 
 import pytest
 
-from dhis2 import exceptions, load_csv, load_json
+from dhis2 import exceptions
+from dhis2.utils import load_csv, load_json, chunk
 
 
 @pytest.fixture
@@ -44,3 +45,14 @@ def test_load_csv_not_found():
 def test_load_json_not_found():
     with pytest.raises(exceptions.ClientException):
         load_json('nothere.json')
+
+
+@pytest.mark.parametrize("amount,expected", [
+    (100, [100]),
+    (10000, [10000]),
+    (13000, [10000, 3000]),
+    (23000, [10000, 10000, 3000])
+])
+def test_chunk(amount, expected):
+    c = chunk(amount)
+    assert set(c) == set(expected)

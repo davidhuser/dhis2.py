@@ -1,13 +1,15 @@
-dhis2.py - Minimalistic Python wrapper for DHIS2
-=================================================
+dhis2.py - Python wrapper for DHIS2
+====================================
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
 Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 
-- Common HTTP methods (GET, POST, PUT, PATCH, DELETE) returning a `requests <https://github.com/requests/requests>`_ response object
-- Some utils like file loading (CSV & JSON), server-side UID generation
-- Supported: Python 2.7, 3.4-3.6 and all DHIS2 versions
+- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object
+- CSV/JSON file loading
+- Server-side UID generation
+- SQLViews
+- Supported: Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
 --------
@@ -29,7 +31,6 @@ Create an API object:
     from dhis2 import Dhis
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
-    
 
 Then run requests on it:
 
@@ -39,7 +40,7 @@ Then run requests on it:
     # 29
 
     print(api.info())
-    # { "serverDate": "2018-10-25T08:47:48.911", ... }
+    # { "systemName": "DHIS 2 Demo - Sierra Leone", "version": "2.29", ... }
 
     r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
 
@@ -107,15 +108,11 @@ Load a CSV file
 
 .. code:: python
 
-    from dhis2 import Dhis, load_csv
+    from dhis2 import load_csv
 
     for row in load_csv('/path/to/file.csv'):
         print(row)
         # { "id": ... }
-
-        r = api.patch('organisationUnits/{}'.format(row['id']), data=row)
-        print(r.text)
-        # <DHIS2 response>
 
     # or for a normal list
     data = list(load_csv('/path/to/file.csv'))
@@ -135,6 +132,33 @@ Paging for large GET requests (JSON only)
     for page in api.get_paged('organisationUnits', page_size=100):
         print(page)
         # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
+
+
+SQL Views
+^^^^^^^^^^
+
+Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
+
+.. code:: python
+
+    from dhis2 import Dhis
+
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+
+    # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
+    for data in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
+        print(data)
+        # {'code': 'COC_358963', 'name': '0-11m'}
+
+    # similarly, poll a sqlView of type QUERY:
+    for data in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
+        print(data)
+
+    # again, if you want a list directly:
+    data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
+
+Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
+to use the ``stream`` parameter of the ``Dhis.get()`` method.
 
 
 Generate UIDs

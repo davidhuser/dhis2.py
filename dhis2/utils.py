@@ -1,19 +1,7 @@
 import json
-import re
-import sys
 
+from .common import *
 from .exceptions import ClientException
-
-# unicode support is already ok for Py3
-if sys.version_info < (3,):
-    import unicodecsv as csv
-else:
-    import csv
-
-try:
-    FileNotFoundError  # py3
-except NameError:
-    FileNotFoundError = IOError  # py2
 
 
 def load_csv(path, delimiter=','):
@@ -48,3 +36,15 @@ def load_json(path):
             return json.load(json_file)
     except FileNotFoundError:
         raise ClientException("File not found: {}".format(path))
+
+
+def chunk(num, thresh=10000):
+    """
+    Chunk a number into a list of numbers
+    :param num: the number to chunk
+    :param thresh: the maximum value of a chunk
+    """
+    while num:
+        to_yield = min(num, thresh)
+        yield to_yield
+        num -= to_yield

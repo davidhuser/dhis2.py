@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 
 from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__
@@ -17,10 +18,12 @@ __all__ = (
 
 
 # Set default logging handler to avoid "No handler found" warnings.
+# https://docs.python.org/2/howto/logging.html#configuring-logging-for-a-library
 import logging
-try:  # Python 2.7+
-    from logging import NullHandler
+try:
+    from logging import NullHandler  # py3
 except ImportError:
+    # py2
     class NullHandler(logging.Handler):
         def emit(self, record):
             pass
