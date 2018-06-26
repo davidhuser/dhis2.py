@@ -3,7 +3,7 @@ dhis2.py - Python wrapper for DHIS2
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
-Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
+Python wrapper for `DHIS2 <https://dhis2.org>`_.
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object
 - CSV/JSON file loading
@@ -86,7 +86,7 @@ If no argument is specified, it tries to find a file called ``dish.json`` in:
 
 
 Load a JSON file
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 .. code:: python
 
@@ -104,7 +104,7 @@ Load a JSON file
 
 
 Load a CSV file
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 .. code:: python
 
