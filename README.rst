@@ -204,7 +204,7 @@ Contribute
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
 .. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
-   :target: https://ci.appveyor.com/project/d4h-va/dhis2-py
+   :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
 
 .. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
