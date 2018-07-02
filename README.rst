@@ -146,13 +146,13 @@ Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
     # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
-    for data in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
-        print(data)
+    for row in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
+        print(row)
         # {'code': 'COC_358963', 'name': '0-11m'}
 
     # similarly, poll a sqlView of type QUERY:
-    for data in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
-        print(data)
+    for row in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
+        print(row)
 
     # again, if you want a list directly:
     data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
