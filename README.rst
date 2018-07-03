@@ -179,7 +179,7 @@ Get server-generated UIDs (not limited to 10000)
 Logging
 ^^^^^^^^
 
-- optional ``logfile=`` creates log file
+- optional ``logfile=`` specifies log file destination
 - Color output depending on log level
 - DHIS2 log format
 
