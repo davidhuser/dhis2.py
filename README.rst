@@ -182,6 +182,7 @@ Logging
 Log file setup
 
 .. code:: python
+
     from dhis2 import setup_logger, logger
     setup_logger(logfile='/var/log/app.log')
     logger.warn(data)
