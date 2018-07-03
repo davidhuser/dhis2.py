@@ -179,12 +179,16 @@ Get server-generated UIDs (not limited to 10000)
 Logging
 ^^^^^^^^
 
-Log file setup
+- optional ``logfile=`` creates log file
+- Color output depending on log level
+- DHIS2 log format
 
 .. code:: python
 
     from dhis2 import setup_logger, logger
+
     setup_logger(logfile='/var/log/app.log')
+
     logger.warn(data)
     logger.error('hello')
     logger.warn('blup')
