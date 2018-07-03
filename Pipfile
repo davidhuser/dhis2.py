@@ -12,6 +12,7 @@ tox = "*"
 unicodecsv = "*"
 requests = "*"
 pytest = "*"
+logzero = "*"
 
 [scripts]
 tests = "python setup.py test"
