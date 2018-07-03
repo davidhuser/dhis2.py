@@ -9,6 +9,7 @@ Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
 - CSV/JSON file loading
 - Server-side UID generation
 - SQLViews
+- Logging
 - Supported: Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
@@ -174,6 +175,17 @@ Get server-generated UIDs (not limited to 10000)
     print(uids)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
 
+Logging
+^^^^^^^^
+
+Log file setup
+
+.. code:: python
+    from dhis2 import setup_logger, logger
+    setup_logger(logfile='/var/log/app.log')
+    logger.warn(data)
+    logger.error('hello')
+    logger.warn('blup')
 
 Exceptions
 ^^^^^^^^^^^
