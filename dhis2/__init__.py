@@ -4,16 +4,21 @@ import sys
 from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__
 
-from .utils import load_json, load_csv
 from .api import Dhis
 from .exceptions import APIException, ClientException
+from .utils import load_json, load_csv
+from .logger import setup_logger
+from logzero import logger as logger
+
 
 __all__ = (
-    'load_json',
-    'load_csv',
     'Dhis',
     'APIException',
-    'ClientException'
+    'ClientException',
+    'setup_logger',
+    'logger',
+    'load_json',
+    'load_csv',
 )
 
 

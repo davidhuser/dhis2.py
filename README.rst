@@ -3,14 +3,15 @@ dhis2.py - Python wrapper for DHIS2
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
-Minimalistic API wrapper for `DHIS2 <https://dhis2.org>`_ written in Python.
+Simple Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
 
-- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object
+- Common HTTP operations (GET, POST, PUT, PATCH, DELETE)
 - CSV/JSON file loading
 - Server-side UID generation
 - SQLViews
 - Logging
-- Supported: Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
+- `requests <https://github.com/requests/requests>`_ as HTTP library
+- Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
 --------
@@ -87,7 +88,7 @@ If no argument is specified, it tries to find a file called ``dish.json`` in:
 
 
 Load a JSON file
-^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^
 
 .. code:: python
 
@@ -105,7 +106,7 @@ Load a JSON file
 
 
 Load a CSV file
-^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^
 
 .. code:: python
 
@@ -147,13 +148,13 @@ Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
     api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
     # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
-    for data in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
-        print(data)
+    for row in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
+        print(row)
         # {'code': 'COC_358963', 'name': '0-11m'}
 
     # similarly, poll a sqlView of type QUERY:
-    for data in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
-        print(data)
+    for row in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
+        print(row)
 
     # again, if you want a list directly:
     data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
@@ -216,7 +217,7 @@ Contribute
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
 .. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
-   :target: https://ci.appveyor.com/project/d4h-va/dhis2-py
+   :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
 
 .. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
