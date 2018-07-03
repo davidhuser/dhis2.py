@@ -3,13 +3,14 @@ dhis2.py - Python wrapper for DHIS2
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
-Python wrapper for `DHIS2 <https://dhis2.org>`_.
+Simple Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
 
-- Common HTTP operations (GET, POST, PUT, PATCH, DELETE) which return a `requests <https://github.com/requests/requests>`_ response object
+- Common HTTP operations (GET, POST, PUT, PATCH, DELETE)
 - CSV/JSON file loading
 - Server-side UID generation
 - SQLViews
-- Supported: Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
+- - `requests <https://github.com/requests/requests>`_ as HTTP library
+- Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
 --------
