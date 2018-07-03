@@ -20,31 +20,6 @@ def api():
 # ------------------
 
 
-@pytest.mark.parametrize("status_code", [
-    400, 401, 402, 403, 404, 405, 406, 407, 408, 409,
-    410, 411, 412, 413, 414, 415, 416, 417, 418, 421,
-    422, 423, 424, 426, 428, 429, 431, 451, 444, 494,
-    495, 496, 497, 499, 500, 501, 502, 503, 504, 505,
-    506, 507, 508, 510, 511
-])
-@responses.activate
-def test_client_server_errors(api, status_code):
-    url = '{}/dataElements/foo.json'.format(API_URL)
-
-    responses.add(responses.GET, url, body='something failed', status=status_code)
-
-    with pytest.raises(exceptions.APIException) as e:
-        api.get(endpoint='dataElements/foo')
-    assert e.value.code == status_code
-    assert e.value.url == url
-    assert e.value.description == 'something failed'
-    assert str(e.value)
-    assert repr(e.value)
-
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == url
-
-
 @responses.activate
 def test_post(api):
     url = '{}/metadata'.format(API_URL)
@@ -109,6 +84,31 @@ def test_info(api):
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == url
     assert responses.calls[0].response.text == json.dumps(r)
+
+
+@pytest.mark.parametrize("status_code", [
+    400, 401, 402, 403, 404, 405, 406, 407, 408, 409,
+    410, 411, 412, 413, 414, 415, 416, 417, 418, 421,
+    422, 423, 424, 426, 428, 429, 431, 451, 444, 494,
+    495, 496, 497, 499, 500, 501, 502, 503, 504, 505,
+    506, 507, 508, 510, 511
+])
+@responses.activate
+def test_client_server_errors(api, status_code):
+    url = '{}/dataElements/foo.json'.format(API_URL)
+
+    responses.add(responses.GET, url, body='something failed', status=status_code)
+
+    with pytest.raises(exceptions.APIException) as e:
+        api.get(endpoint='dataElements/foo')
+    assert e.value.code == status_code
+    assert e.value.url == url
+    assert e.value.description == 'something failed'
+    assert str(e.value)
+    assert repr(e.value)
+
+    assert len(responses.calls) == 1
+    assert responses.calls[0].request.url == url
 
 # ------------------
 # PAGING

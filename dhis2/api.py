@@ -17,13 +17,14 @@ from .utils import load_json, chunk
 
 class Dhis(object):
 
-    def __init__(self, server, username, password, api_version=None):
+    def __init__(self, server, username, password, api_version=None, user_agent=None):
         """
         Dhis API class
         :param server: baseurl, e.g. 'play.dhis2.org/demo'
         :param username: DHIS2 username
         :param password: DHIS2 password
         :param api_version: optional, creates a url like /api/29/schemas
+        :param user_agent: optional, add user-agent to header. otherwise it uses requests' user-agent.
         """
         o = urlparse(server)
         scheme = 'https'
@@ -54,6 +55,10 @@ class Dhis(object):
 
         self.username = username
         self._session = requests.Session()
+
+        if user_agent:
+            self._session.headers['user-agent'] = user_agent
+
         self._session.auth = (self.username, password)
 
     @property

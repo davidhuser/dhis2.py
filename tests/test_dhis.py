@@ -62,6 +62,16 @@ def test_base_url_api_version_below_25():
         Dhis('https://play.dhis2.org/demo', 'admin', 'district', 24)
 
 
+def test_user_agent():
+    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29, user_agent='customLib/0.0.1')
+    assert 'user-agent' in api.session.headers and api.session.headers['user-agent'] == 'customLib/0.0.1'
+
+
+def test_user_agent_not_set():
+    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29)
+    assert 'user-agent' in api.session.headers and api.session.headers['user-agent']
+
+
 def test_session():
     api = Dhis('https://play.dhis2.org/demo', 'admin', 'district')
     assert isinstance(api.session, requests.Session)
