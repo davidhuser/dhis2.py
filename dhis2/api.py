@@ -106,7 +106,7 @@ class Dhis(object):
     @staticmethod
     def _validate_response(response):
         """
-        Return if ok, raise APIException if not ok
+        Return response if ok, raise APIException if not ok
         :param response: requests.response object
         :return: requests.response object
         """
@@ -121,6 +121,24 @@ class Dhis(object):
                     url=response.url,
                     description=response.text)
 
+    @staticmethod
+    def _validate_request(endpoint, file_type='json', data=None, params=None):
+        """
+        Validate request before calling API
+        :param endpoint: API endpoint
+        :param file_type: file type requested
+        :param data: payload
+        :param params: HTTP parameters
+        """
+        if not isinstance(endpoint, str) or endpoint.strip() == '':
+            raise ClientException("Must submit endpoint for DHIS2 API")
+        if not isinstance(file_type, str) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
+            raise ClientException("Invalid file_type: {}".format(file_type))
+        if params and not isinstance(params, dict):
+            raise ClientException("params must be a dict, not {}".format(params.__class__.__name__))
+        if data and not isinstance(data, dict):
+            raise ClientException("data must be a dict, not {}".format(data.__class__.__name__))
+
     def get(self, endpoint, file_type='json', params=None, stream=False):
         """GET from DHIS2
         :param endpoint: DHIS2 API endpoint
@@ -129,17 +147,19 @@ class Dhis(object):
         :param stream: use requests' stream parameter
         :return: requests object
         """
-        url = '{}/{}.{}'.format(self.api_url, endpoint, file_type)
+        self._validate_request(endpoint, file_type=file_type, params=params)
+        url = '{}/{}.{}'.format(self.api_url, endpoint, file_type.lower())
         r = self._session.get(url, params=params, stream=stream)
         return self._validate_response(r)
 
-    def post(self, endpoint, data, params=None):
+    def post(self, endpoint, data=None, params=None):
         """POST to DHIS2
         :param endpoint: DHIS2 API endpoint
         :param data: HTTP payload
         :param params: HTTP parameters (dict)
         :return: requests object
         """
+        self._validate_request(endpoint, data=data, params=params)
         url = '{}/{}'.format(self.api_url, endpoint)
         r = self._session.post(url=url, json=data, params=params)
         return self._validate_response(r)
@@ -151,6 +171,7 @@ class Dhis(object):
         :param params: HTTP parameters (dict)
         :return: requests object
         """
+        self._validate_request(endpoint, data=data, params=params)
         url = '{}/{}'.format(self.api_url, endpoint)
         r = self._session.put(url=url, json=data, params=params)
         return self._validate_response(r)
@@ -162,6 +183,7 @@ class Dhis(object):
         :param params: HTTP parameters (dict)
         :return: requests object
         """
+        self._validate_request(endpoint, data=data, params=params)
         url = '{}/{}'.format(self.api_url, endpoint)
         r = self._session.patch(url=url, json=data, params=params)
         return self._validate_response(r)
@@ -171,6 +193,7 @@ class Dhis(object):
         :param endpoint: DHIS2 API endpoint
         :return: requests object
         """
+        self._validate_request(endpoint)
         url = '{}/{}'.format(self.api_url, endpoint)
         r = self._session.delete(url=url)
         return self._validate_response(r)
@@ -223,7 +246,7 @@ class Dhis(object):
                 params['criteria'] = criteria
 
             if execute:  # materialize
-                self.post('sqlViews/{}/execute'.format(uid), data=None)
+                self.post('sqlViews/{}/execute'.format(uid))
 
         with closing(self.get('sqlViews/{}/data'.format(uid), file_type='csv', params=params, stream=True)) as r:
             reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')

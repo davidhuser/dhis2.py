@@ -1,6 +1,11 @@
 import json
 import uuid
 
+try:
+    from urllib.parse import urlencode  # py2
+except ImportError:
+    from urllib import urlencode  # py2
+
 import pytest
 import responses
 
@@ -366,3 +371,89 @@ def test_get_sqlview_variable_query_no_dict(api, sql_view_query):
         for _ in api.get_sqlview(SQL_VIEW, var='NODICT'):
             pass
 
+# ------------------
+# PRE-REQUEST VALIDATION
+# ------------------
+
+
+@pytest.mark.parametrize("endpoint", [
+    '', ' ', None, [], {'endpoint': 'organisationUnits'}
+])
+def test_requests_invalid_endpoint(api, endpoint):
+    with pytest.raises(exceptions.ClientException):
+        api.get(endpoint)
+
+
+@pytest.mark.parametrize("endpoint", [
+   'organisationUnits', 'schemas'
+])
+@responses.activate
+def test_requests_valid_endpoint(api, endpoint):
+    url = '{}/{}.json'.format(API_URL, endpoint)
+    r = {"version": "unknown"}
+
+    responses.add(responses.GET, url, json=r, status=200)
+    api.get(endpoint)
+    assert endpoint in responses.calls[0].request.url
+
+
+@pytest.mark.parametrize("file_type", [
+    '.hello', '', None, u'EXCEL'
+])
+def test_requests_invalid_file_type(api, file_type):
+    with pytest.raises(exceptions.ClientException):
+        api.get('organisationUnits', file_type=file_type)
+
+
+@pytest.mark.parametrize("file_type", [
+   'csv', 'CSV', 'JSON', 'xml', 'pdf'
+])
+@responses.activate
+def test_requests_valid_file_type(api, file_type):
+    endpoint = 'dataElements'
+    url = '{}/{}.{}'.format(API_URL, endpoint, file_type.lower())
+
+    responses.add(responses.GET, url, status=200)
+    api.get(endpoint, file_type=file_type)
+    assert '{}.{}'.format(endpoint, file_type.lower()) in responses.calls[0].request.url
+
+
+@pytest.mark.parametrize("params", [
+    '{ "hello": "yes" }', (1, 2)
+])
+def test_requests_invalid_params(api, params):
+    with pytest.raises(exceptions.ClientException):
+        api.get('organisationUnits', params=params)
+
+
+@pytest.mark.parametrize("params", [
+   dict(), {'data': 'something'}
+])
+@responses.activate
+def test_requests_valid_params(api, params):
+    endpoint = 'dataElements'
+    url = '{}/{}.json'.format(API_URL, endpoint)
+
+    responses.add(responses.GET, url, status=200)
+    api.get(endpoint, params=params)
+    param_string = urlencode(params)
+    assert param_string in responses.calls[0].request.url
+
+
+@pytest.mark.parametrize("data", [
+    '{ "hello": "yes" }', (1, 2)
+])
+def test_requests_invalid_data(api, data):
+    with pytest.raises(exceptions.ClientException):
+        api.post('organisationUnits', data=data)
+
+
+@pytest.mark.parametrize("data", [
+   {'data': 'something'}
+])
+@responses.activate
+def test_requests_valid_data(api, data):
+    endpoint = 'dataElements'
+    url = '{}/{}'.format(API_URL, endpoint)
+    responses.add(responses.POST, url, json=data, status=204)
+    api.post(endpoint, data=data)

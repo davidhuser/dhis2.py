@@ -3,7 +3,7 @@ dhis2.py - Python wrapper for DHIS2
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
-Simple Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
+Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE)
 - CSV/JSON file loading
@@ -11,6 +11,7 @@ Simple Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
 - SQLViews
 - Logging
 - `requests <https://github.com/requests/requests>`_ as HTTP library
+- Defaults to JSON, supported: XML, CSV, PDF, XLS
 - Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
@@ -33,6 +34,11 @@ Create an API object:
     from dhis2 import Dhis
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
+
+optional parameters applicable to all requests:
+
+- ``api_version``: DHIS2 API version
+- ``user_agent``: submit your own User-Agent header
 
 Then run requests on it:
 

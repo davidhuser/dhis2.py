@@ -5,7 +5,7 @@ from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__
 
 from .api import Dhis
-from .exceptions import APIException, ClientException
+from .exceptions import Dhis2PyException, APIException, ClientException
 from .utils import load_json, load_csv
 from .logger import setup_logger
 from logzero import logger as logger
@@ -13,6 +13,7 @@ from logzero import logger as logger
 
 __all__ = (
     'Dhis',
+    'Dhis2PyException',
     'APIException',
     'ClientException',
     'setup_logger',
