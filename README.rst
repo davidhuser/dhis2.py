@@ -9,8 +9,8 @@ Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
 - CSV/JSON file loading
 - Server-side UID generation
 - SQLViews
-- Logging
 - `requests <https://github.com/requests/requests>`_ as HTTP library
+- `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
 - Defaults to JSON, supported: XML, CSV, PDF, XLS
 - Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
@@ -35,7 +35,7 @@ Create an API object:
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
 
-optional parameters applicable to all requests:
+optional parameters:
 
 - ``api_version``: DHIS2 API version
 - ``user_agent``: submit your own User-Agent header
