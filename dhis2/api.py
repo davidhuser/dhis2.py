@@ -130,9 +130,9 @@ class Dhis(object):
         :param data: payload
         :param params: HTTP parameters
         """
-        if not isinstance(endpoint, str) or endpoint.strip() == '':
+        if not isinstance(endpoint, string_types) or endpoint.strip() == '':
             raise ClientException("Must submit endpoint for DHIS2 API")
-        if not isinstance(file_type, str) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
+        if not isinstance(file_type, string_types) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
             raise ClientException("Invalid file_type: {}".format(file_type))
         if params and not isinstance(params, dict):
             raise ClientException("params must be a dict, not {}".format(params.__class__.__name__))
