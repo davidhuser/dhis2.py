@@ -11,7 +11,7 @@ Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
 - SQLViews
 - `requests <https://github.com/requests/requests>`_ as HTTP library
 - `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
-- Defaults to JSON, supported: XML, CSV, PDF, XLS
+- Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
 - Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
@@ -35,7 +35,7 @@ Create an API object:
 
     api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
 
-optional parameters:
+optional arguments:
 
 - ``api_version``: DHIS2 API version
 - ``user_agent``: submit your own User-Agent header
@@ -45,7 +45,7 @@ Then run requests on it:
 .. code:: python
 
     print(api.dhis_version())
-    # 29
+    # (29, '80d2c77')
 
     print(api.info())
     # { "systemName": "DHIS 2 Demo - Sierra Leone", "version": "2.29", ... }
@@ -53,9 +53,6 @@ Then run requests on it:
     r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
 
     print(r.json())
-    # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
-
-    print(r.text)
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
 
     print(r.status_code)
@@ -98,17 +95,11 @@ Load a JSON file
 
 .. code:: python
 
-    from dhis2 import Dhis, load_json
-
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+    from dhis2 import load_json
 
     json_data = load_json('/path/to/file.json')
     print(json_data)
     # { "id": ... }
-
-    r = api.post('metadata', data=json_data, params={'preheatCache': False})
-    print(r.text)
-    # <DHIS2 response>
 
 
 Load a CSV file
@@ -133,10 +124,6 @@ Paging for large GET requests (JSON only)
 
 .. code:: python
 
-    from dhis2 import Dhis
-
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
-
     for page in api.get_paged('organisationUnits', page_size=100):
         print(page)
         # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
@@ -148,10 +135,6 @@ SQL Views
 Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
 
 .. code:: python
-
-    from dhis2 import Dhis
-
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
 
     # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
     for row in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
@@ -182,6 +165,22 @@ Get server-generated UIDs (not limited to 10000)
     print(uids)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
 
+
+GET other content types
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Usually defaults to JSON but you can get other file types:
+
+.. code:: python
+
+    r = api.get('organisationUnits/Rp268JB6Ne4', file_type='xml')
+    print(r.text)
+    # <?xml version='1.0' encoding='UTF-8'?><organisationUnit ...
+
+    r = api.get('organisationUnits/Rp268JB6Ne4', file_type='pdf')
+    with open('/path/to/file.pdf', 'wb') as f:
+        f.write(r.content)
+
 Logging
 ^^^^^^^^
 
@@ -209,20 +208,24 @@ There should be only two exceptions:
 
 They both inherit from ``Dhis2PyException``.
 
-Testing
---------
-
-.. code:: bash
-
-    pipenv install --dev
-    pipenv run tests
-
 
 Contribute
 -----------
 
-- Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
-- Fork, test, add code, add tests, test, push, Pull Request
+Feedback welcome!
+
+Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
+
+and/or install the dev environment:
+
+.. code:: bash
+
+    pip install pipenv
+    git clone https://github.com/davidhuser/dhis2.py && cd dhis2.py
+    pipenv install --dev
+    pipenv run tests
+
+
 
 .. |Build| image:: https://travis-ci.org/davidhuser/dhis2.py.svg?branch=master
    :target: https://travis-ci.org/davidhuser/dhis2.py
