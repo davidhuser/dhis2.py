@@ -3,7 +3,7 @@ dhis2.py - Python wrapper for DHIS2
 
 |Build| |BuildWin| |Coverage| |PyPi|
 
-Python wrapper for `DHIS2 <https://dhis2.org>`_. *In development*
+Python wrapper for `DHIS2 <https://dhis2.org>`_.
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE)
 - CSV/JSON file loading
