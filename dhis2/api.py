@@ -263,16 +263,19 @@ class Dhis(object):
         return json.dumps(self.get('system/info').json(), indent=2)
 
     def dhis_version(self):
+        """ DHIS2 version and revision info
+        :return: (version, revision), e.g. (28, '80d2c77')
         """
-        :return: DHIS2 Version as Integer (e.g. 28)
-        """
-        version = self.get('system/info').json().get('version')
-        if '-SNAPSHOT' in version:
-            version = version.replace('-SNAPSHOT', '')
+        info = self.get('system/info').json()
+        v = info.get('version')
+        revision = info.get('revision')
+        if '-SNAPSHOT' in v:
+            v = v.replace('-SNAPSHOT', '')
         try:
-            return int(version.split('.')[1])
+            version = int(v.split('.')[1])
         except (ValueError, IndexError):
-            raise ClientException("Cannot handle DHIS2 version '{}'".format(version))
+            raise ClientException("Cannot handle DHIS2 version '{}'".format(info.get('version')))
+        return version, revision
 
     def generate_uids(self, amount):
         """

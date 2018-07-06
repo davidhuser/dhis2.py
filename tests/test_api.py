@@ -237,21 +237,22 @@ def test_paging_with_params(api):
             pass
 
 
-@pytest.mark.parametrize("from_server,integer", [
-    ("2.29", 29),
-    ("2.30", 30),
-    ("2.30-SNAPSHOT", 30)
+@pytest.mark.parametrize("from_server,expected", [
+    ({'version': '2.29', 'revision': '80d2c77'}, (29, '80d2c77')),
+    ({'version': '2.30-SNAPSHOT', 'revision': '80d2c77'}, (30, '80d2c77'))
 ])
 @responses.activate
-def test_dhis_version(api, from_server, integer):
+def test_dhis_version(api, from_server, expected):
     url = '{}/system/info.json'.format(API_URL)
-    r = {"version": from_server}
+    r = from_server
 
     responses.add(responses.GET, url, json=r, status=200)
 
     resp = api.dhis_version()
 
-    assert resp == integer
+    assert resp[0] == expected[0]
+    assert resp[1] == expected[1]
+
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == url
     assert responses.calls[0].response.text == json.dumps(r)
@@ -260,7 +261,7 @@ def test_dhis_version(api, from_server, integer):
 @responses.activate
 def test_dhis_version_invalid(api):
     url = '{}/system/info.json'.format(API_URL)
-    r = {"version": "unknown"}
+    r = {'version': 'customBuild', 'revision': '80d2c77'}
 
     responses.add(responses.GET, url, json=r, status=200)
 
@@ -385,7 +386,7 @@ def test_requests_invalid_endpoint(api, endpoint):
 
 
 @pytest.mark.parametrize("endpoint", [
-   'organisationUnits', 'schemas'
+   'organisationUnits', 'schemas', u'schemas'
 ])
 @responses.activate
 def test_requests_valid_endpoint(api, endpoint):
