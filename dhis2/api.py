@@ -69,7 +69,7 @@ class Dhis(object):
         return self._session
 
     @classmethod
-    def from_auth_file(cls, api_version=None, user_agent=None, auth_file_path='', dish_filename='dish.json'):
+    def from_auth_file(cls, auth_file_path='', api_version=None, user_agent=None, dish_filename='dish.json'):
         """
         Alternative constructor to load from JSON file.
         If auth_file_path is not specified, it tries to find `dish_filename` in:
