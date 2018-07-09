@@ -80,7 +80,7 @@ Must have the following structure:
 
     from dhis2 import Dhis
 
-    api = Dhis.from_auth_file('path/to/auth.json')
+    api = Dhis.from_auth_file('path/to/auth.json', api_version=29, user_agent='myApp/1.0')
 
 
 If no argument is specified, it tries to find a file called ``dish.json`` in:

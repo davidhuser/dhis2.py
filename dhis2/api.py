@@ -69,12 +69,14 @@ class Dhis(object):
         return self._session
 
     @classmethod
-    def from_auth_file(cls, auth_file_path='', dish_filename='dish.json'):
+    def from_auth_file(cls, api_version=None, user_agent=None, auth_file_path='', dish_filename='dish.json'):
         """
         Alternative constructor to load from JSON file.
         If auth_file_path is not specified, it tries to find `dish_filename` in:
         - the DHIS_HOME environment variable
         - Home folder
+        :param api_version: see Dhis
+        :param user_agent: see Dhis
         :param auth_file_path: authentication file path
         :param dish_filename: file_name to search for in env var or home folder
         :return: Dhis instance
@@ -101,7 +103,7 @@ class Dhis(object):
         except (KeyError, AssertionError):
             raise ClientException("Auth file found but not valid: {}".format(auth_file_path))
         else:
-            return cls(server=baseurl, username=username, password=password)
+            return cls(baseurl, username, password, api_version=api_version, user_agent=user_agent)
 
     @staticmethod
     def _validate_response(response):
