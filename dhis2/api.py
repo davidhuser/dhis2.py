@@ -69,31 +69,20 @@ class Dhis(object):
         return self._session
 
     @classmethod
-    def from_auth_file(cls, auth_file_path='', api_version=None, user_agent=None, dish_filename='dish.json'):
+    def from_auth_file(cls, location=None, api_version=None, user_agent=None):
         """
         Alternative constructor to load from JSON file.
-        If auth_file_path is not specified, it tries to find `dish_filename` in:
-        - the DHIS_HOME environment variable
+        If auth_file_path is not specified, it tries to find `dish.json` in:
+        - DHIS_HOME
         - Home folder
+        :param location: authentication file path
         :param api_version: see Dhis
         :param user_agent: see Dhis
-        :param auth_file_path: authentication file path
-        :param dish_filename: file_name to search for in env var or home folder
         :return: Dhis instance
         """
-        if not auth_file_path:
-            if 'DHIS_HOME' in os.environ:
-                auth_file_path = os.path.join(os.environ['DHIS_HOME'], dish_filename)
-            else:
-                home_path = os.path.expanduser(os.path.join('~'))
-                for root, dirs, files in os.walk(home_path):
-                    if dish_filename in files:
-                        auth_file_path = os.path.join(root, dish_filename)
-                        break
-        if not auth_file_path:
-            raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(dish_filename))
+        location = search_auth_file() if not location else location
 
-        a = load_json(auth_file_path)
+        a = load_json(location)
         try:
             section = a['dhis']
             baseurl = section['baseurl']
@@ -101,7 +90,7 @@ class Dhis(object):
             password = section['password']
             assert all([baseurl, username, password])
         except (KeyError, AssertionError):
-            raise ClientException("Auth file found but not valid: {}".format(auth_file_path))
+            raise ClientException("Auth file found but not valid: {}".format(location))
         else:
             return cls(baseurl, username, password, api_version=api_version, user_agent=user_agent)
 
@@ -291,3 +280,14 @@ class Dhis(object):
             codes = self.get('system/id', params={'limit': limit}).json()['codes']
             uids.extend(codes)
         return uids
+
+
+def search_auth_file(filename='dish.json'):
+    if 'DHIS_HOME' in os.environ:
+        return os.path.join(os.environ['DHIS_HOME'], filename)
+    else:
+        home_path = os.path.expanduser(os.path.join('~'))
+        for root, dirs, files in os.walk(home_path):
+            if filename in files:
+                return os.path.join(root, filename)
+    raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(filename))

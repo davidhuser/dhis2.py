@@ -7,7 +7,7 @@ import tempfile
 import pytest
 import requests
 
-from dhis2.api import Dhis
+from dhis2.api import Dhis, search_auth_file
 from dhis2 import exceptions
 
 
@@ -97,7 +97,7 @@ def auth_file():
 def test_from_auth_file_named(auth_file):
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'auth_test.json')
-    api = Dhis.from_auth_file(auth_file_path=filename)
+    api = Dhis.from_auth_file(location=filename)
     assert api.base_url == 'https://play.dhis2.org/demo'
     assert api.username == 'admin'
 
@@ -130,7 +130,7 @@ def test_from_auth_file_not_valid(auth_file_invalid):
     with pytest.raises(exceptions.ClientException):
         tmp = tempfile.gettempdir()
         filename = os.path.join(tmp, 'auth_test_invalid.json')
-        Dhis.from_auth_file(auth_file_path=filename)
+        Dhis.from_auth_file(location=filename)
 
 
 @pytest.fixture
@@ -192,7 +192,13 @@ def test_from_auth_file_in_dhishome(auth_file_in_dhishome):
 def test_from_auth_file_not_found():
     kwargs = {}
     with override_environ(**kwargs) and pytest.raises(exceptions.ClientException):
-        Dhis.from_auth_file(dish_filename='nothere.json')
+        Dhis.from_auth_file('not_here.json')
+
+
+def test_search_auth_file_not_found():
+    kwargs = {}
+    with override_environ(**kwargs) and pytest.raises(exceptions.ClientException):
+        search_auth_file('not_here.json')
 
 
 def test_str():
