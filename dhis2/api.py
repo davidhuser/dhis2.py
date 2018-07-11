@@ -2,6 +2,7 @@ import json
 import os
 import codecs
 from contextlib import closing
+from collections import namedtuple
 
 try:
     from urllib.parse import urlparse, urlunparse  # py3
@@ -12,7 +13,7 @@ import requests
 
 from .common import *
 from .exceptions import ClientException, APIException
-from .utils import load_json, chunk
+from .utils import load_json, chunk, search_auth_file, version_to_int
 
 
 class Dhis(object):
@@ -53,20 +54,50 @@ class Dhis(object):
         else:
             self.api_url = '{}/api'.format(self.base_url)
 
-        self.username = username
         self._session = requests.Session()
-
+        self.username = username
+        self._session.auth = (self.username, password)
         if user_agent:
             self._session.headers['user-agent'] = user_agent
 
-        self._session.auth = (self.username, password)
+        self._info, self._version, self._version_int, self._revision = None, None, None, None
 
     @property
-    def session(self):
-        """
-        Property getter for session
-        """
-        return self._session
+    def info(self):
+        if not self._info:
+            print("accessing info...")
+            self._info = self.get('system/info').json()
+        return self._info
+
+    @info.setter
+    def info(self, value):
+        self._info = value
+
+    @property
+    def version(self):
+        return self.info['version'] if not self._version else self._version
+
+    @version.setter
+    def version(self, value):
+        self._version = value
+
+    @property
+    def revision(self):
+        return self.info['revision'] if not self._revision else self._revision
+
+    @revision.setter
+    def revision(self, value):
+        self._revision = value
+
+    @property
+    def version_int(self):
+        if not self._version_int:
+            self._version_int = version_to_int(self.version)
+        return self._version_int
+
+    @version_int.setter
+    def version_int(self, value):
+        self._version_int = value
 
     @classmethod
     def from_auth_file(cls, location=None, api_version=None, user_agent=None):
@@ -250,23 +281,35 @@ class Dhis(object):
             'Username: {}'.format(self.base_url, self.api_url, self.username)
         return s
 
-    def info(self):
+    def system_info(self):
         return json.dumps(self.get('system/info').json(), indent=2)
 
     def dhis_version(self):
         """ DHIS2 version and revision info
-        :return: (version, revision), e.g. (28, '80d2c77')
+        version = raw version as provided by API, e.g. '2.29'
+        version_int = version as integer, e.g. 29
+        revision = build revision, e.g. '80d2c77'
+        :return: version, version_int, revision
+
         """
-        info = self.get('system/info').json()
-        v = info.get('version')
-        revision = info.get('revision')
-        if '-SNAPSHOT' in v:
-            v = v.replace('-SNAPSHOT', '')
+        system_info = self.get('system/info').json()
+
+        Info = namedtuple('Info', 'version version_int revision')
+
+        version = system_info['version']
+
+        # remove '-SNAPSHOT'
+        version_int = version.replace('-SNAPSHOT', '')
+        # remove '-RC1'
+        if 'RC-' in version_int:
+            version_int = version_int.split('RC-', 1)[0]
         try:
-            version = int(v.split('.')[1])
+            version_int = int(version_int.split('.')[1])
         except (ValueError, IndexError):
-            raise ClientException("Cannot handle DHIS2 version '{}'".format(info.get('version')))
-        return version, revision
+            version_int = None
+
+        revision = system_info['revision']
+        return Info(version=version, version_int=version_int, revision=revision)
 
     def generate_uids(self, amount):
         """
@@ -280,14 +323,3 @@ class Dhis(object):
             codes = self.get('system/id', params={'limit': limit}).json()['codes']
             uids.extend(codes)
         return uids
-
-
-def search_auth_file(filename='dish.json'):
-    if 'DHIS_HOME' in os.environ:
-        return os.path.join(os.environ['DHIS_HOME'], filename)
-    else:
-        home_path = os.path.expanduser(os.path.join('~'))
-        for root, dirs, files in os.walk(home_path):
-            if filename in files:
-                return os.path.join(root, filename)
-    raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(filename))

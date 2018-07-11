@@ -1,4 +1,5 @@
 import json
+import os
 
 from .common import *
 from .exceptions import ClientException
@@ -48,3 +49,26 @@ def chunk(num, thresh=10000):
         to_yield = min(num, thresh)
         yield to_yield
         num -= to_yield
+
+
+def search_auth_file(filename='dish.json'):
+    if 'DHIS_HOME' in os.environ:
+        return os.path.join(os.environ['DHIS_HOME'], filename)
+    else:
+        home_path = os.path.expanduser(os.path.join('~'))
+        for root, dirs, files in os.walk(home_path):
+            if filename in files:
+                return os.path.join(root, filename)
+    raise ClientException("'{}' not found - searched in $DHIS_HOME and in home folder".format(filename))
+
+
+def version_to_int(value):
+    # remove '-SNAPSHOT'
+    value = value.replace('-SNAPSHOT', '')
+    # remove '-RC1'
+    if 'RC-' in value:
+        value = value.split('RC-', 1)[0]
+    try:
+        return int(value.split('.')[1])
+    except (ValueError, IndexError):
+        return
