@@ -14,24 +14,20 @@ def test_setup_logger_default():
     logger.error("error")
 
 
-@pytest.fixture
-def log_file():
-    tmp = tempfile.gettempdir()
-    filename = os.path.join(tmp, 'logfile.log')
-    yield filename
-    os.remove(filename)
-
-
-def test_setup_logger_to_file(log_file):
+def test_setup_logger_to_file():
 
     from dhis2.logger import setup_logger
     from dhis2 import logger
-    setup_logger(logfile=log_file)
+
+    filename = os.path.join(tempfile.gettempdir(), 'logfile.log')
+
+    setup_logger(logfile=filename)
     logger.info("info")
     logger.warn("warn")
     logger.debug("debug")
     logger.error("error")
 
-    assert os.path.isfile(log_file)
+    assert os.path.isfile(filename)
+
 
 
