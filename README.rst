@@ -1,7 +1,7 @@
 dhis2.py - Python wrapper for DHIS2
 ====================================
 
-|Build| |BuildWin| |Coverage| |PyPi|
+|Build| |BuildWin| |Coverage| |Latest version|
 
 Python wrapper for `DHIS2 <https://dhis2.org>`_.
 
@@ -14,8 +14,8 @@ Python wrapper for `DHIS2 <https://dhis2.org>`_.
 - `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
 - Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
-Install
---------
+Installation
+-------------
 
 Simply use `pipenv <https://docs.pipenv.org>`_ (or ``pip``):
 
@@ -23,9 +23,13 @@ Simply use `pipenv <https://docs.pipenv.org>`_ (or ``pip``):
 
     pipenv install dhis2.py --user --upgrade
 
+For instructions on installing python / pip see "The Hitchhiker's Guide to
+Python" `Installation Guides
+<http://docs.python-guide.org/en/latest/starting/installation/>`_.
 
-Basics
--------
+
+Quickstart
+-----------
 
 Create an API object:
 
@@ -243,6 +247,6 @@ and/or install the dev environment:
 .. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
 
-.. |PyPi| image:: https://img.shields.io/pypi/v/dhis2.py.svg
+.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg
    :target: https://pypi.org/project/dhis2.py
 
