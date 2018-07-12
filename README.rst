@@ -6,12 +6,12 @@ dhis2.py - Python wrapper for DHIS2
 Python wrapper for `DHIS2 <https://dhis2.org>`_.
 
 - Common HTTP operations (GET, POST, PUT, PATCH, DELETE)
+- SQLViews
 - CSV/JSON file loading
 - Server-side UID generation
-- SQLViews
+- Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
 - `requests <https://github.com/requests/requests>`_ as HTTP library
 - `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
-- Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
 - Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Install
@@ -44,21 +44,28 @@ Then run requests on it:
 
 .. code:: python
 
-    print(api.dhis_version())
-    # (29, '80d2c77')
-
-    print(api.info())
-    # { "systemName": "DHIS 2 Demo - Sierra Leone", "version": "2.29", ... }
-
     r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
 
     print(r.json())
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
 
-    print(r.status_code)
-    # 200
 
+Get info
+^^^^^^^^^
 
+.. code:: python
+
+    print(api.version)
+    # '2.29'
+
+    print(api.version_int)
+    # 29
+
+    print(api.revision)
+    # '17f7f0b'
+
+    print(api.api_url)
+    # 'https://play.dhis2.org/2.29/api/29'
 
 Load authentication from file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -87,7 +94,6 @@ If no argument is specified, it tries to find a file called ``dish.json`` in:
 
 1. the ``DHIS_HOME`` environment variable
 2. your Home folder
-
 
 
 Load a JSON file
@@ -197,6 +203,7 @@ Logging
     logger.warn(data)
     logger.error('hello')
     logger.warn('blup')
+
 
 Exceptions
 ^^^^^^^^^^^

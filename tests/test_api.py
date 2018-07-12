@@ -20,6 +20,11 @@ API_URL = '{}/api'.format(BASEURL)
 def api():
     return Dhis(BASEURL, 'admin', 'district')
 
+
+@pytest.fixture
+def api_with_api_version():
+    return Dhis(BASEURL, 'admin', 'district', api_version=29)
+
 # ------------------
 # GENERAL API STUFF
 # ------------------
@@ -83,9 +88,9 @@ def test_info(api):
 
     responses.add(responses.GET, url, json=r, status=200)
 
-    resp = api.info()
+    prop = api.info
 
-    assert resp == json.dumps(r, indent=2)
+    assert prop == r
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == url
     assert responses.calls[0].response.text == json.dumps(r)
@@ -237,36 +242,36 @@ def test_paging_with_params(api):
             pass
 
 
-@pytest.mark.parametrize("from_server,expected", [
-    ({'version': '2.29', 'revision': '80d2c77'}, (29, '80d2c77')),
-    ({'version': '2.30-SNAPSHOT', 'revision': '80d2c77'}, (30, '80d2c77'))
-])
-@responses.activate
-def test_dhis_version(api, from_server, expected):
-    url = '{}/system/info.json'.format(API_URL)
-    r = from_server
-
-    responses.add(responses.GET, url, json=r, status=200)
-
-    resp = api.dhis_version()
-
-    assert resp[0] == expected[0]
-    assert resp[1] == expected[1]
-
-    assert len(responses.calls) == 1
-    assert responses.calls[0].request.url == url
-    assert responses.calls[0].response.text == json.dumps(r)
+def test_api_version(api_with_api_version):
+    assert api_with_api_version.api_version == 29
+    assert len(responses.calls) == 0
 
 
 @responses.activate
-def test_dhis_version_invalid(api):
+def test_dhis_version(api):
     url = '{}/system/info.json'.format(API_URL)
     r = {'version': 'customBuild', 'revision': '80d2c77'}
 
     responses.add(responses.GET, url, json=r, status=200)
+    assert api.version == 'customBuild'
 
-    with pytest.raises(exceptions.ClientException):
-        api.dhis_version()
+
+@responses.activate
+def test_dhis_version_int(api):
+    url = '{}/system/info.json'.format(API_URL)
+    r = {'version': '2.30', 'revision': '80d2c77'}
+
+    responses.add(responses.GET, url, json=r, status=200)
+    assert api.version_int == 30
+
+
+@responses.activate
+def test_dhis_revision(api):
+    url = '{}/system/info.json'.format(API_URL)
+    r = {'version': '2.30', 'revision': '80d2c77'}
+
+    responses.add(responses.GET, url, json=r, status=200)
+    assert api.revision == '80d2c77'
 
 # ------------------
 # UID GENERATION

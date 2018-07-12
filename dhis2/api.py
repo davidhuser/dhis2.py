@@ -1,13 +1,10 @@
-import json
-import os
 import codecs
 from contextlib import closing
-from collections import namedtuple
 
 try:
     from urllib.parse import urlparse, urlunparse  # py3
 except ImportError:
-     from urlparse import urlparse, urlunparse  # py2
+    from urlparse import urlparse, urlunparse  # py2
 
 import requests
 
@@ -27,10 +24,30 @@ class Dhis(object):
         :param api_version: optional, creates a url like /api/29/schemas
         :param user_agent: optional, add user-agent to header. otherwise it uses requests' user-agent.
         """
+        self._base_url, self._api_version, self._info, self._version, self._version_int, self._revision = (None,)*6
+
+        self.base_url = server
+        self.api_version = api_version
+
+        self.session = requests.Session()
+        self.username = username
+        self.session.auth = (self.username, password)
+        if user_agent:
+            self.session.headers['user-agent'] = user_agent
+
+    @property
+    def base_url(self):
+        return self._base_url
+
+    @base_url.setter
+    def base_url(self, server):
+        if '/api' in server:
+            raise ClientException("Do not include /api/ in the DHIS2 URL")
         o = urlparse(server)
-        scheme = 'https'
         if 'localhost' in (o.netloc + o.path) or '127.0.0.1' in (o.netloc + o.path):  # only allow http for localhost
             scheme = 'http'
+        else:
+            scheme = 'https'
 
         if not o.scheme and not o.netloc and o.path:
             base = o.path
@@ -38,56 +55,46 @@ class Dhis(object):
         else:
             base = o.netloc
             path = o.path
-        self.base_url = urlunparse((scheme, base, path, '', '', ''))
+        self._base_url = urlunparse((scheme, base, path, '', '', ''))
 
-        if '/api' in self.base_url:
-            raise ClientException("Do not include /api/ in the DHIS2 URL")
-        if api_version:
+    @property
+    def api_version(self):
+        return self._api_version
+
+    @api_version.setter
+    def api_version(self, number):
+        if number:
             try:
-                api_version = int(api_version)
-                if api_version < 25:
+                i = int(number)
+                if i < 25:
                     raise ValueError
             except ValueError:
-                raise ClientException("api_version must be 25 or greater: {}".format(api_version))
+                raise ClientException("api_version must be 25 or greater: {}".format(number))
             else:
-                self.api_url = '{}/api/{}'.format(self.base_url, api_version)
+                self._api_version = i
         else:
-            self.api_url = '{}/api'.format(self.base_url)
+            self._api_version = None
 
-        self._session = requests.Session()
-        self.username = username
-        self._session.auth = (self.username, password)
-        if user_agent:
-            self._session.headers['user-agent'] = user_agent
-
-        self._info, self._version, self._version_int, self._revision = None, None, None, None
+    @property
+    def api_url(self):
+        if self._api_version:
+            return '{}/api/{}'.format(self._base_url, self._api_version)
+        else:
+            return '{}/api'.format(self._base_url)
 
     @property
     def info(self):
         if not self._info:
-            print("accessing info...")
             self._info = self.get('system/info').json()
         return self._info
 
-    @info.setter
-    def info(self, value):
-        self._info = value
-
     @property
     def version(self):
-        return self.info['version'] if not self._version else self._version
-
-    @version.setter
-    def version(self, value):
-        self._version = value
+        return self._version if self._version else self.info['version']
 
     @property
     def revision(self):
-        return self.info['revision'] if not self._revision else self._revision
-
-    @revision.setter
-    def revision(self, value):
-        self._revision = value
+        return self._revision if self._revision else self.info['revision']
 
     @property
     def version_int(self):
@@ -95,9 +102,11 @@ class Dhis(object):
             self._version_int = version_to_int(self.version)
         return self._version_int
 
-    @version_int.setter
-    def version_int(self, value):
-        self._version_int = value
+    def __str__(self):
+        s = "DHIS2 Base URL: '{}'\n" \
+            "API URL: '{}'\n" \
+            "Username: '{}'".format(self.base_url, self.api_url, self.username)
+        return s
 
     @classmethod
     def from_auth_file(cls, location=None, api_version=None, user_agent=None):
@@ -169,9 +178,10 @@ class Dhis(object):
         :param stream: use requests' stream parameter
         :return: requests object
         """
+        print("getting!")
         self._validate_request(endpoint, file_type=file_type, params=params)
         url = '{}/{}.{}'.format(self.api_url, endpoint, file_type.lower())
-        r = self._session.get(url, params=params, stream=stream)
+        r = self.session.get(url, params=params, stream=stream)
         return self._validate_response(r)
 
     def post(self, endpoint, data=None, params=None):
@@ -183,7 +193,7 @@ class Dhis(object):
         """
         self._validate_request(endpoint, data=data, params=params)
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.post(url=url, json=data, params=params)
+        r = self.session.post(url=url, json=data, params=params)
         return self._validate_response(r)
 
     def put(self, endpoint, data, params=None):
@@ -195,7 +205,7 @@ class Dhis(object):
         """
         self._validate_request(endpoint, data=data, params=params)
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.put(url=url, json=data, params=params)
+        r = self.session.put(url=url, json=data, params=params)
         return self._validate_response(r)
 
     def patch(self, endpoint, data, params=None):
@@ -207,7 +217,7 @@ class Dhis(object):
         """
         self._validate_request(endpoint, data=data, params=params)
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.patch(url=url, json=data, params=params)
+        r = self.session.patch(url=url, json=data, params=params)
         return self._validate_response(r)
 
     def delete(self, endpoint):
@@ -217,7 +227,7 @@ class Dhis(object):
         """
         self._validate_request(endpoint)
         url = '{}/{}'.format(self.api_url, endpoint)
-        r = self._session.delete(url=url)
+        r = self.session.delete(url=url)
         return self._validate_response(r)
 
     def get_paged(self, endpoint, params=None, page_size=50):
@@ -274,42 +284,6 @@ class Dhis(object):
             reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
             for row in reader:
                 yield row
-
-    def __str__(self):
-        s = 'DHIS2 server: {}\n' \
-            'API URL: {}\n' \
-            'Username: {}'.format(self.base_url, self.api_url, self.username)
-        return s
-
-    def system_info(self):
-        return json.dumps(self.get('system/info').json(), indent=2)
-
-    def dhis_version(self):
-        """ DHIS2 version and revision info
-        version = raw version as provided by API, e.g. '2.29'
-        version_int = version as integer, e.g. 29
-        revision = build revision, e.g. '80d2c77'
-        :return: version, version_int, revision
-
-        """
-        system_info = self.get('system/info').json()
-
-        Info = namedtuple('Info', 'version version_int revision')
-
-        version = system_info['version']
-
-        # remove '-SNAPSHOT'
-        version_int = version.replace('-SNAPSHOT', '')
-        # remove '-RC1'
-        if 'RC-' in version_int:
-            version_int = version_int.split('RC-', 1)[0]
-        try:
-            version_int = int(version_int.split('.')[1])
-        except (ValueError, IndexError):
-            version_int = None
-
-        revision = system_info['revision']
-        return Info(version=version, version_int=version_int, revision=revision)
 
     def generate_uids(self, amount):
         """

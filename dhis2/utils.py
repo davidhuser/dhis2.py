@@ -52,6 +52,13 @@ def chunk(num, thresh=10000):
 
 
 def search_auth_file(filename='dish.json'):
+    """
+    Search filename in
+    - A) DHIS_HOME (env variable)
+    - B) current user's home folder
+    :param filename: the filename to search for
+    :return: full path of filename
+    """
     if 'DHIS_HOME' in os.environ:
         return os.path.join(os.environ['DHIS_HOME'], filename)
     else:
@@ -63,11 +70,16 @@ def search_auth_file(filename='dish.json'):
 
 
 def version_to_int(value):
+    """
+
+    :param value: the version received from system/info, e.g. "2.28"
+    :return: integer from version, e.g. 28, None if it couldn't be parsed
+    """
     # remove '-SNAPSHOT'
     value = value.replace('-SNAPSHOT', '')
-    # remove '-RC1'
-    if 'RC-' in value:
-        value = value.split('RC-', 1)[0]
+    # remove '-RCx'
+    if '-RC' in value:
+        value = value.split('-RC', 1)[0]
     try:
         return int(value.split('.')[1])
     except (ValueError, IndexError):

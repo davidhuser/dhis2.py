@@ -4,7 +4,7 @@ import tempfile
 import pytest
 
 from dhis2 import exceptions
-from dhis2.utils import load_csv, load_json, chunk
+from dhis2.utils import load_csv, load_json, chunk, version_to_int
 
 
 @pytest.fixture
@@ -56,3 +56,13 @@ def test_load_json_not_found():
 def test_chunk(amount, expected):
     c = chunk(amount)
     assert set(c) == set(expected)
+
+
+@pytest.mark.parametrize("version,expected", [
+    ("2.30", 30),
+    ("2.30-SNAPSHOT", 30),
+    ("2.30-RC1", 30),
+    ("unknown", None)
+])
+def test_version_to_int(version, expected):
+    assert version_to_int(version) == expected
