@@ -71,7 +71,7 @@ def search_auth_file(filename='dish.json'):
 
 def version_to_int(value):
     """
-
+    Convert version info to integer
     :param value: the version received from system/info, e.g. "2.28"
     :return: integer from version, e.g. 28, None if it couldn't be parsed
     """
