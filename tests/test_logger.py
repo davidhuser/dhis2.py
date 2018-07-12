@@ -18,8 +18,6 @@ def test_setup_logger_default():
 def log_file():
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'logfile.log')
-    with open(filename, 'w') as f:
-        f.write('test')
     yield filename
     os.remove(filename)
 
