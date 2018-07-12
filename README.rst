@@ -195,7 +195,7 @@ Logging
 ^^^^^^^^
 
 - optional ``logfile=`` specifies log file destination
-- Color output depending on log level
+- Color output depending on log level (defaults to INFO)
 - DHIS2 log format
 
 .. code:: python
@@ -204,9 +204,10 @@ Logging
 
     setup_logger(logfile='/var/log/app.log')
 
-    logger.warn(data)
-    logger.error('hello')
-    logger.warn('blup')
+    logger.info('hello world')
+    logger.warn('missing something')
+    logger.error('something went wrong')
+    logger.exception('with stacktrace')
 
 
 Exceptions
