@@ -1,8 +1,6 @@
 import tempfile
 import os
 
-import pytest
-
 
 def test_setup_logger_default():
     from dhis2.logger import setup_logger

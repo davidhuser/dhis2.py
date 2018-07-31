@@ -2,9 +2,17 @@ import os
 import tempfile
 
 import pytest
+import responses
 
-from dhis2 import exceptions
+from dhis2 import exceptions, Dhis
 from dhis2.utils import load_csv, load_json, chunk, version_to_int
+
+from .common import API_URL, BASEURL
+
+
+@pytest.fixture  # BASE FIXTURE
+def api():
+    return Dhis(BASEURL, 'admin', 'district')
 
 
 @pytest.fixture
@@ -66,3 +74,13 @@ def test_chunk(amount, expected):
 ])
 def test_version_to_int(version, expected):
     assert version_to_int(version) == expected
+
+
+@responses.activate
+def test_generate_uids(api):
+    amount = 13000
+    url = '{}/system/id.json'.format(API_URL, amount)
+
+    responses.add_passthru(url)
+    uids = api.generate_uids(amount)
+    assert (len(uids) == amount)

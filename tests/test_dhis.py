@@ -1,29 +1,15 @@
 import json
 import os
 import shutil
-import contextlib
 import tempfile
 
 import pytest
 import requests
 
+from .common import override_environ
+
 from dhis2.api import Dhis, search_auth_file
 from dhis2 import exceptions
-
-
-@contextlib.contextmanager
-def override_environ(**kwargs):
-    save_env = dict(os.environ)
-    for key, value in kwargs.items():
-        if value is None:
-            del os.environ[key]
-        else:
-            os.environ[key] = value
-    try:
-        yield
-    finally:
-        os.environ.clear()
-        os.environ.update(save_env)
 
 
 @pytest.mark.parametrize("entered,expected", [
