@@ -196,7 +196,8 @@ Logging
 
 - optional ``logfile=`` specifies log file destination
 - Color output depending on log level (defaults to INFO)
-- DHIS2 log format including the source in the code, e.g. ``* INFO  2018-06-01 18:19:40,098  my log message [script:102]``
+- DHIS2 log format including the line of the caller
+
 
 .. code:: python
 
@@ -204,11 +205,15 @@ Logging
 
     setup_logger(logfile='/var/log/app.log')
 
-    logger.info('hello world')
+    logger.info('my log message')
     logger.warn('missing something')
     logger.error('something went wrong')
     logger.exception('with stacktrace')
 
+::
+
+    * INFO  2018-06-01 18:19:40,001  my log message [script:86]
+    * ERROR  2018-06-01 18:19:40,007  something went wrong [script:87]
 
 Exceptions
 ^^^^^^^^^^^
