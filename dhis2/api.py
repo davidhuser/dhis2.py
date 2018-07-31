@@ -178,7 +178,6 @@ class Dhis(object):
         :param stream: use requests' stream parameter
         :return: requests object
         """
-        print("getting!")
         self._validate_request(endpoint, file_type=file_type, params=params)
         url = '{}/{}.{}'.format(self.api_url, endpoint, file_type.lower())
         r = self.session.get(url, params=params, stream=stream)
