@@ -130,13 +130,13 @@ Load a CSV file
 API paging
 ^^^^^^^^^^^
 
-Paging for large GET requests (JSON only)
+Paging for large GET requests. Returning directly a JSON object, not a requests.response object unlike normal GETs.
 
 .. code:: python
 
-    for page in api.get_paged('organisationUnits', page_size=100):
-        print(page)
-        # { "organisationUnits": [ {...}, {...} ] } (100 elements each)
+    data = api.get_paged('organisationUnits', page_size=100):
+    print(data)
+    # { "organisationUnits": [ {...}, {...} ] } (all organisationUnits)
 
 
 SQL Views

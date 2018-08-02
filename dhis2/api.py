@@ -1,5 +1,6 @@
 import codecs
 from contextlib import closing
+from itertools import chain
 
 try:
     from urllib.parse import urlparse, urlunparse  # py3
@@ -234,23 +235,31 @@ class Dhis(object):
         :param page_size: how many objects per page
         :param endpoint: DHIS2 API endpoint
         :param params: HTTP parameters (dict), defaults to None
-        :return: requests object
-        :rtype: dict (generator)
+        :return: normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
-        if not params:
-            params = {}
         if page_size < 1:
             raise ClientException("Can't set page_size to < 1")
+
+        params = {} if not params else params
         if 'paging' in params:
             raise ClientException("Can't set paging manually in params when using get_paged")
         params['pageSize'] = page_size
         params['page'] = 1
+        params['totalPages'] = True
+
+        data = []
+        collection = endpoint.split('/')[0]  # only use e.g. events when submitting events/query as endpoint
         page = self.get(endpoint=endpoint, file_type='json', params=params).json()
-        yield page
-        while page['pager'].get('nextPage'):
+        page_count = page['pager']['pageCount']
+        data.append(page[collection])
+
+        while page['pager']['page'] < page_count:
             params['page'] += 1
             page = self.get(endpoint=endpoint, file_type='json', params=params).json()
-            yield page
+            data.append(page[collection])
+
+        # flatten list of lists into list and add it to dict
+        return {collection: list(chain.from_iterable(data))}
 
     def get_sqlview(self, uid, execute=False, var=None, criteria=None):
         """GET SQL View data

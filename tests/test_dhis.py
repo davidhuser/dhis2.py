@@ -5,11 +5,22 @@ import tempfile
 
 import pytest
 import requests
+import responses
 
-from .common import override_environ
+from .common import BASEURL, API_URL, override_environ
 
 from dhis2.api import Dhis, search_auth_file
 from dhis2 import exceptions
+
+
+@pytest.fixture  # BASE FIXTURE
+def api():
+    return Dhis(BASEURL, 'admin', 'district')
+
+
+@pytest.fixture  # BASE FIXTURE
+def api_with_api_version():
+    return Dhis(BASEURL, 'admin', 'district', api_version=29)
 
 
 @pytest.mark.parametrize("entered,expected", [
@@ -61,6 +72,38 @@ def test_user_agent_not_set():
 def test_session():
     api = Dhis('https://play.dhis2.org/demo', 'admin', 'district')
     assert isinstance(api.session, requests.Session)
+
+
+def test_api_version(api_with_api_version):
+    assert api_with_api_version.api_version == 29
+    assert len(responses.calls) == 0
+
+
+@responses.activate
+def test_dhis_version(api):
+    url = '{}/system/info.json'.format(API_URL)
+    r = {'version': 'customBuild', 'revision': '80d2c77'}
+
+    responses.add(responses.GET, url, json=r, status=200)
+    assert api.version == 'customBuild'
+
+
+@responses.activate
+def test_dhis_version_int(api):
+    url = '{}/system/info.json'.format(API_URL)
+    r = {'version': '2.30', 'revision': '80d2c77'}
+
+    responses.add(responses.GET, url, json=r, status=200)
+    assert api.version_int == 30
+
+
+@responses.activate
+def test_dhis_revision(api):
+    url = '{}/system/info.json'.format(API_URL)
+    r = {'version': '2.30', 'revision': '80d2c77'}
+
+    responses.add(responses.GET, url, json=r, status=200)
+    assert api.revision == '80d2c77'
 
 
 @pytest.fixture
