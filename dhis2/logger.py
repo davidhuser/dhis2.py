@@ -19,5 +19,5 @@ def setup_logger(logfile=None, backup_count=20, log_level=logging.INFO):
     logzero.setup_default_logger(formatter=formatter)
 
     if logfile:
-        formatter = logzero.LogFormatter(fmt=log_format)
+        formatter = logzero.LogFormatter(fmt=log_format, datefmt='%Y-%m-%d %H:%M:%S')
         logzero.logfile(logfile, formatter=formatter, loglevel=log_level, maxBytes=int(1e7), backupCount=backup_count)
