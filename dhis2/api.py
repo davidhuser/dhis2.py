@@ -230,11 +230,12 @@ class Dhis(object):
         r = self.session.delete(url=url)
         return self._validate_response(r)
 
-    def get_paged(self, endpoint, params=None, page_size=50):
-        """GET with paging (for large payloads)
+    def get_paged(self, endpoint, params=None, page_size=50, merge=False):
+        """GET with paging (for large payloads).
         :param page_size: how many objects per page
         :param endpoint: DHIS2 API endpoint
         :param params: HTTP parameters (dict), defaults to None
+        :param merge: If true, return a list containing all pages instead of one page. Defaults to False.
         :return: normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
         if page_size < 1:
@@ -247,19 +248,25 @@ class Dhis(object):
         params['page'] = 1
         params['totalPages'] = True
 
-        data = []
         collection = endpoint.split('/')[0]  # only use e.g. events when submitting events/query as endpoint
-        page = self.get(endpoint=endpoint, file_type='json', params=params).json()
-        page_count = page['pager']['pageCount']
-        data.append(page[collection])
 
-        while page['pager']['page'] < page_count:
-            params['page'] += 1
+        def page_generator():
             page = self.get(endpoint=endpoint, file_type='json', params=params).json()
-            data.append(page[collection])
+            page_count = page['pager']['pageCount']
+            yield page
 
-        # flatten list of lists into list and add it to dict
-        return {collection: list(chain.from_iterable(data))}
+            while page['pager']['page'] < page_count:
+                params['page'] += 1
+                page = self.get(endpoint=endpoint, file_type='json', params=params).json()
+                yield page
+
+        if not merge:
+            return page_generator()
+        else:
+            data = []
+            for p in page_generator():
+                data.append(p[collection])
+            return {collection: list(chain.from_iterable(data))}
 
     def get_sqlview(self, uid, execute=False, var=None, criteria=None):
         """GET SQL View data
