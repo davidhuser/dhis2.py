@@ -132,6 +132,8 @@ API paging
 
 Paging for large GET requests.
 
+Two possible ways:
+
 a) Process every page as they come in:
 
 .. code:: python
@@ -140,7 +142,7 @@ a) Process every page as they come in:
         print(page)
         # { "organisationUnits": [ {...}, {...} ] } (100 organisationUnits)
 
-b) Load all pages before proceeding (this may take a long time) - to do this, do not use `for` and add `merge=True`:
+b) Load all pages before proceeding (this may take a long time) - to do this, do not use ``for`` and add ``merge=True``:
 
 .. code:: python
 
