@@ -168,7 +168,7 @@ Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
     for row in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
         print(row)
 
-    # again, if you want a list directly:
+    # if you want a list directly, cast it to a ``list`` or add ``merge=True``:
     data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
 
 Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended

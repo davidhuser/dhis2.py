@@ -268,12 +268,13 @@ class Dhis(object):
                 data.append(p[collection])
             return {collection: list(chain.from_iterable(data))}
 
-    def get_sqlview(self, uid, execute=False, var=None, criteria=None):
+    def get_sqlview(self, uid, execute=False, var=None, criteria=None, merge=False):
         """GET SQL View data
         :param uid: sqlView UID
         :param execute: materialize sqlView before downloading its data
         :param var: for QUERY types, a dict of variables to query the sqlView
         :param criteria: for VIEW / MATERIALIZED_VIEW types, a dict of criteria to filter the sqlView
+        :param merge: If true, return a list containing all pages instead of one page. Defaults to False.
         """
         params = {}
         sqlview_type = self.get('sqlViews/{}'.format(uid), params={'fields': 'type'}).json().get('type')
@@ -295,10 +296,16 @@ class Dhis(object):
             if execute:  # materialize
                 self.post('sqlViews/{}/execute'.format(uid))
 
-        with closing(self.get('sqlViews/{}/data'.format(uid), file_type='csv', params=params, stream=True)) as r:
-            reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
-            for row in reader:
-                yield row
+        def page_generator():
+            with closing(self.get('sqlViews/{}/data'.format(uid), file_type='csv', params=params, stream=True)) as r:
+                reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
+                for row in reader:
+                    yield row
+
+        if not merge:
+            return page_generator()
+        else:
+            return list(page_generator())
 
     def generate_uids(self, amount):
         """

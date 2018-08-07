@@ -43,19 +43,18 @@ def test_get_sqlview(api, sql_view_view):
 
     # get data
     r = """
-name,code
-0-11m,COC_358963
-0-11m,
-0-4y,COC_358907
-    """
-    responses.add(responses.GET, '{}/data.csv'.format(sql_view_view), json=r, status=200)
+name,code,attr\n
+0-11m,COC_358963,123\n
+0-11m,,456
+"""
+    responses.add(responses.GET, '{}/data.csv'.format(sql_view_view), body=r, status=200)
 
     expected = [
-        {'name': '0-11m', 'code': 'COC_358963'},
-        {'name': '0-11m'},
-        # don't include this {'name': '0-4y', 'code': 'COC_358907'}
+        {'name': '0-11m', 'code': 'COC_358963', 'attr': '123'},
+        {'name': '0-11m', 'code': '', 'attr': '456'},
     ]
     for index, row in enumerate(api.get_sqlview(SQL_VIEW, True, criteria={'name': '0-11m'})):
+        assert isinstance(row, dict)
         assert row == expected[index]
 
 
@@ -74,29 +73,55 @@ def test_get_sqlview_criteria_none(api, sql_view_view):
 def test_get_sqlview_variable_query(api, sql_view_query):
 
     r = """
-dataelementid,name,valueType
-1151060,Inpatient cases,INTEGER
-1151042,MNCH vacuum/forceps delivery,INTEGER    
-    """
-    responses.add(responses.GET, '{}/data.csv'.format(sql_view_query), json=r, status=200)
+dataelementid,name,valueType\n
+1151060,Inpatient cases,INTEGER\n
+1151042,MNCH vacuum/forceps delivery,INTEGER
+"""
+    responses.add(responses.GET, '{}/data.csv'.format(sql_view_query), body=r, status=200)
 
     expected = [
         {'dataelementid': '1151060', 'name': 'Inpatient cases', 'valueType': 'INTEGER'},
-        {'dataelementid': '1151042', 'name': 'MNCH vacuum / forceps delivery', 'valueType': 'INTEGER'}
+        {'dataelementid': '1151042', 'name': 'MNCH vacuum/forceps delivery', 'valueType': 'INTEGER'}
     ]
     for index, row in enumerate(api.get_sqlview(SQL_VIEW, var={'valueType': 'INTEGER'})):
+        assert isinstance(row, dict)
         assert row == expected[index]
 
 
 @responses.activate
-def test_get_sqlview_variable_query_execute_throws(api, sql_view_query):
+def test_get_sqlview_variable_query_execute_throws(api, sql_view_query):  # noqa
     with pytest.raises(exceptions.ClientException):
         for _ in api.get_sqlview(SQL_VIEW, execute=True, var={'valueType': 'INTEGER'}):
             continue
 
 
 @responses.activate
-def test_get_sqlview_variable_query_no_dict(api, sql_view_query):
+def test_get_sqlview_variable_query_no_dict(api, sql_view_query):  # noqa
     with pytest.raises(exceptions.ClientException):
         for _ in api.get_sqlview(SQL_VIEW, var='NODICT'):
             continue
+
+
+@responses.activate
+def test_get_sqlview_merged(api, sql_view_query):
+
+    r = """
+dataelementid,name,valueType\n
+1151060,Inpatient cases,INTEGER\n
+1151042,MNCH vacuum/forceps delivery,INTEGER
+"""
+    responses.add(responses.GET, '{}/data.csv'.format(sql_view_query), body=r, status=200)
+
+    expected = [
+        {'dataelementid': '1151060', 'name': 'Inpatient cases', 'valueType': 'INTEGER'},
+        {'dataelementid': '1151042', 'name': 'MNCH vacuum/forceps delivery', 'valueType': 'INTEGER'}
+    ]
+    # calling with list()
+    data = list(api.get_sqlview(SQL_VIEW, var={'valueType': 'INTEGER'}))
+    assert isinstance(data, list)
+    assert data == expected
+
+    # calling with merge=True
+    data = api.get_sqlview(SQL_VIEW, var={'valueType': 'INTEGER'}, merge=True)
+    assert isinstance(data, list)
+    assert data == expected
