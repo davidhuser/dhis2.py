@@ -1,18 +1,19 @@
-dhis2.py - Python wrapper for DHIS2
-====================================
+dhis2.py
+=========
 
 |Build| |BuildWin| |Coverage| |Latest version|
 
-Python wrapper for `DHIS2 <https://dhis2.org>`_.
+A Python wrapper for `DHIS2 <https://dhis2.org>`_.
 
-- Common HTTP operations (GET, POST, PUT, PATCH, DELETE)
-- SQLViews
+- Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
+- **API paging** for GETs
+- **SQL Views**
+- Server-side **UID generation**
 - CSV/JSON file loading
-- Server-side UID generation
 - Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
 - `requests <https://github.com/requests/requests>`_ as HTTP library
 - `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
-- Supported and tested on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
+- **Supported and tested** on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
 
 Installation
 -------------
@@ -23,9 +24,8 @@ Simply use `pipenv <https://docs.pipenv.org>`_ (or ``pip``):
 
     pipenv install dhis2.py --user --upgrade
 
-For instructions on installing python / pip see "The Hitchhiker's Guide to
-Python" `Installation Guides
-<http://docs.python-guide.org/en/latest/starting/installation/>`_.
+For instructions on installing Python / pip see `The Hitchhiker's Guide to
+Python <http://docs.python-guide.org/en/latest/starting/installation/>`_.
 
 
 Quickstart
@@ -37,7 +37,7 @@ Create an API object:
 
     from dhis2 import Dhis
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29)
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29, user_agent='myApp/0.1')
 
 optional arguments:
 
@@ -54,8 +54,8 @@ Then run requests on it:
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
 
 
-Get info
-^^^^^^^^^
+Get info about the DHIS2 instance
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: python
 
@@ -100,37 +100,10 @@ If no argument is specified, it tries to find a file called ``dish.json`` in:
 2. your Home folder
 
 
-Load a JSON file
-^^^^^^^^^^^^^^^^^
-
-.. code:: python
-
-    from dhis2 import load_json
-
-    json_data = load_json('/path/to/file.json')
-    print(json_data)
-    # { "id": ... }
-
-
-Load a CSV file
-^^^^^^^^^^^^^^^^
-
-.. code:: python
-
-    from dhis2 import load_csv
-
-    for row in load_csv('/path/to/file.csv'):
-        print(row)
-        # { "id": ... }
-
-    # or for a normal list
-    data = list(load_csv('/path/to/file.csv'))
-
-
 API paging
 ^^^^^^^^^^^
 
-Paging for large GET requests.
+Paging for larger GET requests.
 
 Two possible ways:
 
@@ -170,15 +143,19 @@ Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
 
     # if you want a list directly, cast it to a ``list`` or add ``merge=True``:
     data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
+    # OR
+    # data = api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}, merge=True)
+
+*Note:* Returns directly a JSON object, not a requests.response object unlike normal GETs.
 
 Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
-to use the ``stream`` parameter of the ``Dhis.get()`` method.
+to use the ``stream=True`` parameter of the ``Dhis.get()`` method.
 
 
 Generate UIDs
 ^^^^^^^^^^^^^
 
-Get server-generated UIDs (not limited to 10000)
+Get server-generated UIDs (not limited to 10000):
 
 .. code:: python
 
@@ -204,12 +181,38 @@ Usually defaults to JSON but you can get other file types:
     with open('/path/to/file.pdf', 'wb') as f:
         f.write(r.content)
 
+Load a JSON file
+^^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    from dhis2 import load_json
+
+    json_data = load_json('/path/to/file.json')
+    print(json_data)
+    # { "id": ... }
+
+
+Load a CSV file
+^^^^^^^^^^^^^^^^
+
+.. code:: python
+
+    from dhis2 import load_csv
+
+    for row in load_csv('/path/to/file.csv'):
+        print(row)
+        # { "id": ... }
+
+    # or for a normal list
+    data = list(load_csv('/path/to/file.csv'))
+
 Logging
 ^^^^^^^^
 
-- optional ``logfile=`` specifies log file destination
-- Color output depending on log level (defaults to INFO)
+- Color output depending on log level
 - DHIS2 log format including the line of the caller
+- optional ``logfile=`` specifies a rotating log file path (20 x 10MB files)
 
 
 .. code:: python
@@ -228,10 +231,12 @@ Logging
     * INFO  2018-06-01 18:19:40,001  my log message [script:86]
     * ERROR  2018-06-01 18:19:40,007  something went wrong [script:87]
 
+
+
 Exceptions
 ^^^^^^^^^^^
 
-There should be only two exceptions:
+There are two exceptions:
 
 - ``APIException``: DHIS2 didn't like what you requested. See the exception's ``code``, ``url`` and ``description``.
 - ``ClientException``: Something didn't work with the client not involving DHIS2.
