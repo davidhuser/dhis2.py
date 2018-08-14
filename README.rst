@@ -132,7 +132,12 @@ You may submit params as a list of tuples instead when you need to pass multiple
 
 .. code:: python
 
-    r = api.get('dataValueSets', params=[('dataSet', 'pBOMPrpg1QX'), ('dataSet, 'BfMAe6Itzgt')])
+    r = api.get('dataValueSets', params=[
+            ('dataSet', 'pBOMPrpg1QX'), ('dataSet, 'BfMAe6Itzgt'),
+            ('orgUnit', 'YuQRtpLP10I'), ('orgUnit', 'vWbkYPRmKyS'),
+            ('startDate', '2013-01-01'), ('endDate', '2013-01-31')
+        ]
+    )
 
 SQL Views
 ^^^^^^^^^^
