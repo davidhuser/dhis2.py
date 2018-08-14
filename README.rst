@@ -125,6 +125,15 @@ b) Load all pages before proceeding (this may take a long time) - to do this, do
 
 *Note:* Returns directly a JSON object, not a requests.response object unlike normal GETs.
 
+Multiple params
+^^^^^^^^^^^^^^^
+
+You may submit params as a list of tuples instead when you need to pass multiple parameters with the same key, e.g.:
+
+.. code:: python
+
+    r = api.get('dataValueSets', params=[('dataSet', 'pBOMPrpg1QX'), ('dataSet, 'BfMAe6Itzgt')])
+
 SQL Views
 ^^^^^^^^^^
 
