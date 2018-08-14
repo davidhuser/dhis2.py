@@ -170,10 +170,13 @@ def test_get_paged_empty(api):
     assert len(responses.calls) == 1
 
 
+@pytest.mark.parametrize("page_size", [
+    -1, 0, 'abc', {'page_size': 3}
+])
 @responses.activate
-def test_page_size_zero(api):
+def test_page_size_invalid(api, page_size):
     with pytest.raises(exceptions.ClientException):
-        api.get_paged('organisationUnits', page_size=0)
+        api.get_paged('organisationUnits', page_size=page_size)
 
 
 @responses.activate

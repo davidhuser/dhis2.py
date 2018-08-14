@@ -166,8 +166,11 @@ class Dhis(object):
             raise ClientException("Must submit endpoint for DHIS2 API")
         if not isinstance(file_type, string_types) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
             raise ClientException("Invalid file_type: {}".format(file_type))
-        if params and not isinstance(params, dict):
-            raise ClientException("params must be a dict, not {}".format(params.__class__.__name__))
+        if params:
+            if not isinstance(params, (dict, list)):
+                raise ClientException("params must be a dict or list of tuples, not {}".format(params.__class__.__name__))
+            if isinstance(params, list) and not all([isinstance(elem, tuple) for elem in params]):
+                raise ClientException("params list must all be tuples")
         if data and not isinstance(data, dict):
             raise ClientException("data must be a dict, not {}".format(data.__class__.__name__))
 
@@ -238,8 +241,11 @@ class Dhis(object):
         :param merge: If true, return a list containing all pages instead of one page. Defaults to False.
         :return: normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
-        if page_size < 1:
-            raise ClientException("Can't set page_size to < 1")
+        try:
+            if not isinstance(page_size, (string_types, int)) or int(page_size) < 1:
+                raise ValueError
+        except ValueError:
+            raise ClientException("page_size must be > 1")
 
         params = {} if not params else params
         if 'paging' in params:

@@ -249,9 +249,9 @@ Contribute
 
 Feedback welcome!
 
-Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
-
-and/or install the dev environment:
+- Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
+- Install the dev environment (see below)
+- Fork, add changes to *master* branch, ensure tests pass with full coverage and add a Pull Request
 
 .. code:: bash
 

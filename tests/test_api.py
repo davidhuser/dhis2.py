@@ -174,7 +174,9 @@ def test_requests_invalid_params(api, params):
 
 
 @pytest.mark.parametrize("params", [
-   dict(), {'data': 'something'}
+    dict(),
+    {'data': 'something'},
+    [('data', 'something')]
 ])
 @responses.activate
 def test_requests_valid_params(api, params):
@@ -185,6 +187,15 @@ def test_requests_valid_params(api, params):
     api.get(endpoint, params=params)
     param_string = urlencode(params)
     assert param_string in responses.calls[0].request.url
+
+
+@pytest.mark.parametrize("params", [
+    ('paging', False),  # must be list
+    [('paging', False), 3]  # must be list of tuples
+])
+def test_requests_invalid_params(api, params):
+    with pytest.raises(exceptions.ClientException):
+        api.get('organisationUnits', params=params)
 
 
 @pytest.mark.parametrize("data", [
