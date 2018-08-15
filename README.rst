@@ -1,19 +1,19 @@
 dhis2.py
 =========
 
-|Build| |BuildWin| |Coverage| |Latest version|
+|Latest version| |Build| |BuildWin| |Coverage|
 
 A Python wrapper for `DHIS2 <https://dhis2.org>`_.
 
 - Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
 - **API paging** for GETs
 - **SQL Views**
-- Server-side **UID generation**
+- Server-side UID generation
 - CSV/JSON file loading
 - Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
 - `requests <https://github.com/requests/requests>`_ as HTTP library
 - `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
-- **Supported and tested** on Python 2.7, 3.4-3.6 and DHIS2 versions >= 2.25
+- **Supported and tested** on Python 2.7, 3.4-3.7 and DHIS2 versions >= 2.25
 
 Installation
 -------------
@@ -133,11 +133,22 @@ You may submit params as a list of tuples instead when you need to pass multiple
 .. code:: python
 
     r = api.get('dataValueSets', params=[
-            ('dataSet', 'pBOMPrpg1QX'), ('dataSet, 'BfMAe6Itzgt'),
+            ('dataSet', 'pBOMPrpg1QX'), ('dataSet', 'BfMAe6Itzgt'),
             ('orgUnit', 'YuQRtpLP10I'), ('orgUnit', 'vWbkYPRmKyS'),
             ('startDate', '2013-01-01'), ('endDate', '2013-01-31')
         ]
     )
+
+or
+
+.. code:: python
+
+    r = api.get('dataValueSets', params={
+        'dataSet': ['pBOMPrpg1QX', 'BfMAe6Itzgt'],
+        'orgUnit': ['YuQRtpLP10I', 'vWbkYPRmKyS'],
+        'startDate': '2013-01-01',
+        'endDate': '2013-01-31'
+    })
 
 SQL Views
 ^^^^^^^^^^
@@ -173,9 +184,7 @@ Get server-generated UIDs (not limited to 10000):
 
 .. code:: python
 
-    from dhis2 import generate_uids
-
-    uids = generate_uids(20000)
+    uids = api.generate_uids(20000)
     print(uids)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
 
@@ -275,16 +284,17 @@ Feedback welcome!
     pipenv run tests
 
 
+.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip
+   :target: https://pypi.org/project/dhis2.py
 
-.. |Build| image:: https://travis-ci.org/davidhuser/dhis2.py.svg?branch=master
+.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis-ci
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
-.. |BuildWin| image:: https://ci.appveyor.com/api/projects/status/9lkxdi8o8r8o5jy7?svg=true
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor-ci
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
 
 .. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
 
-.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg
-   :target: https://pypi.org/project/dhis2.py
+
 
