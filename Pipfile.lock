@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e53528783e901792aa79dbd9f5f3d4bf4e0d164f00cd8ceedd38278c1bffbb59"
+            "sha256": "f2cb487caaed746bafd66cd1cc30a8cadb9260dd9616c65f4cc80cc91d6b7f38"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -192,20 +192,6 @@
                 "sha256:890fe5565400902b0c78b5357004aab1c814115894f4f21370e2433256a3eeec"
             ],
             "version": "==2.5.1"
-        },
-        "pytest-cover": {
-            "hashes": [
-                "sha256:578249955eb3b5f3991209df6e532bb770b647743b7392d3d97698dc02f39ebb",
-                "sha256:5bdb6c1cc3dd75583bb7bc2c57f5e1034a1bfcb79d27c71aceb0b16af981dbf4"
-            ],
-            "version": "==3.0.0"
-        },
-        "pytest-coverage": {
-            "hashes": [
-                "sha256:db6af2cbd7e458c7c9fd2b4207cee75258243c8a81cad31a7ee8cfad5be93c05",
-                "sha256:dedd084c5e74d8e669355325916dc011539b190355021b037242514dee546368"
-            ],
-            "version": "==0.0"
         },
         "requests": {
             "hashes": [
