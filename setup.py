@@ -60,7 +60,7 @@ class TestCommand(Command):
 
     def run(self):
         self.status('Testing with pytest...')
-        os.system('pipenv run python -m pytest --cov=dhis2 --cov-report term-missing tests -vv')
+        os.system('pipenv run python -m pytest tests')
 
 
 requires = [

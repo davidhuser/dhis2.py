@@ -14,4 +14,4 @@ requests = "*"
 logzero = "*"
 
 [scripts]
-tests = "python setup.py test"
+tests = "python -m pytest --cov=dhis2 --cov-report term-missing tests -vv"

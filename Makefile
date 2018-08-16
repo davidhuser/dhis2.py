@@ -2,4 +2,4 @@ init:
 	pip install pipenv
 	pipenv install --dev
 test:
-	pipenv run tests
+	python setup.py test
