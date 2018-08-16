@@ -1,12 +1,6 @@
 import logging
 import logzero
 
-# DHIS2 logging format incl. [file:codeline]
-log_format = '* %(levelname)1s  %(asctime)s,%(msecs)03d  %(message)s [%(module)s:%(lineno)d]'
-
-# Including color depending on log level
-log_format_color = '%(color)s* %(levelname)1s%(end_color)s  %(asctime)s,%(msecs)03d  %(message)s [%(module)s:%(lineno)d]'  # noqa
-
 
 def _set_log_format(color, include_caller):
     """
