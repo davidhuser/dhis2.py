@@ -8,9 +8,7 @@ python:
 install:
   - pip install coveralls
   - pip install tox-travis
-  - make
 script:
-  - make test
   - tox
 notifications:
   email: false
