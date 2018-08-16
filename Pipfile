@@ -3,10 +3,10 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "*"
 pytest-cov = "*"
 responses = "*"
 tox = "*"
+pytest = "==3.6.3"
 
 [packages]
 unicodecsv = "*"
