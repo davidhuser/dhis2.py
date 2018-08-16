@@ -4,7 +4,8 @@ CHANGELOG
 
 1.5.1
 -----
-- `setup_logger` to choose if caller and line of script should be included - e.g. `[script:123]`
+- ``setup_logger`` to choose if caller and line of script should be included - e.g. ``[script:123]``
+- CI testing fixes
 
 1.5.0
 -----
