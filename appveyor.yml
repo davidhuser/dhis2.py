@@ -40,7 +40,7 @@ install:
   # install pip 9 (10.1.0) has a bug
   - "python -m pip install pip==9.0.3 --user --disable-pip-version-check"
   - "python -m pip install pipenv --user --disable-pip-version-check"
-  - "python -m pipenv install --dev"
+  - "python -m pipenv install --dev --skip-lock"
   - "python -m pipenv install funcsigs --dev"
 
 test_script:
