@@ -284,17 +284,18 @@ Feedback welcome!
     pipenv run tests
 
 
-.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip
+.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip&style=flat-square
    :target: https://pypi.org/project/dhis2.py
 
-.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis-ci
+.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis-ci&style=flat-square
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
-.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor-ci
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor-ci&style=flat-square
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
 
-.. |Coverage| image:: https://coveralls.io/repos/github/davidhuser/dhis2.py/badge.svg?branch=master
+.. |Coverage| image:: https://img.shields.io/coveralls/davidhuser/dhis2.py/master.svg?style=flat-square
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
+
 
 
 
