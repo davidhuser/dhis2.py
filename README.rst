@@ -94,7 +94,7 @@ Must have the following structure:
     api = Dhis.from_auth_file('path/to/auth.json', api_version=29, user_agent='myApp/1.0')
 
 
-If no argument is specified, it tries to find a file called ``dish.json`` in:
+If no file path is specified, it tries to find a file called ``dish.json`` in:
 
 1. the ``DHIS_HOME`` environment variable
 2. your Home folder
