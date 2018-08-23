@@ -22,7 +22,7 @@ Simply use `pipenv <https://docs.pipenv.org>`_ (or ``pip``):
 
 .. code:: bash
 
-    pipenv install dhis2.py --user --upgrade
+    pipenv install dhis2.py --upgrade
 
 For instructions on installing Python / pip see `The Hitchhiker's Guide to
 Python <http://docs.python-guide.org/en/latest/starting/installation/>`_.
