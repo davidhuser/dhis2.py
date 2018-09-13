@@ -24,12 +24,18 @@ def api_with_api_version():
 
 
 @pytest.mark.parametrize("entered,expected", [
-    ('https://play.dhis2.org/demo', 'https://play.dhis2.org/demo'),
-    ('play.dhis2.org/demo', 'https://play.dhis2.org/demo'),
-    ('localhost:8080', 'http://localhost:8080'),
-    ('127.0.0.1:8080', 'http://127.0.0.1:8080'),
-    ('http://localhost:8080', 'http://localhost:8080'),
-    ('http://example.com', 'https://example.com'),
+    ('https://play.dhis2.org/demo ', 'https://play.dhis2.org/demo'),  # strip whitespace
+    ('https://play.dhis2.org/demo', 'https://play.dhis2.org/demo'),  # standard url
+    ('play.dhis2.org/demo', 'https://play.dhis2.org/demo'),  # url w/o scheme to go as https://
+    ('localhost:8080', 'http://localhost:8080'),  # localhost to use http
+    ('127.0.0.1:8080', 'http://127.0.0.1:8080'),  # localhost to use http
+    ('localhost:8080/dhis', 'http://localhost:8080/dhis'),  # localhost works with additional path
+    ('http://1.2.3.4', 'http://1.2.3.4'),  # public IP to use provided scheme http
+    ('https://1.2.3.4', 'https://1.2.3.4'),  # public IP to use provided scheme https
+    ('http://localhost:8080', 'http://localhost:8080'),  # localhost to use provided scheme http
+    ('https://localhost:8080', 'https://localhost:8080'),  # localhost to use provided scheme https
+    ('http://example.com', 'http://example.com'),  # public addresses to use provided scheme http
+    ('https://example.com', 'https://example.com'),  # public addresses to use provided scheme https
 ])
 def test_api_url(entered, expected):
     api = Dhis(entered, 'admin', 'district')

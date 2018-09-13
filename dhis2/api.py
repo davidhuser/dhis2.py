@@ -42,21 +42,25 @@ class Dhis(object):
 
     @base_url.setter
     def base_url(self, server):
-        if '/api' in server:
-            raise ClientException("Do not include /api/ in the DHIS2 URL")
-        o = urlparse(server)
-        if 'localhost' in (o.netloc + o.path) or '127.0.0.1' in (o.netloc + o.path):  # only allow http for localhost
-            scheme = 'http'
-        else:
-            scheme = 'https'
 
-        if not o.scheme and not o.netloc and o.path:
-            base = o.path
-            path = ''
+        if '/api' in server:
+            raise ClientException("Do not include /api/ in the DHIS2 server argument")
+
+        server = server.strip()
+
+        is_local = 'localhost' in server or '127.0.0.1' in server
+        has_scheme = '://' in server
+
+        # add http / https schemes when missing
+        if is_local and not has_scheme:
+            url = 'http://{}'.format(server)
+        elif not is_local and not has_scheme:
+            url = 'https://{}'.format(server)
         else:
-            base = o.netloc
-            path = o.path
-        self._base_url = urlunparse((scheme, base, path, '', '', ''))
+            url = server
+
+        o = urlparse(url)
+        self._base_url = urlunparse((o.scheme, o.netloc, o.path, '', '', ''))
 
     @property
     def api_version(self):
