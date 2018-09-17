@@ -3,7 +3,7 @@ dhis2.py
 
 |Latest version| |Build| |BuildWin| |Coverage|
 
-A Python wrapper for `DHIS2 <https://dhis2.org>`_.
+A Python wrapper for `DHIS2 <https://dhis2.org>`_ utilizing `requests <https://github.com/requests/requests>`_.
 
 - Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
 - **API paging** for GETs
@@ -11,7 +11,6 @@ A Python wrapper for `DHIS2 <https://dhis2.org>`_.
 - Server-side UID generation
 - CSV/JSON file loading
 - Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
-- `requests <https://github.com/requests/requests>`_ as HTTP library
 - `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
 - **Supported and tested** on Python 2.7, 3.4-3.7 and DHIS2 versions >= 2.25
 
@@ -52,6 +51,18 @@ Then run requests on it:
 
     print(r.json())
     # { "name": "Adonkia CHP", "id": "Rp268JB6Ne4" }
+
+    r = api.post('metadata', json={'dataElements': [ ... ] })
+    print(r.status_code) # 200
+
+
+
+- ``api.get()``
+- ``api.post()``
+- ``api.put()``
+- ``api.patch()``
+- ``api.delete()``
+
 
 
 Get info about the DHIS2 instance
