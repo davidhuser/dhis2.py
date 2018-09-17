@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+1.5.2
+-----
+- allow to use ``https://`` scheme and *no scheme* for localhost urls (e.g. ``localhost:8080``)
+- allow to use ``json`` alongside ``data`` argument in Dhis ``.get`` / ``.post`` / ``.put`` / ``.patch`` to standardize with `requests`
+
 1.5.1
 -----
 - ``setup_logger`` to choose if caller and line of script should be included - e.g. ``[script:123]``
