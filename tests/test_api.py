@@ -145,7 +145,7 @@ def test_requests_valid_endpoint(api, endpoint):
 
 
 @pytest.mark.parametrize("file_type", [
-    '.hello', '', None, u'EXCEL'
+    '.hello', '', ' ', u'EXCEL'
 ])
 def test_requests_invalid_file_type(api, file_type):
     with pytest.raises(exceptions.ClientException):
@@ -215,3 +215,18 @@ def test_requests_valid_data(api, data):
     url = '{}/{}'.format(API_URL, endpoint)
     responses.add(responses.POST, url, json=data, status=204)
     api.post(endpoint, data=data)
+
+
+def test_invalid_http_method(api):
+    with pytest.raises(exceptions.ClientException):
+        api._make_request('update', 'dataElements')
+
+
+@responses.activate
+def test_json_arg_valid(api):
+    endpoint = 'dataElements'
+    url = '{}/{}'.format(API_URL, endpoint)
+    data = {'data': 'something'}
+    responses.add(responses.POST, url, json=data, status=204)
+    api.post(endpoint, data=data)
+    api.post(endpoint, json=data)

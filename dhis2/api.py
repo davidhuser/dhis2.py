@@ -178,6 +178,39 @@ class Dhis(object):
         if data and not isinstance(data, dict):
             raise ClientException("data must be a dict, not {}".format(data.__class__.__name__))
 
+    def _make_request(self, method, endpoint, **kwargs):
+        if isinstance(kwargs.get('file_type'), string_types):
+            file_type = kwargs['file_type'].lower()
+        else:
+            file_type = 'json'
+        params = kwargs.get('params')
+
+        data = kwargs.get('data', kwargs.get('json', None))
+        url = '{}/{}'.format(self.api_url, endpoint)
+        self._validate_request(endpoint, file_type, data, params)
+
+        if method == 'get':
+            stream = kwargs.get('stream', False)
+            url = '{}.{}'.format(url, file_type)
+            r = self.session.get(url, params=params, stream=stream)
+
+        elif method == 'post':
+            r = self.session.post(url=url, json=data, params=params)
+
+        elif method == 'put':
+            r = self.session.put(url=url, json=data, params=params)
+
+        elif method == 'patch':
+            r = self.session.patch(url=url, json=data, params=params)
+
+        elif method == 'delete':
+            r = self.session.delete(url=url)
+
+        else:
+            raise ClientException("Non-supported HTTP method: {}".format(method))
+
+        return self._validate_response(r)
+
     def get(self, endpoint, file_type='json', params=None, stream=False):
         """GET from DHIS2
         :param endpoint: DHIS2 API endpoint
@@ -186,56 +219,44 @@ class Dhis(object):
         :param stream: use requests' stream parameter
         :return: requests object
         """
-        self._validate_request(endpoint, file_type=file_type, params=params)
-        url = '{}/{}.{}'.format(self.api_url, endpoint, file_type.lower())
-        r = self.session.get(url, params=params, stream=stream)
-        return self._validate_response(r)
+        return self._make_request('get', endpoint, params=params, file_type=file_type, stream=stream)
 
-    def post(self, endpoint, data=None, params=None):
+    def post(self, endpoint, json=None, params=None, **kwargs):
         """POST to DHIS2
         :param endpoint: DHIS2 API endpoint
-        :param data: HTTP payload
+        :param json: HTTP payload
         :param params: HTTP parameters (dict)
         :return: requests object
         """
-        self._validate_request(endpoint, data=data, params=params)
-        url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.post(url=url, json=data, params=params)
-        return self._validate_response(r)
+        json = kwargs['data'] if 'data' in kwargs else json
+        return self._make_request('post', endpoint, data=json, params=params)
 
-    def put(self, endpoint, data, params=None):
+    def put(self, endpoint, json=None, params=None, **kwargs):
         """PUT to DHIS2
         :param endpoint: DHIS2 API endpoint
-        :param data: HTTP payload
+        :param json: HTTP payload
         :param params: HTTP parameters (dict)
         :return: requests object
         """
-        self._validate_request(endpoint, data=data, params=params)
-        url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.put(url=url, json=data, params=params)
-        return self._validate_response(r)
+        json = kwargs['data'] if 'data' in kwargs else json
+        return self._make_request('put', endpoint, data=json, params=params)
 
-    def patch(self, endpoint, data, params=None):
+    def patch(self, endpoint, json=None, params=None, **kwargs):
         """PATCH to DHIS2
         :param endpoint: DHIS2 API endpoint
-        :param data: HTTP payload
+        :param json: HTTP payload
         :param params: HTTP parameters (dict)
         :return: requests object
         """
-        self._validate_request(endpoint, data=data, params=params)
-        url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.patch(url=url, json=data, params=params)
-        return self._validate_response(r)
+        json = kwargs['data'] if 'data' in kwargs else json
+        return self._make_request('patch', endpoint, data=json, params=params)
 
     def delete(self, endpoint):
         """DELETE from DHIS2
         :param endpoint: DHIS2 API endpoint
         :return: requests object
         """
-        self._validate_request(endpoint)
-        url = '{}/{}'.format(self.api_url, endpoint)
-        r = self.session.delete(url=url)
-        return self._validate_response(r)
+        return self._make_request('delete', endpoint)
 
     def get_paged(self, endpoint, params=None, page_size=50, merge=False):
         """GET with paging (for large payloads).
