@@ -283,6 +283,7 @@ Contribute
 
 Feedback welcome!
 
+- Check the `changelog <https://github.com/davidhuser/dhis2.py/blob/master/CHANGELOG.rst>`_
 - Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
 - Install the dev environment (see below)
 - Fork, add changes to *master* branch, ensure tests pass with full coverage and add a Pull Request
