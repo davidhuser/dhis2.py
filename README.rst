@@ -10,8 +10,8 @@ A Python wrapper for `DHIS2 <https://dhis2.org>`_ utilizing `requests <https://g
 - **SQL Views**
 - Server-side UID generation
 - CSV/JSON file loading
-- Defaults to JSON, supported GETs: XML, CSV, PDF, XLS
-- `logzero <https://github.com/metachris/logzero>`_ as drop-in logging library
+- Defaults to ``json``, supported GETs: ``xml``, ``csv``, ``pdf``, ``xls``
+- `logzero <https://github.com/metachris/logzero>`_ for logging
 - **Supported and tested** on Python 2.7, 3.4-3.7 and DHIS2 versions >= 2.25
 
 Installation
@@ -54,7 +54,6 @@ Then run requests on it:
 
     r = api.post('metadata', json={'dataElements': [ ... ] })
     print(r.status_code) # 200
-
 
 
 - ``api.get()``
