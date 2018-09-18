@@ -5,7 +5,7 @@ import sys
 from codecs import open
 from shutil import rmtree
 
-from setuptools import setup, Command
+from setuptools import setup, find_packages, Command
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -91,7 +91,7 @@ setup(
     author_email=about['__author_email__'],
     url=about['__url__'],
     keywords='dhis2',
-    packages=['dhis2'],
+    packages=find_packages(exclude=['tests', 'examples']),
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=requires,
     license=about['__license__'],

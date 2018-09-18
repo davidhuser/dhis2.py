@@ -1,0 +1,34 @@
+{
+  "dataElements": [
+    {
+      "code": "IT001",
+      "name": "Import Test",
+      "shortName": "Import Test",
+      "aggregationType": "SUM",
+      "domainType": "AGGREGATE",
+      "publicAccess": "rw------",
+      "valueType": "NUMBER",
+      "zeroIsSignificant": false,
+      "url": "",
+      "categoryCombo": {
+        "id": "bjDvmb4bfuf"
+      },
+      "translations": [],
+      "userGroupAccesses": [],
+      "attributeValues": [
+        {
+          "value": "XYZ",
+          "attribute": {
+            "id": "n2xYlNbsfko"
+          }
+        }
+      ],
+      "userAccesses": [
+      ],
+      "legendSets": [
+      ],
+      "aggregationLevels": [
+      ]
+    }
+  ]
+}

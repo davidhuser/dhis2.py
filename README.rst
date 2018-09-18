@@ -63,6 +63,11 @@ Then run requests on it:
 - ``api.delete()``
 
 
+Examples
+^^^^^^^^
+
+Real-world script examples can be found in the ``examples`` folder.
+
 
 Get info about the DHIS2 instance
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
