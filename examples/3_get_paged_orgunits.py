@@ -26,9 +26,9 @@ def main():
 
             # compare date and print message
             if opening_date > datetime(year=1990, month=1, day=1):
-                logger.warn("OU '{}' ({}) was opened after 2010 on {}".format(ou['name'], ou['id'], ou['openingDate'][:-13]))
+                logger.warn("OU '{}' ({}) was opened AFTER 1990-01-01 on {}".format(ou['name'], ou['id'], ou['openingDate'][:-13]))
             else:
-                logger.debug("OU '{}' ({}) was opened before 2010 on {}".format(ou['id'], ou['name'], ou['openingDate'][:-13]))
+                logger.debug("OU '{}' ({}) was opened BEFORE 1990-01-01 on {}".format(ou['id'], ou['name'], ou['openingDate'][:-13]))
 
 
 if __name__ == '__main__':
