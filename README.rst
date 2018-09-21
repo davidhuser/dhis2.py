@@ -3,7 +3,7 @@ dhis2.py
 
 |Latest version| |Build| |BuildWin| |Coverage|
 
-A Python wrapper for `DHIS2 <https://dhis2.org>`_ utilizing `requests <https://github.com/requests/requests>`_.
+A Python libray for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
 
 - Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
 - **API paging** for GETs
