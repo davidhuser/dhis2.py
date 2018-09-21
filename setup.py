@@ -72,6 +72,7 @@ requires = [
 test_requirements = [
     'pytest',
     'pytest-cov',
+    'pytest-rerunfailures',
     'responses'
 ]
 
