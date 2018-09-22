@@ -11,7 +11,13 @@ import requests
 
 from .common import *
 from .exceptions import ClientException, APIException
-from .utils import load_json, chunk, search_auth_file, version_to_int
+from .utils import (
+    load_json,
+    chunk_number,
+    partition_payload,
+    search_auth_file,
+    version_to_int
+)
 
 
 class Dhis(object):
@@ -338,6 +344,29 @@ class Dhis(object):
         else:
             return list(page_generator())
 
+    def post_partitioned(self, endpoint, json, params=None, thresh=1000):
+        """
+        Post a payload in chunks to prevent 'Request Entity Too Large' Timeout errors
+        :param endpoint: the API endpoint to use
+        :param json: payload dict
+        :param params: request parameters
+        :param thresh: the maximum amount to partition into
+        :yield: response objects
+        """
+
+        if not isinstance(json, dict) or len(json.keys()) != 1:
+            raise ClientException('Must submit exactly one key in payload (which needs to be a dict)'
+                                  ' - e.g. json={"dataElements": [...]"}')
+        if not isinstance(thresh, int) or thresh < 2:
+            raise ClientException("thresh must be integer of 2 or larger")
+
+        key = next(iter(json))  # the (only) key in the payload
+        if not json[key]:
+            raise ClientException("payload for key '{}' is empty".format(key))
+
+        for data in partition_payload(data=json, key=key, thresh=thresh):
+            yield self.post(endpoint, json=data, params=params)
+
     def generate_uids(self, amount):
         """
         Create UIDs on the server
@@ -346,7 +375,7 @@ class Dhis(object):
         """
 
         uids = []
-        for limit in chunk(amount):
+        for limit in chunk_number(amount):
             codes = self.get('system/id', params={'limit': limit}).json()['codes']
             uids.extend(codes)
         return uids

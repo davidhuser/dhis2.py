@@ -6,7 +6,7 @@ dhis2.py
 A Python libray for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
 
 - Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
-- **API paging** for GETs
+- Additional utilities like **paging** with GET or **partitioned** POSTs
 - **SQL Views**
 - Server-side UID generation
 - CSV/JSON file loading
@@ -190,6 +190,23 @@ Get SQL View data as if you'd open a CSV file, optimized for larger payloads:
 
 Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
 to use the ``stream=True`` parameter of the ``Dhis.get()`` method.
+
+
+Post partitioned payloads
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have such a large payload (e.g. metadata imports) that you frequently get a HTTP Error:``413 Request Entity Too Large`` response e.g. from Nginx you might benefit from using the following method that splits your payload in partitions / chunks and posts them one-by-one. You define the amount of elements in each POST by specifying a number in ``thresh`` (default: ``1000``). Note that it is only possible to submit one key per payload (e.g. ``dataElements`` only, not additionally ``organisationUnits`` in the same payload).
+
+.. code:: python
+
+    data = {
+        "organisationUnits": [
+            {...},
+            {...} # very large number of org units
+        ]
+    {
+    for post in api.post_partitioned('metadata', json=data, thresh=5000):
+        print(post.text) # validate / further process
 
 
 Generate UIDs

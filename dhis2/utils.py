@@ -39,7 +39,7 @@ def load_json(path):
         raise ClientException("File not found: {}".format(path))
 
 
-def chunk(num, thresh=10000):
+def chunk_number(num, thresh=10000):
     """
     Chunk a number into a list of numbers
     :param num: the number to chunk
@@ -49,6 +49,27 @@ def chunk(num, thresh=10000):
         to_yield = min(num, thresh)
         yield to_yield
         num -= to_yield
+
+
+def partition_payload(data, key, thresh):
+    """
+    Yield partitions of a payload.
+    e.g. with a threshold of 2:
+
+    { "dataElements": [1, 2, 3] }
+    -->
+    { "dataElements": [1, 2] }
+       and
+    { "dataElements": [3] }
+
+    :param data: the payload
+    :param key: the key of the dict to partition
+    :param thresh: the maximum value of a chunk
+    :yield: a partition of the payload
+    """
+    data = data[key]
+    for i in range(0, len(data), thresh):
+        yield {key: data[i:i + thresh]}
 
 
 def search_auth_file(filename='dish.json'):

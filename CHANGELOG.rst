@@ -2,10 +2,14 @@
 CHANGELOG
 =========
 
+1.5.3
+------
+- partitioned payloads with ``.post_partitioned()`` to split large payloads into smaller ones
+
 1.5.2
 -----
 - allow to use ``https://`` scheme and *no scheme* for localhost urls (e.g. ``localhost:8080``)
-- allow to use ``json`` alongside ``data`` argument in Dhis ``.get`` / ``.post`` / ``.put`` / ``.patch`` to standardize with `requests`
+- allow to use ``json`` alongside ``data`` argument in Dhis ``.get`` / ``.post`` / ``.put`` / ``.patch`` to standardize with ``requests``
 
 1.5.1
 -----

@@ -1,11 +1,18 @@
 import os
 import tempfile
+from types import GeneratorType
 
 import pytest
 import responses
 
 from dhis2 import exceptions, Dhis
-from dhis2.utils import load_csv, load_json, chunk, version_to_int
+from dhis2.utils import (
+    load_csv,
+    load_json,
+    chunk_number,
+    partition_payload,
+    version_to_int
+)
 
 from .common import API_URL, BASEURL
 
@@ -61,9 +68,34 @@ def test_load_json_not_found():
     (13000, [10000, 3000]),
     (23000, [10000, 10000, 3000])
 ])
-def test_chunk(amount, expected):
-    c = chunk(amount)
+def test_chunk_number(amount, expected):
+    c = chunk_number(amount)
     assert set(c) == set(expected)
+
+
+@pytest.mark.parametrize("payload,threshold,expected", [
+    (
+            {"dataElements": [1, 2, 3, 4, 5, 6, 7, 8]},
+            3,
+            [
+                {"dataElements": [1, 2, 3]},
+                {"dataElements": [4, 5, 6]},
+                {"dataElements": [7, 8]}
+            ]
+    ),
+    (
+            {"dataElements": [1, 2, 3, 4, 5, 6, 7, 8]},
+            9,
+            [
+                {"dataElements": [1, 2, 3, 4, 5, 6, 7, 8]}
+            ]
+    )
+])
+def test_partition_payload(payload, threshold, expected):
+    key = 'dataElements'
+    c_gen = partition_payload(payload, key, threshold)
+    assert isinstance(c_gen, GeneratorType)
+    assert list(c_gen) == expected
 
 
 @pytest.mark.parametrize("version,expected", [
