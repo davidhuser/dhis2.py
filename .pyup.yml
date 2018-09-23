@@ -4,3 +4,4 @@ schedule: "every week"
 
 requirements:
   - Pipfile
+  - requirements_dev.txt
