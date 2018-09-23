@@ -1,0 +1,6 @@
+# pyup.io dependency checker
+
+schedule: "every week"
+
+requirements:
+  - Pipfile
