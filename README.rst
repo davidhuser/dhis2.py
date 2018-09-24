@@ -198,15 +198,18 @@ Post partitioned payloads
 If you have such a large payload (e.g. metadata imports) that you frequently get a HTTP Error:``413 Request Entity Too Large`` response e.g. from Nginx you might benefit from using the following method that splits your payload in partitions / chunks and posts them one-by-one. You define the amount of elements in each POST by specifying a number in ``thresh`` (default: ``1000``). Note that it is only possible to submit one key per payload (e.g. ``dataElements`` only, not additionally ``organisationUnits`` in the same payload).
 
 .. code:: python
-
+    
+    import json
+    
     data = {
         "organisationUnits": [
             {...},
             {...} # very large number of org units
         ]
     {
-    for post in api.post_partitioned('metadata', json=data, thresh=5000):
-        print(post.text) # validate / further process
+    for response in api.post_partitioned('metadata', json=data, thresh=5000):
+        response = json.loads(p.text)
+        print('[{}] - {}'.format(response['status'], json.dumps(response['stats'])))
 
 
 Generate UIDs
