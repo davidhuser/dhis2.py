@@ -6,7 +6,6 @@ verify_ssl = true
 pytest = "*"
 pytest-cov = "*"
 responses = "*"
-tox = "*"
 pytest-rerunfailures = "*"
 
 [packages]

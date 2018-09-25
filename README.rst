@@ -1,9 +1,9 @@
 dhis2.py
 =========
 
-|Latest version| |Build| |BuildWin| |Coverage|
+|Latest version| |Build| |BuildWin| |Coverage| |PyUp|
 
-A Python libray for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
+A Python library for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
 
 - Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
 - Additional utilities like **paging** with GET or **partitioned** POSTs
@@ -198,15 +198,18 @@ Post partitioned payloads
 If you have such a large payload (e.g. metadata imports) that you frequently get a HTTP Error:``413 Request Entity Too Large`` response e.g. from Nginx you might benefit from using the following method that splits your payload in partitions / chunks and posts them one-by-one. You define the amount of elements in each POST by specifying a number in ``thresh`` (default: ``1000``). Note that it is only possible to submit one key per payload (e.g. ``dataElements`` only, not additionally ``organisationUnits`` in the same payload).
 
 .. code:: python
-
+    
+    import json
+    
     data = {
         "organisationUnits": [
             {...},
             {...} # very large number of org units
         ]
     {
-    for post in api.post_partitioned('metadata', json=data, thresh=5000):
-        print(post.text) # validate / further process
+    for response in api.post_partitioned('metadata', json=data, thresh=5000):
+        text = json.loads(response.text)
+        print('[{}] - {}'.format(text['status'], json.dumps(text['stats'])))
 
 
 Generate UIDs
@@ -317,18 +320,17 @@ Feedback welcome!
     pipenv run tests
 
 
-.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip&style=flat-square
+.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip
    :target: https://pypi.org/project/dhis2.py
 
-.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis-ci&style=flat-square
+.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis-ci
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
-.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor-ci&style=flat-square
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor-ci
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
 
-.. |Coverage| image:: https://img.shields.io/coveralls/davidhuser/dhis2.py/master.svg?style=flat-square
+.. |Coverage| image:: https://img.shields.io/coveralls/davidhuser/dhis2.py/master.svg
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
 
-
-
-
+.. |PyUp| image:: https://pyup.io/repos/github/davidhuser/dhis2.py/shield.svg
+   :target: https://pyup.io/repos/github/davidhuser/dhis2.py
