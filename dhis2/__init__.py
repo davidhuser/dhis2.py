@@ -24,14 +24,7 @@ __all__ = (
 
 
 # Set default logging handler to avoid "No handler found" warnings.
-# https://docs.python.org/2/howto/logging.html#configuring-logging-for-a-library
 import logging
-try:
-    from logging import NullHandler  # py3
-except ImportError:
-    # py2
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
+from logging import NullHandler  # py 2.7+
 
 logging.getLogger(__name__).addHandler(NullHandler())

@@ -6,16 +6,17 @@ from .exceptions import ClientException
 
 
 def load_csv(path, delimiter=','):
-    """Load CSV file efficiently.
-    Detects delimiter automatically.
+    """Yield CSV rows.
 
     Usage:
 
     for row in load_csv('/path/to/file'):
         print(row)
+    or
+    list(load_csv('/path/to/file'))
 
-    :type delimiter: char
     :param path: file path
+    :param delimiter: CSV delimiter
     :return: row (from generator)
     """
     try:
