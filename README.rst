@@ -3,7 +3,7 @@ dhis2.py
 
 |Latest version| |Build| |BuildWin| |Coverage| |PyUp|
 
-A Python libray for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
+A Python library for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
 
 - Common **HTTP operations** (GET, POST, PUT, PATCH, DELETE)
 - Additional utilities like **paging** with GET or **partitioned** POSTs
@@ -208,8 +208,8 @@ If you have such a large payload (e.g. metadata imports) that you frequently get
         ]
     {
     for response in api.post_partitioned('metadata', json=data, thresh=5000):
-        response = json.loads(p.text)
-        print('[{}] - {}'.format(response['status'], json.dumps(response['stats'])))
+        text = json.loads(response.text)
+        print('[{}] - {}'.format(text['status'], json.dumps(text['stats'])))
 
 
 Generate UIDs
