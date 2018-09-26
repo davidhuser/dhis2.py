@@ -134,7 +134,7 @@ def pretty_json(obj):
     if isinstance(obj, string_types):
         try:
             obj = json.loads(obj)
-        except json.decoder.JSONDecodeError:
+        except ValueError:
             raise ClientException("Not a json string")
     json_str = json.dumps(obj, sort_keys=True, indent=2)
     print(highlight(json_str, JsonLexer(), TerminalFormatter()))
