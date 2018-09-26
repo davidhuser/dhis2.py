@@ -1,5 +1,7 @@
 import json
 import os
+import random
+import string
 
 from .common import *
 from .exceptions import ClientException
@@ -106,3 +108,16 @@ def version_to_int(value):
         return int(value.split('.')[1])
     except (ValueError, IndexError):
         return
+
+
+def create_uid():
+    """
+    Create DHIS2 UID matching to Regex
+    ^[A-Za-z][A-Za-z0-9]{10}$
+    :return: UID string
+    """
+
+    first = random.choice(string.ascii_letters)
+    rest = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
+    return first + rest
+

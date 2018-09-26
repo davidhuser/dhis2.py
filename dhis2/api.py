@@ -16,7 +16,8 @@ from .utils import (
     chunk_number,
     partition_payload,
     search_auth_file,
-    version_to_int
+    version_to_int,
+    create_uid
 )
 
 
@@ -367,15 +368,21 @@ class Dhis(object):
         for data in partition_payload(data=json, key=key, thresh=thresh):
             yield self.post(endpoint, json=data, params=params)
 
-    def generate_uids(self, amount):
+    def generate_uids(self, amount, local=False):
         """
         Create UIDs on the server
         :param amount: the number of UIDs to generate
+        :param local: create UIDs locally (no API calls to generate)
         :return: list of UIDs
         """
+        if not isinstance(amount, int) or amount < 1:
+            raise ClientException("amount must be integer > 0")
 
         uids = []
-        for limit in chunk_number(amount):
-            codes = self.get('system/id', params={'limit': limit}).json()['codes']
-            uids.extend(codes)
+        if local:
+            uids = [create_uid() for _ in range(amount)]
+        else:
+            for limit in chunk_number(amount):
+                codes = self.get('system/id', params={'limit': limit}).json()['codes']
+                uids.extend(codes)
         return uids

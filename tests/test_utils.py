@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 from types import GeneratorType
 
@@ -11,7 +12,8 @@ from dhis2.utils import (
     load_json,
     chunk_number,
     partition_payload,
-    version_to_int
+    version_to_int,
+    create_uid
 )
 
 from .common import API_URL, BASEURL
@@ -115,4 +117,28 @@ def test_generate_uids(api):
 
     responses.add_passthru(url)
     uids = api.generate_uids(amount)
-    assert (len(uids) == amount)
+    assert isinstance(uids, list)
+    assert len(uids) == amount
+
+
+@responses.activate
+def test_generate_uids_locally(api):
+    amount = 1000
+    uids = api.generate_uids(amount, local=True)
+    assert isinstance(uids, list)
+    assert len(uids) == amount
+    assert len(set(uids)) == len(uids)
+    assert len(responses.calls) == 0
+
+
+@pytest.mark.parametrize("amount", [
+    None, -1, 0, 100.5
+])
+def test_generate_uids_amount_not_int(api, amount):
+    with pytest.raises(exceptions.ClientException):
+        api.generate_uids(amount)
+
+
+def test_create_uids():
+    uid_regex = r"^[A-Za-z][A-Za-z0-9]{10}$"
+    assert all([re.match(uid_regex, uid) for uid in [create_uid() for _ in range(100000)]])

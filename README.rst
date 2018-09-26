@@ -215,13 +215,15 @@ If you have such a large payload (e.g. metadata imports) that you frequently get
 Generate UIDs
 ^^^^^^^^^^^^^
 
-Get server-generated UIDs (not limited to 10000):
+Create UIDs on the server (not limited to 10000):
 
 .. code:: python
 
     uids = api.generate_uids(20000)
     print(uids)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
+
+If you want UIDs generated locally (no server calls), add ``local=True``.
 
 
 GET other content types
