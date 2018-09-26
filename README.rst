@@ -292,6 +292,28 @@ Logging
     * ERROR  2018-06-01 18:19:40,007  something went wrong [script:87]
 
 
+Pretty JSON
+^^^^^^^^^^^^
+
+Print easy-readable JSON objects.
+
+.. code:: python
+
+    obj = {"dataElements": [{"name": "Accute Flaccid Paralysis (Deaths < 5 yrs)", "id": "FTRrcoaog83", "aggregationType": "SUM"}]}
+    pretty_json(obj)
+
+.. code:: json
+
+    {
+      "dataElements": [
+        {
+          "aggregationType": "SUM",
+          "id": "FTRrcoaog83",
+          "name": "Accute Flaccid Paralysis (Deaths < 5 yrs)"
+        }
+      ]
+    }
+
 
 Exceptions
 ^^^^^^^^^^^

@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import tempfile
 from types import GeneratorType
 
@@ -13,7 +14,8 @@ from dhis2.utils import (
     chunk_number,
     partition_payload,
     version_to_int,
-    create_uid
+    create_uid,
+    pretty_json
 )
 
 from .common import API_URL, BASEURL
@@ -142,3 +144,24 @@ def test_generate_uids_amount_not_int(api, amount):
 def test_create_uids():
     uid_regex = r"^[A-Za-z][A-Za-z0-9]{10}$"
     assert all([re.match(uid_regex, uid) for uid in [create_uid() for _ in range(100000)]])
+
+
+@pytest.mark.parametrize("obj", [
+    {'data': [1, 2, 3]},
+    '{"pager": {"page": 1}}',
+])
+def test_pretty_json(capsys, obj):
+    pretty_json(obj)
+    out, err = capsys.readouterr()
+    sys.stdout.write(out)
+    sys.stderr.write(err)
+    assert out.startswith("{")
+
+
+@pytest.mark.parametrize("obj", [
+    '',
+    '{"pager": {"page": }}'
+])
+def test_pretty_json_not_json_string(obj):
+    with pytest.raises(exceptions.ClientException):
+        pretty_json(obj)

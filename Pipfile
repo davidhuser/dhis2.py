@@ -5,13 +5,14 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 pytest-cov = "*"
-responses = "*"
 pytest-rerunfailures = "*"
+responses = "*"
 
 [packages]
 unicodecsv = "*"
 requests = "*"
 logzero = "*"
+pygments = "*"
 
 [scripts]
 tests = "python -m pytest --cov=dhis2 --cov-report term-missing tests -vv"

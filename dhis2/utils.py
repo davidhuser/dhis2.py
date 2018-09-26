@@ -3,6 +3,10 @@ import os
 import random
 import string
 
+from pygments import highlight
+from pygments.lexers.data import JsonLexer
+from pygments.formatters.terminal import TerminalFormatter
+
 from .common import *
 from .exceptions import ClientException
 
@@ -121,3 +125,16 @@ def create_uid():
     rest = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
     return first + rest
 
+
+def pretty_json(obj):
+    """
+    Print JSON with indentation and colours
+    :param obj: the object to print - can be a dict or a string
+    """
+    if isinstance(obj, string_types):
+        try:
+            obj = json.loads(obj)
+        except json.decoder.JSONDecodeError:
+            raise ClientException("Not a json string")
+    json_str = json.dumps(obj, sort_keys=True, indent=2)
+    print(highlight(json_str, JsonLexer(), TerminalFormatter()))
