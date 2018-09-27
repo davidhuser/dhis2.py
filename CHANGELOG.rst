@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-1.6.0
+1.6.1
 -----
 - argument ``local`` to ``.generate_uids()`` to create UIDs locally (no network calls to DHIS2)
 - ``pretty_json()`` to print easy-readable JSON
