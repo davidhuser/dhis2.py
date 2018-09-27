@@ -295,7 +295,7 @@ Logging
 Pretty JSON
 ^^^^^^^^^^^^
 
-Print easy-readable JSON objects.
+Print easy-readable JSON objects with colors.
 
 .. code:: python
 

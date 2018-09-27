@@ -66,7 +66,8 @@ class TestCommand(Command):
 requires = [
     'requests>=2.18.4,<3.0',
     'unicodecsv>=0.14.1',
-    'logzero==1.5.0'
+    'logzero==1.5.0',
+    'pygments==2.2.0'
 ]
 
 test_requirements = [
