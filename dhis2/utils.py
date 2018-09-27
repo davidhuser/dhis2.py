@@ -1,21 +1,28 @@
 import json
 import os
+import random
+import string
+
+from pygments import highlight
+from pygments.lexers.data import JsonLexer
+from pygments.formatters.terminal import TerminalFormatter
 
 from .common import *
 from .exceptions import ClientException
 
 
 def load_csv(path, delimiter=','):
-    """Load CSV file efficiently.
-    Detects delimiter automatically.
+    """Yield CSV rows.
 
     Usage:
 
     for row in load_csv('/path/to/file'):
         print(row)
+    or
+    list(load_csv('/path/to/file'))
 
-    :type delimiter: char
     :param path: file path
+    :param delimiter: CSV delimiter
     :return: row (from generator)
     """
     try:
@@ -105,3 +112,29 @@ def version_to_int(value):
         return int(value.split('.')[1])
     except (ValueError, IndexError):
         return
+
+
+def create_uid():
+    """
+    Create DHIS2 UID matching to Regex
+    ^[A-Za-z][A-Za-z0-9]{10}$
+    :return: UID string
+    """
+
+    first = random.choice(string.ascii_letters)
+    rest = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
+    return first + rest
+
+
+def pretty_json(obj):
+    """
+    Print JSON with indentation and colours
+    :param obj: the object to print - can be a dict or a string
+    """
+    if isinstance(obj, string_types):
+        try:
+            obj = json.loads(obj)
+        except ValueError:
+            raise ClientException("Not a json string")
+    json_str = json.dumps(obj, sort_keys=True, indent=2)
+    print(highlight(json_str, JsonLexer(), TerminalFormatter()))

@@ -215,13 +215,15 @@ If you have such a large payload (e.g. metadata imports) that you frequently get
 Generate UIDs
 ^^^^^^^^^^^^^
 
-Get server-generated UIDs (not limited to 10000):
+Create UIDs on the server (not limited to 10000):
 
 .. code:: python
 
     uids = api.generate_uids(20000)
     print(uids)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
+
+If you want UIDs generated locally (no server calls), add ``local=True``.
 
 
 GET other content types
@@ -289,6 +291,28 @@ Logging
     * INFO  2018-06-01 18:19:40,001  my log message [script:86]
     * ERROR  2018-06-01 18:19:40,007  something went wrong [script:87]
 
+
+Pretty JSON
+^^^^^^^^^^^^
+
+Print easy-readable JSON objects with colors.
+
+.. code:: python
+
+    obj = {"dataElements": [{"name": "Accute Flaccid Paralysis (Deaths < 5 yrs)", "id": "FTRrcoaog83", "aggregationType": "SUM"}]}
+    pretty_json(obj)
+
+.. code:: json
+
+    {
+      "dataElements": [
+        {
+          "aggregationType": "SUM",
+          "id": "FTRrcoaog83",
+          "name": "Accute Flaccid Paralysis (Deaths < 5 yrs)"
+        }
+      ]
+    }
 
 
 Exceptions

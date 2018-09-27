@@ -1,5 +1,6 @@
 import pytest
 import responses
+import time
 
 from dhis2 import exceptions, Dhis
 
@@ -98,6 +99,7 @@ def test_get_sqlview_variable_query_execute_throws(api, sql_view_query):  # noqa
 @pytest.mark.flaky(reruns=3, reruns_delay=30)
 @responses.activate
 def test_get_sqlview_variable_query_no_dict(api, sql_view_query):  # noqa
+    time.sleep(3)  # prevent ConnectionError when running concurrent CI tests
     with pytest.raises(exceptions.ClientException):
         for _ in api.get_sqlview(SQL_VIEW, var='NODICT'):
             continue

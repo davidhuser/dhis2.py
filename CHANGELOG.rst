@@ -2,6 +2,11 @@
 CHANGELOG
 =========
 
+1.6.0
+-----
+- argument ``local`` to ``.generate_uids()`` to create UIDs locally (no network calls to DHIS2)
+- ``pretty_json()`` to print easy-readable JSON
+
 1.5.3
 ------
 - partitioned payloads with ``.post_partitioned()`` to split large payloads into smaller ones
