@@ -1,7 +1,7 @@
 dhis2.py
 =========
 
-|Latest version| |Build| |BuildWin| |Coverage| |PyUp|
+|Latest version| |Build| |BuildWin| |Coverage| |Maint| |LGTM|
 
 A Python library for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_.
 
@@ -344,17 +344,22 @@ Feedback welcome!
     pipenv run tests
 
 
-.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip
+.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip&style=flat-square
    :target: https://pypi.org/project/dhis2.py
 
-.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis-ci
+.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis%20ci&style=flat-square
    :target: https://travis-ci.org/davidhuser/dhis2.py
 
-.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor-ci
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor%20ci&style=flat-square
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
 
-.. |Coverage| image:: https://img.shields.io/coveralls/davidhuser/dhis2.py/master.svg
+.. |Coverage| image:: https://img.shields.io/coveralls/davidhuser/dhis2.py/master.svg?style=flat-square
    :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
 
-.. |PyUp| image:: https://pyup.io/repos/github/davidhuser/dhis2.py/shield.svg
-   :target: https://pyup.io/repos/github/davidhuser/dhis2.py
+.. |Maint| image:: https://img.shields.io/codeclimate/maintainability-percentage/davidhuser/dhis2.py.svg?style=flat-square
+   :target: https://codeclimate.com/github/davidhuser/dhis2.py/maintainability
+
+.. |LGTM| image:: https://img.shields.io/lgtm/grade/python/g/davidhuser/dhis2.py.svg?label=code%20quality&style=flat-square
+   :target: https://lgtm.com/projects/g/davidhuser/dhis2.py/context:python
+
+
