@@ -7,7 +7,7 @@ from pygments import highlight
 from pygments.lexers.data import JsonLexer
 from pygments.formatters.terminal import TerminalFormatter
 
-from .common import *
+from .common import string_types, csv
 from .exceptions import ClientException
 
 
@@ -30,7 +30,7 @@ def load_csv(path, delimiter=','):
             reader = csv.DictReader(csvfile, delimiter=delimiter)
             for row in reader:
                 yield row
-    except FileNotFoundError:
+    except (OSError, IOError):
         raise ClientException("File not found: {}".format(path))
 
 
@@ -42,7 +42,7 @@ def load_json(path):
     try:
         with open(path, 'r') as json_file:
             return json.load(json_file)
-    except FileNotFoundError:
+    except (OSError, IOError):
         raise ClientException("File not found: {}".format(path))
 
 
@@ -135,6 +135,6 @@ def pretty_json(obj):
         try:
             obj = json.loads(obj)
         except ValueError:
-            raise ClientException("Not a json string")
+            raise ClientException("`obj` is not a json string")
     json_str = json.dumps(obj, sort_keys=True, indent=2)
     print(highlight(json_str, JsonLexer(), TerminalFormatter()))

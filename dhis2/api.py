@@ -9,7 +9,7 @@ except ImportError:
 
 import requests
 
-from .common import *
+from .common import string_types, csv
 from .exceptions import ClientException, APIException
 from .utils import (
     load_json,
@@ -51,7 +51,7 @@ class Dhis(object):
     def base_url(self, server):
 
         if '/api' in server:
-            raise ClientException("Do not include /api/ in the DHIS2 server argument")
+            raise ClientException("Do not include /api/ in the DHIS2 `server` argument")
 
         server = server.strip()
 
@@ -81,7 +81,7 @@ class Dhis(object):
                 if i < 25:
                     raise ValueError
             except ValueError:
-                raise ClientException("api_version must be 25 or greater: {}".format(number))
+                raise ClientException("`api_version` must be 25 or greater: {}".format(number))
             else:
                 self._api_version = i
         else:
@@ -174,16 +174,16 @@ class Dhis(object):
         :param params: HTTP parameters
         """
         if not isinstance(endpoint, string_types) or endpoint.strip() == '':
-            raise ClientException("Must submit endpoint for DHIS2 API")
+            raise ClientException("Must submit `endpoint` for DHIS2 API")
         if not isinstance(file_type, string_types) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
             raise ClientException("Invalid file_type: {}".format(file_type))
         if params:
             if not isinstance(params, (dict, list)):
-                raise ClientException("params must be a dict or list of tuples, not {}".format(params.__class__.__name__))
+                raise ClientException("`params` must be a dict or list of tuples, not {}".format(params.__class__.__name__))
             if isinstance(params, list) and not all([isinstance(elem, tuple) for elem in params]):
-                raise ClientException("params list must all be tuples")
+                raise ClientException("`params` list must all be tuples")
         if data and not isinstance(data, dict):
-            raise ClientException("data must be a dict, not {}".format(data.__class__.__name__))
+            raise ClientException("`data` must be a dict, not {}".format(data.__class__.__name__))
 
     def _make_request(self, method, endpoint, **kwargs):
         if isinstance(kwargs.get('file_type'), string_types):
@@ -281,7 +281,7 @@ class Dhis(object):
 
         params = {} if not params else params
         if 'paging' in params:
-            raise ClientException("Can't set paging manually in params when using get_paged")
+            raise ClientException("Can't set paging manually in `params` when using `get_paged`")
         params['pageSize'] = page_size
         params['page'] = 1
         params['totalPages'] = True
@@ -355,18 +355,23 @@ class Dhis(object):
         :yield: response objects
         """
 
-        if not isinstance(json, dict) or len(json.keys()) != 1:
-            raise ClientException('Must submit exactly one key in payload (which needs to be a dict)'
-                                  ' - e.g. json={"dataElements": [...]"}')
+        if not isinstance(json, dict):
+            raise ClientException('Parameter `json` must be a dict')
         if not isinstance(thresh, int) or thresh < 2:
-            raise ClientException("thresh must be integer of 2 or larger")
+            raise ClientException("`thresh` must be integer of 2 or larger")
 
-        key = next(iter(json))  # the (only) key in the payload
-        if not json[key]:
-            raise ClientException("payload for key '{}' is empty".format(key))
-
-        for data in partition_payload(data=json, key=key, thresh=thresh):
-            yield self.post(endpoint, json=data, params=params)
+        try:
+            key = next(iter(json))  # the (only) key in the payload
+        except StopIteration:
+            raise ClientException("`json` is empty")
+        else:
+            if len(json.keys()) != 1:
+                raise ClientException('Must submit exactly one key in payload - e.g. json={"dataElements": [...]"}')
+            if not json.get(key):
+                raise ClientException("payload for key '{}' is empty".format(key))
+            else:
+                for data in partition_payload(data=json, key=key, thresh=thresh):
+                    yield self.post(endpoint, json=data, params=params)
 
     def generate_uids(self, amount, local=False):
         """
@@ -376,7 +381,7 @@ class Dhis(object):
         :return: list of UIDs
         """
         if not isinstance(amount, int) or amount < 1:
-            raise ClientException("amount must be integer > 0")
+            raise ClientException("`amount` must be integer > 0")
 
         uids = []
         if local:

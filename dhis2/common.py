@@ -7,9 +7,3 @@ if sys.version_info < (3,):
 else:
     import csv  # py3
     string_types = str
-
-
-try:
-    FileNotFoundError  # py3
-except NameError:
-    FileNotFoundError = IOError  # py2

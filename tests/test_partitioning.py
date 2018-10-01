@@ -48,8 +48,11 @@ def test_post_partitioned(api, payload, threshold, expected):
     },
     {
         "dataElements": []
-    }
-
+    },
+    ["dataElements", {}],
+    None,
+    3,
+    dict()  # stopIteration check, should raise because empty
 ])
 def test_post_partitioned_invalid(api, payload_invalid):
     with pytest.raises(exceptions.ClientException):

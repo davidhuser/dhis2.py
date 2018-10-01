@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import sys
 
 from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__
@@ -25,6 +26,4 @@ __all__ = (
 
 # Set default logging handler to avoid "No handler found" warnings.
 import logging
-from logging import NullHandler  # py 2.7+
-
-logging.getLogger(__name__).addHandler(NullHandler())
+logging.getLogger(__name__).addHandler(logging.NullHandler())
