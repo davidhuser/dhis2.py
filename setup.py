@@ -63,12 +63,12 @@ class TestCommand(Command):
         os.system('pipenv run python -m pytest tests')
 
 
-requires = [
-    'requests>=2.18.4,<3.0',
-    'unicodecsv>=0.14.1',
-    'logzero==1.5.0',
-    'pygments==2.2.0'
-]
+def get_requirements():
+    """Get requirements list."""
+    with open(os.path.join(here, 'requirements.txt')) as req_file:
+        requirements = req_file.read().splitlines()
+    return requirements
+
 
 test_requirements = [
     'pytest',
@@ -95,7 +95,7 @@ setup(
     keywords='dhis2',
     packages=find_packages(exclude=['tests', 'examples']),
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
-    install_requires=requires,
+    install_requires=get_requirements(),
     license=about['__license__'],
     zip_safe=False,
     classifiers=(
