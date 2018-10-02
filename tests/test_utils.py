@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import re
 import sys
@@ -6,6 +8,7 @@ from types import GeneratorType
 
 import pytest
 import responses
+import unicodecsv as csv
 
 from dhis2 import exceptions, Dhis
 from dhis2.utils import (
@@ -20,6 +23,8 @@ from dhis2.utils import (
 
 from .common import API_URL, BASEURL
 
+PY3 = sys.version_info[0] == 3
+
 
 @pytest.fixture  # BASE FIXTURE
 def api():
@@ -31,13 +36,13 @@ def csv_file():
     content = [
         'abc,def',
         '1,2',
-        '3,4'
+        '3,4',
+        'ñ,äü'
     ]
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'file.csv')
 
-    import csv
-    with open(filename, 'w') as f:
+    with open(filename, 'wb') as f:
         w = csv.writer(f, delimiter=',')
         w.writerows([x.split(',') for x in content])
     yield filename
@@ -46,13 +51,20 @@ def csv_file():
 
 def test_load_csv(csv_file):
     expected = [
-        {"abc": "1", "def": "2"},
-        {"abc": "3", "def": "4"}
+        {u"abc": u"1", "def": u"2"},
+        {u"abc": u"3", "def": u"4"},
+        {u"abc": u"ñ", "def": u"äü"}
     ]
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'file.csv')
     loaded = list(load_csv(filename))
     assert loaded == expected
+    for d in loaded:
+        for k, v in d.items():
+            if PY3:
+                assert isinstance(k, str) and isinstance(v, str)
+            else:
+                assert isinstance(k, basestring) and isinstance(v, basestring)
 
 
 def test_load_csv_not_found():
