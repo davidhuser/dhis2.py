@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import re
 import sys
@@ -6,6 +8,7 @@ from types import GeneratorType
 
 import pytest
 import responses
+import unicodecsv as csv
 
 from dhis2 import exceptions, Dhis
 from dhis2.utils import (
@@ -31,13 +34,13 @@ def csv_file():
     content = [
         'abc,def',
         '1,2',
-        '3,4'
+        '3,4',
+        'ñ,äü'
     ]
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'file.csv')
 
-    import csv
-    with open(filename, 'w') as f:
+    with open(filename, 'wb') as f:
         w = csv.writer(f, delimiter=',')
         w.writerows([x.split(',') for x in content])
     yield filename
@@ -47,7 +50,8 @@ def csv_file():
 def test_load_csv(csv_file):
     expected = [
         {"abc": "1", "def": "2"},
-        {"abc": "3", "def": "4"}
+        {"abc": "3", "def": "4"},
+        {"abc": "ñ", "def": "äü"}
     ]
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'file.csv')

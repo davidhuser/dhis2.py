@@ -1,4 +1,5 @@
 import codecs
+from six import string_types
 from contextlib import closing
 from itertools import chain
 
@@ -8,8 +9,8 @@ except ImportError:
     from urlparse import urlparse, urlunparse  # py2
 
 import requests
+from csv import DictReader
 
-from .common import string_types, csv
 from .exceptions import ClientException, APIException
 from .utils import (
     load_json,
@@ -336,7 +337,8 @@ class Dhis(object):
 
         def page_generator():
             with closing(self.get('sqlViews/{}/data'.format(uid), file_type='csv', params=params, stream=True)) as r:
-                reader = csv.DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
+                # do not need to use unicodecsv.DictReader as data comes in bytes already
+                reader = DictReader(codecs.iterdecode(r.iter_lines(), 'utf-8'), delimiter=',', quotechar='"')
                 for row in reader:
                     yield row
 

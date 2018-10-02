@@ -1,13 +1,16 @@
+# -*- coding: utf-8 -*-
+
 import json
 import os
 import random
 import string
+from six import string_types
 
+from unicodecsv import DictReader
 from pygments import highlight
 from pygments.lexers.data import JsonLexer
 from pygments.formatters.terminal import TerminalFormatter
 
-from .common import string_types, csv
 from .exceptions import ClientException
 
 
@@ -26,8 +29,8 @@ def load_csv(path, delimiter=','):
     :return: row (from generator)
     """
     try:
-        with open(path, 'r') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter=delimiter)
+        with open(path, 'rb') as csvfile:
+            reader = DictReader(csvfile, delimiter=delimiter)
             for row in reader:
                 yield row
     except (OSError, IOError):
