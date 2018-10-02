@@ -20,7 +20,7 @@ def check_opening_date(org_unit):
     ou_opening_date = org_unit['openingDate'][:-13]
 
     # parse the opening date to a Python date
-    opening_date = datetime.strptime(ou['openingDate'], '%Y-%m-%dT00:00:00.000')
+    opening_date = datetime.strptime(ou_opening_date, '%Y-%m-%d')
 
     msg = "Organisation Unit '{}' ({}) was opened {} 1990-01-01 on {}"
 
