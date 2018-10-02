@@ -1,12 +1,14 @@
 language: python
+sudo: required
+dist: xenial
 python:
   - '2.7'
   - '3.4'
   - '3.5'
   - '3.6'
- # - '3.7' --> https://github.com/travis-ci/travis-ci/issues/9815
-  - 'pypy2.7-5.10.0'
- # - 'pypy3.5-5.10.1' --> https://github.com/tox-dev/tox-travis/issues/114
+  - '3.7' # https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
+  - 'pypy'
+  - 'pypy3.5'
 install:
   - pip install coveralls
   - pip install tox-travis
