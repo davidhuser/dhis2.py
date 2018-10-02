@@ -23,6 +23,8 @@ from dhis2.utils import (
 
 from .common import API_URL, BASEURL
 
+PY3 = sys.version_info[0] == 3
+
 
 @pytest.fixture  # BASE FIXTURE
 def api():
@@ -49,14 +51,20 @@ def csv_file():
 
 def test_load_csv(csv_file):
     expected = [
-        {"abc": "1", "def": "2"},
-        {"abc": "3", "def": "4"},
-        {"abc": "ñ", "def": "äü"}
+        {u"abc": u"1", "def": u"2"},
+        {u"abc": u"3", "def": u"4"},
+        {u"abc": u"ñ", "def": u"äü"}
     ]
     tmp = tempfile.gettempdir()
     filename = os.path.join(tmp, 'file.csv')
     loaded = list(load_csv(filename))
     assert loaded == expected
+    for d in loaded:
+        for k, v in d.items():
+            if PY3:
+                assert isinstance(k, str) and isinstance(v, str)
+            else:
+                assert isinstance(k, basestring) and isinstance(v, basestring)
 
 
 def test_load_csv_not_found():
