@@ -14,21 +14,30 @@ api = Dhis('play.dhis2.org/dev', 'admin', 'district')
 setup_logger()
 
 
+def check_opening_date(org_unit):
+    ou_name = org_unit['name']
+    ou_uid = org_unit['id']
+    ou_opening_date = org_unit['openingDate'][:-13]
+
+    # parse the opening date to a Python date
+    opening_date = datetime.strptime(ou['openingDate'], '%Y-%m-%dT00:00:00.000')
+
+    msg = "Organisation Unit '{}' ({}) was opened {} 1990-01-01 on {}"
+
+    # compare date and print message
+    if opening_date > datetime(year=1990, month=1, day=1):
+        logger.warn(msg.format(ou_name, ou_uid, 'AFTER', ou_opening_date))
+    else:
+        logger.debug(msg.format(ou_name, ou_uid, 'BEFORE', ou_opening_date))
+
+
 def main():
     # get 50 organisation units per call to the API
     for page in api.get_paged('organisationUnits', params={'fields': 'id,name,openingDate'}):
 
         # loop through the organisation units received
         for ou in page['organisationUnits']:
-
-            # parse the opening date to a Python date
-            opening_date = datetime.strptime(ou['openingDate'], '%Y-%m-%dT00:00:00.000')
-
-            # compare date and print message
-            if opening_date > datetime(year=1990, month=1, day=1):
-                logger.warn("OU '{}' ({}) was opened AFTER 1990-01-01 on {}".format(ou['name'], ou['id'], ou['openingDate'][:-13]))
-            else:
-                logger.debug("OU '{}' ({}) was opened BEFORE 1990-01-01 on {}".format(ou['id'], ou['name'], ou['openingDate'][:-13]))
+            check_opening_date(ou)
 
 
 if __name__ == '__main__':
