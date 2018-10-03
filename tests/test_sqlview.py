@@ -17,7 +17,7 @@ def api():
 
 @pytest.fixture  # BASE FIXTURE
 def api_with_api_version():
-    return Dhis(BASEURL, 'admin', 'district', api_version=29)
+    return Dhis(BASEURL, 'admin', 'district', api_version=30)
 
 
 @pytest.fixture

@@ -36,7 +36,7 @@ Create an API object:
 
     from dhis2 import Dhis
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=29, user_agent='myApp/0.1')
+    api = Dhis('play.dhis2.org/demo', 'admin', 'district', api_version=30, user_agent='myApp/0.1')
 
 optional arguments:
 
@@ -75,16 +75,16 @@ Get info about the DHIS2 instance
 .. code:: python
 
     print(api.version)
-    # '2.29'
+    # '2.30'
 
     print(api.version_int)
-    # 29
+    # 30
 
     print(api.revision)
     # '17f7f0b'
 
     print(api.api_url)
-    # 'https://play.dhis2.org/2.29/api/29'
+    # 'https://play.dhis2.org/2.30/api/30'
 
 Load authentication from file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
-import sys
+
+"""
+dhis2.py - Python wrapper for DHIS2
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A Python library for DHIS2 wrapping requests (github.com/requests/requests)
+
+:copyright: (c) 2018 by David Huser
+:license: MIT, see LICENSE for more details.
+"""
 
 from .__version__ import __title__, __description__, __url__, __version__
 from .__version__ import __author__, __author_email__, __license__

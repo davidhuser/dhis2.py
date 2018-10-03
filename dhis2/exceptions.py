@@ -1,8 +1,17 @@
+# -*- coding: utf-8 -*-
+
+"""
+dhis2.exceptions
+~~~~~~~~~~~~~~~~~
+
+This module contains dhis2.py exceptions.
+"""
+
 import requests
 
 
 class Dhis2PyException(Exception):
-    """ Base exception for all"""
+    """ Base exception for all custom exceptions"""
 
 
 class APIException(Dhis2PyException, requests.RequestException):

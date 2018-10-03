@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+
+"""
+dhis2.logger
+~~~~~~~~~~~~~~~~~
+
+This module sets up logzero loggers.
+"""
+
 import logging
 import logzero
 

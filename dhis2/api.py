@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+
+"""
+dhis2.api
+~~~~~~~~~
+
+This module implements DHIS2 API operations via the Dhis class.
+"""
+
 import codecs
 from six import string_types
 from contextlib import closing
@@ -50,7 +59,6 @@ class Dhis(object):
 
     @base_url.setter
     def base_url(self, server):
-
         if '/api' in server:
             raise ClientException("Do not include /api/ in the DHIS2 `server` argument")
 
@@ -154,16 +162,15 @@ class Dhis(object):
         :param response: requests.response object
         :return: requests.response object
         """
-        if response.status_code == requests.codes.ok:
-            return response
+        try:
+            response.raise_for_status()
+        except requests.RequestException:
+            raise APIException(
+                code=response.status_code,
+                url=response.url,
+                description=response.text)
         else:
-            try:
-                response.raise_for_status()
-            except requests.RequestException:
-                raise APIException(
-                    code=response.status_code,
-                    url=response.url,
-                    description=response.text)
+            return response
 
     @staticmethod
     def _validate_request(endpoint, file_type='json', data=None, params=None):
@@ -187,6 +194,13 @@ class Dhis(object):
             raise ClientException("`data` must be a dict, not {}".format(data.__class__.__name__))
 
     def _make_request(self, method, endpoint, **kwargs):
+        """
+        Do the actual request with supplied HTTP method
+        :param method: HTTP method
+        :param endpoint: DHIS2 API endpoint
+        :param kwargs: keyword args
+        :return: response if ok, APIException if not
+        """
         if isinstance(kwargs.get('file_type'), string_types):
             file_type = kwargs['file_type'].lower()
         else:
@@ -220,12 +234,13 @@ class Dhis(object):
         return self._validate_response(r)
 
     def get(self, endpoint, file_type='json', params=None, stream=False):
-        """GET from DHIS2
+        """
+        GET from DHIS2
         :param endpoint: DHIS2 API endpoint
         :param file_type: DHIS2 API File Type (json, xml, csv), defaults to JSON
-        :param params: HTTP parameters (dict), defaults to None
+        :param params: HTTP parameters
         :param stream: use requests' stream parameter
-        :return: requests object
+        :return: requests.Response object
         """
         return self._make_request('get', endpoint, params=params, file_type=file_type, stream=stream)
 
@@ -233,46 +248,50 @@ class Dhis(object):
         """POST to DHIS2
         :param endpoint: DHIS2 API endpoint
         :param json: HTTP payload
-        :param params: HTTP parameters (dict)
-        :return: requests object
+        :param params: HTTP parameters
+        :return: requests.Response object
         """
         json = kwargs['data'] if 'data' in kwargs else json
         return self._make_request('post', endpoint, data=json, params=params)
 
     def put(self, endpoint, json=None, params=None, **kwargs):
-        """PUT to DHIS2
+        """
+        PUT to DHIS2
         :param endpoint: DHIS2 API endpoint
         :param json: HTTP payload
-        :param params: HTTP parameters (dict)
-        :return: requests object
+        :param params: HTTP parameters
+        :return: requests.Response object
         """
         json = kwargs['data'] if 'data' in kwargs else json
         return self._make_request('put', endpoint, data=json, params=params)
 
     def patch(self, endpoint, json=None, params=None, **kwargs):
-        """PATCH to DHIS2
+        """
+        PATCH to DHIS2
         :param endpoint: DHIS2 API endpoint
         :param json: HTTP payload
         :param params: HTTP parameters (dict)
-        :return: requests object
+        :return: requests.Response object
         """
         json = kwargs['data'] if 'data' in kwargs else json
         return self._make_request('patch', endpoint, data=json, params=params)
 
     def delete(self, endpoint):
-        """DELETE from DHIS2
+        """
+        DELETE from DHIS2
         :param endpoint: DHIS2 API endpoint
-        :return: requests object
+        :return: requests.Response object
         """
         return self._make_request('delete', endpoint)
 
     def get_paged(self, endpoint, params=None, page_size=50, merge=False):
-        """GET with paging (for large payloads).
+        """
+        GET with paging (for large payloads).
         :param page_size: how many objects per page
         :param endpoint: DHIS2 API endpoint
         :param params: HTTP parameters (dict), defaults to None
         :param merge: If true, return a list containing all pages instead of one page. Defaults to False.
-        :return: normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
+        :return: generator OR a normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
         try:
             if not isinstance(page_size, (string_types, int)) or int(page_size) < 1:
@@ -290,6 +309,7 @@ class Dhis(object):
         collection = endpoint.split('/')[0]  # only use e.g. events when submitting events/query as endpoint
 
         def page_generator():
+            """Yield pages"""
             page = self.get(endpoint=endpoint, file_type='json', params=params).json()
             page_count = page['pager']['pageCount']
             yield page
@@ -308,12 +328,14 @@ class Dhis(object):
             return {collection: list(chain.from_iterable(data))}
 
     def get_sqlview(self, uid, execute=False, var=None, criteria=None, merge=False):
-        """GET SQL View data
+        """
+        GET SQL View data
         :param uid: sqlView UID
         :param execute: materialize sqlView before downloading its data
         :param var: for QUERY types, a dict of variables to query the sqlView
         :param criteria: for VIEW / MATERIALIZED_VIEW types, a dict of criteria to filter the sqlView
         :param merge: If true, return a list containing all pages instead of one page. Defaults to False.
+        :return: a list OR generator where __next__ is a 'row' of the SQL View
         """
         params = {}
         sqlview_type = self.get('sqlViews/{}'.format(uid), params={'fields': 'type'}).json().get('type')
@@ -354,7 +376,7 @@ class Dhis(object):
         :param json: payload dict
         :param params: request parameters
         :param thresh: the maximum amount to partition into
-        :yield: response objects
+        :return: generator where __next__ is a requests.Response object
         """
 
         if not isinstance(json, dict):
@@ -377,9 +399,9 @@ class Dhis(object):
 
     def generate_uids(self, amount, local=False):
         """
-        Create UIDs on the server
+        Create DHIS2 UIDs
         :param amount: the number of UIDs to generate
-        :param local: create UIDs locally (no API calls to generate)
+        :param local: create UIDs locally (no API calls to generate). A tiny probability of a collision exists.
         :return: list of UIDs
         """
         if not isinstance(amount, int) or amount < 1:

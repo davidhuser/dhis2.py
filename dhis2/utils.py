@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
 
+"""
+dhis2.utils
+~~~~~~~~~~~
+
+This module provides utility functions that are used within dhis2.py
+but also can be loaded externally, e.g. from dhis2.utils import create_uid()
+"""
+
 import json
 import os
 import random
@@ -15,7 +23,8 @@ from .exceptions import ClientException
 
 
 def load_csv(path, delimiter=','):
-    """Yield CSV rows.
+    """
+    Load CSV file from path and yield CSV rows
 
     Usage:
 
@@ -26,7 +35,7 @@ def load_csv(path, delimiter=','):
 
     :param path: file path
     :param delimiter: CSV delimiter
-    :return: row (from generator)
+    :return: a generator where __next__ is a row of the CSV
     """
     try:
         with open(path, 'rb') as csvfile:
@@ -38,9 +47,10 @@ def load_csv(path, delimiter=','):
 
 
 def load_json(path):
-    """Load JSON file from path
+    """
+    Load JSON file from path
     :param path: file path
-    :return: dict
+    :return: A Python object (e.g. a dict)
     """
     try:
         with open(path, 'r') as json_file:
@@ -53,17 +63,19 @@ def chunk_number(num, thresh=10000):
     """
     Chunk a number into a list of numbers
     :param num: the number to chunk
-    :param thresh: the maximum value of a chunk
+    :param thresh: the maximum value of a chunk. 10000 is the max limit for system/id endpoint.
+    :return: a generator where __next__ is the next number
     """
     while num:
-        to_yield = min(num, thresh)
-        yield to_yield
-        num -= to_yield
+        chunk = min(num, thresh)
+        yield chunk
+        num -= chunk
 
 
 def partition_payload(data, key, thresh):
     """
-    Yield partitions of a payload.
+    Yield partitions of a payload
+
     e.g. with a threshold of 2:
 
     { "dataElements": [1, 2, 3] }
@@ -75,7 +87,7 @@ def partition_payload(data, key, thresh):
     :param data: the payload
     :param key: the key of the dict to partition
     :param thresh: the maximum value of a chunk
-    :yield: a partition of the payload
+    :return: a generator where __next__ is a partition of the payload
     """
     data = data[key]
     for i in range(0, len(data), thresh):
@@ -123,8 +135,9 @@ def create_uid():
     ^[A-Za-z][A-Za-z0-9]{10}$
     :return: UID string
     """
-
+    # first must be a letter
     first = random.choice(string.ascii_letters)
+    # rest must be letters or numbers
     rest = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
     return first + rest
 

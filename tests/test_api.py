@@ -21,7 +21,7 @@ def api():
 
 @pytest.fixture  # BASE FIXTURE
 def api_with_api_version():
-    return Dhis(BASEURL, 'admin', 'district', api_version=29)
+    return Dhis(BASEURL, 'admin', 'district', api_version=30)
 
 # ------------------
 # GENERAL API STUFF
@@ -82,7 +82,7 @@ def test_delete(api):
 @responses.activate
 def test_info(api):
     url = '{}/system/info.json'.format(API_URL)
-    r = {"contextPath": "https://play.dhis2.org/2.29"}
+    r = {"contextPath": "https://play.dhis2.org/2.30"}
 
     responses.add(responses.GET, url, json=r, status=200)
 

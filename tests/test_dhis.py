@@ -20,7 +20,7 @@ def api():
 
 @pytest.fixture  # BASE FIXTURE
 def api_with_api_version():
-    return Dhis(BASEURL, 'admin', 'district', api_version=29)
+    return Dhis(BASEURL, 'admin', 'district', api_version=30)
 
 
 @pytest.mark.parametrize("entered,expected", [
@@ -50,8 +50,8 @@ def test_base_url_with_api():
 
 
 def test_base_url_api_version():
-    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29)
-    assert api.api_url == 'https://play.dhis2.org/demo/api/29'
+    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 30)
+    assert api.api_url == 'https://play.dhis2.org/demo/api/30'
     assert api.username == 'admin'
 
 
@@ -66,12 +66,12 @@ def test_base_url_api_version_below_25():
 
 
 def test_user_agent():
-    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29, user_agent='customLib/0.0.1')
+    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 30, user_agent='customLib/0.0.1')
     assert 'user-agent' in api.session.headers and api.session.headers['user-agent'] == 'customLib/0.0.1'
 
 
 def test_user_agent_not_set():
-    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 29)
+    api = Dhis('https://play.dhis2.org/demo', 'admin', 'district', 30)
     assert 'user-agent' in api.session.headers and api.session.headers['user-agent']
 
 
@@ -81,7 +81,7 @@ def test_session():
 
 
 def test_api_version(api_with_api_version):
-    assert api_with_api_version.api_version == 29
+    assert api_with_api_version.api_version == 30
     assert len(responses.calls) == 0
 
 
