@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+1.6.2
+-----
+- various minor bug fixes and clean up
+
 1.6.1
 -----
 - argument ``local`` to ``.generate_uids()`` to create UIDs locally (no network calls to DHIS2)
