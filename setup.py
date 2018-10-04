@@ -98,9 +98,10 @@ setup(
     install_requires=requirements,
     license=about['__license__'],
     zip_safe=False,
-    classifiers=(
+    classifiers=(  # https://pypi.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
