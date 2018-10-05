@@ -12,7 +12,7 @@ import json
 import os
 import random
 import string
-from six import string_types
+from six import string_types, iteritems
 
 from unicodecsv import DictReader
 from pygments import highlight
@@ -154,3 +154,33 @@ def pretty_json(obj):
             raise ClientException("`obj` is not a json string")
     json_str = json.dumps(obj, sort_keys=True, indent=2)
     print(highlight(json_str, JsonLexer(), TerminalFormatter()))
+
+
+def clean_obj(obj, remove):
+    """
+    Recursively remove keys from list/dict/dict-of-lists/list-of-keys/nested ...,
+     e.g. remove all sharing keys or remove all 'user' fields
+    This should result in the same as if running in bash: `jq del(.. | .publicAccess?, .userGroupAccesses?)`
+    :param obj: the dict to remove keys from
+    :param remove: keys to remove - can be a string or iterable
+    """
+    if isinstance(remove, string_types):
+        remove = [remove]
+    try:
+        iter(remove)
+    except TypeError:
+        raise ClientException("`remove` could not be removed from object: {}".format(repr(remove)))
+    else:
+        if isinstance(obj, dict):
+            obj = {
+                key: clean_obj(value, remove)
+                for key, value in iteritems(obj)
+                if key not in remove
+            }
+        elif isinstance(obj, list):
+            obj = [
+                clean_obj(item, remove)
+                for item in obj
+                if item not in remove
+            ]
+        return obj

@@ -359,6 +359,39 @@ Create UIDs on the server (not limited to 10000):
 If you want UIDs generated locally (no server calls), add ``local=True``.
 
 
+Clean an object
+^^^^^^^^^^^^^^^^
+
+Useful for removing e.g. all ``user`` or ``userGroupAccesses`` from an object.
+
+.. code:: python
+
+    from dhis2 import clean_obj
+
+    # obj = {
+    #   "dataElements": [
+    #       {
+    #           "name": "GL- DE001",
+    #           "user": {
+    #               "id": "gONaRemoveThis"
+    #           }
+    #       }
+    #   ]
+    # }
+
+    cleaned = clean_obj(obj, 'user')
+    print(cleaned)
+
+    # obj = {
+    #     "dataElements": [
+    #         {
+    #             "name": "GL- DE001",
+    #         }
+    #     ]
+    # }
+
+Submit more keys to remove by wrapping them into a list or set. This works recursively.
+
 Print pretty JSON
 ^^^^^^^^^^^^^^^^^
 
@@ -431,13 +464,16 @@ Examples
 * Real-world script examples can be found in the ``examples`` folder.
 * dhis2.py is used in `dhis2-pk <https://github.com/davidhuser/dhis2-pk>`_ (dhis2-pocket-knife)
 
+Changelog
+==========
+
+Versions `changelog <https://github.com/davidhuser/dhis2.py/blob/master/CHANGELOG.rst>`_
 
 Contribute
 ==========
 
 Feedback welcome!
 
-- Check the `changelog <https://github.com/davidhuser/dhis2.py/blob/master/CHANGELOG.rst>`_
 - Add `issue <https://github.com/davidhuser/dhis2.py/issues/new>`_
 - Install the dev environment (see below)
 - Fork, add changes to *master* branch, ensure tests pass with full coverage and add a Pull Request

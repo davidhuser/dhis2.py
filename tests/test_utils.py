@@ -18,7 +18,8 @@ from dhis2.utils import (
     partition_payload,
     version_to_int,
     create_uid,
-    pretty_json
+    pretty_json,
+    clean_obj
 )
 
 from .common import API_URL, BASEURL
@@ -177,3 +178,101 @@ def test_pretty_json(capsys, obj):
 def test_pretty_json_not_json_string(obj):
     with pytest.raises(exceptions.ClientException):
         pretty_json(obj)
+
+
+@pytest.mark.parametrize("obj,key_to_clean,expected", [
+    (  # remove sharing
+        {
+            'dataElements': [{
+                'id': 'abc',
+                'publicAccess': '1',
+                'userGroupAccesses': [1, 2, 3]
+            }]
+        },
+        ["userGroupAccesses"],
+        {
+            'dataElements': [{
+                'id': 'abc',
+                'publicAccess': '1',
+            }]
+        }
+    ),
+    (  # nested dict still works
+        {
+            'dataElements': [{
+                'id': 'abc',
+                'publicAccess': '1',
+                'userGroupAccesses': [{"userGroupAccesses": [1, 2, 3]}]
+            }]
+        },
+        ["userGroupAccesses"],
+        {
+            'dataElements': [{
+                'id': 'abc',
+                'publicAccess': '1',
+            }]
+        }
+    ),
+    (  # works even with `remove` being just a string
+            {
+                'dataElements': [{
+                    'id': 'abc',
+                    'publicAccess': '1',
+                    'userGroupAccesses': [1, 2, 3]
+                }]
+            },
+            "userGroupAccesses",
+            {
+                'dataElements': [{
+                    'id': 'abc',
+                    'publicAccess': '1',
+                }]
+            }
+    ),
+    (  # works with no keys matching
+            {
+                'dataElements': [{
+                    'id': 'abc',
+                    'publicAccess': '1',
+                }]
+            },
+            "notHere",
+            {
+                'dataElements': [{
+                    'id': 'abc',
+                    'publicAccess': '1',
+                }]
+            }
+    ),
+    ({}, {}, {}),
+    ({}, 'justChecking', {}),
+    (None, 'hello', None),
+    ([[1, 3], (1, 2), [3]]),
+])
+def test_remove_keys(obj, key_to_clean, expected):
+    assert clean_obj(obj, key_to_clean) == expected
+
+
+@pytest.mark.parametrize("obj,key_to_clean,expected", [
+    ([1, None, 1]),
+    (
+            {
+                'a': 1,
+                'b': 2
+            },
+            None,
+            '_'
+    ),
+    (
+            {
+                None: 1,
+                'b': 2
+            },
+            None,
+            '_'
+    ),
+    (None, None, None)
+])
+def test_remove_keys_invalid(obj, key_to_clean, expected):
+    with pytest.raises(exceptions.ClientException):
+        _ = clean_obj(obj, key_to_clean) == expected

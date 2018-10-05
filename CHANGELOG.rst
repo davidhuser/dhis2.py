@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+1.7.0
+------
+- ``clean_obj`` to recursively remove e.g. `userGroupAccesses` keys from an object
+
 1.6.2
 -----
 - various minor bug fixes and clean up

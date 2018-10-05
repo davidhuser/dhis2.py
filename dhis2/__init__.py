@@ -15,7 +15,12 @@ from .__version__ import __author__, __author_email__, __license__
 
 from .api import Dhis
 from .exceptions import Dhis2PyException, APIException, ClientException
-from .utils import load_json, load_csv, pretty_json
+from .utils import (
+    load_json,
+    load_csv,
+    pretty_json,
+    clean_obj
+)
 from .logger import setup_logger
 from logzero import logger as logger
 
@@ -29,7 +34,8 @@ __all__ = (
     'logger',
     'load_json',
     'load_csv',
-    'pretty_json'
+    'pretty_json',
+    'clean_obj'
 )
 
 
