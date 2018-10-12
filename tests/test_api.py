@@ -69,11 +69,11 @@ def test_patch(api):
 
 @responses.activate
 def test_delete(api):
-    url = '{}/organisationUnits/uid'.format(API_URL)
+    url = '{}/organisationUnits/uid?a=b'.format(API_URL)
 
     responses.add(responses.DELETE, url, status=200)
 
-    api.delete(endpoint='organisationUnits/uid')
+    api.delete(endpoint='organisationUnits/uid', params={'a': 'b'})
 
     assert len(responses.calls) == 1
     assert responses.calls[0].request.url == url

@@ -226,7 +226,7 @@ class Dhis(object):
             r = self.session.patch(url=url, json=data, params=params)
 
         elif method == 'delete':
-            r = self.session.delete(url=url)
+            r = self.session.delete(url=url, params=params)
 
         else:
             raise ClientException("Non-supported HTTP method: {}".format(method))
@@ -276,13 +276,14 @@ class Dhis(object):
         json = kwargs['data'] if 'data' in kwargs else json
         return self._make_request('patch', endpoint, data=json, params=params)
 
-    def delete(self, endpoint):
+    def delete(self, endpoint, params=None):
         """
         DELETE from DHIS2
         :param endpoint: DHIS2 API endpoint
+        :param params: HTTP parameters (dict)
         :return: requests.Response object
         """
-        return self._make_request('delete', endpoint)
+        return self._make_request('delete', endpoint, params=params)
 
     def get_paged(self, endpoint, params=None, page_size=50, merge=False):
         """
