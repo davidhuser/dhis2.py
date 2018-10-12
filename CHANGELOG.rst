@@ -2,9 +2,13 @@
 CHANGELOG
 =========
 
+1.7.1
+------
+- allow ``delete()`` to have params
+
 1.7.0
 ------
-- ``clean_obj`` to recursively remove e.g. `userGroupAccesses` keys from an object
+- ``clean_obj`` to recursively remove e.g. ``userGroupAccesses`` keys from an object
 - require ``six`` as a dependency
 
 1.6.2
