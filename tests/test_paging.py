@@ -18,7 +18,7 @@ def api_with_api_version():
 
 
 @pytest.mark.parametrize("endpoint,page_size,no_of_pages,expected_amount", [
-    ('organisationUnits', 1000, 3, 2005),
+    ('organisationUnits', 1000, 3, 2005),  # 1000 * (3-1) + 5 = 2005
     ('events', 50, 6, 255),
     ('trackedEntityInstances', 50, 1, 50),
     ('enrollments', 50, 6, 255),
@@ -40,7 +40,7 @@ def test_get_paged_merge(api, endpoint, page_size, no_of_pages, expected_amount)
                 "total": expected_amount,
                 "pageSize": page_size
             },
-            "organisationUnits": [str(uuid.uuid4()) for _ in range(expected_amount)]
+            collection: [str(uuid.uuid4()) for _ in range(expected_amount)]
         }
         url = '{}/{}.json?pageSize={}&page=1&totalPages=True'.format(API_URL, endpoint, page_size)
         responses.add(responses.GET, url, json=r, status=200)
@@ -58,7 +58,7 @@ def test_get_paged_merge(api, endpoint, page_size, no_of_pages, expected_amount)
                 },
                 collection: [str(uuid.uuid4()) for _ in range(page_size)]
             }
-            url = '{}/{}.json?pageSize={}&totalPages=True&page={}'.format(API_URL, endpoint, page_size, i)
+            url = '{}/{}.json?pageSize={}&page={}&totalPages=True'.format(API_URL, endpoint, page_size, i)
             responses.add(responses.GET, url, json=r, status=200)
 
         # last page containing only 5 objects (overflow value)
@@ -72,10 +72,9 @@ def test_get_paged_merge(api, endpoint, page_size, no_of_pages, expected_amount)
             },
             collection: [str(uuid.uuid4()) for _ in range(overflow)]
         }
-        url = '{}/{}.json?pageSize={}&totalPages=true&page={}'.format(API_URL, endpoint, page_size, no_of_pages)
+        url = '{}/{}.json?pageSize={}&page={}&totalPages=True'.format(API_URL, endpoint, page_size, no_of_pages)
         responses.add(responses.GET, url, json=last_page, status=200)
-
-        data = api.get_paged(endpoint, merge=True)
+        data = api.get_paged(endpoint, merge=True, page_size=page_size)
         assert len(data[collection]) == expected_amount
         assert len(responses.calls) == no_of_pages
 
