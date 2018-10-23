@@ -42,7 +42,7 @@ def test_get_paged_merge(api, endpoint, page_size, no_of_pages, expected_amount)
             },
             "organisationUnits": [str(uuid.uuid4()) for _ in range(expected_amount)]
         }
-        url = '{}/{}.json?pageSize={}&totalPages=true&page=1'.format(API_URL, endpoint, page_size)
+        url = '{}/{}.json?pageSize={}&page=1&totalPages=True'.format(API_URL, endpoint, page_size)
         responses.add(responses.GET, url, json=r, status=200)
 
     # multi-page response
@@ -58,7 +58,7 @@ def test_get_paged_merge(api, endpoint, page_size, no_of_pages, expected_amount)
                 },
                 collection: [str(uuid.uuid4()) for _ in range(page_size)]
             }
-            url = '{}/{}.json?pageSize={}&totalPages=true&page={}'.format(API_URL, endpoint, page_size, i)
+            url = '{}/{}.json?pageSize={}&totalPages=True&page={}'.format(API_URL, endpoint, page_size, i)
             responses.add(responses.GET, url, json=r, status=200)
 
         # last page containing only 5 objects (overflow value)
@@ -105,7 +105,7 @@ def test_get_paged_generator(api, endpoint, page_size, no_of_pages, expected_amo
             },
             "organisationUnits": [str(uuid.uuid4()) for _ in range(expected_amount)]
         }
-        url = '{}/{}.json?pageSize={}&totalPages=true&page=1'.format(API_URL, endpoint, page_size)
+        url = '{}/{}.json?pageSize={}&page=1&totalPages=True'.format(API_URL, endpoint, page_size)
         responses.add(responses.GET, url, json=r, status=200)
 
     # multi-page response
@@ -121,7 +121,7 @@ def test_get_paged_generator(api, endpoint, page_size, no_of_pages, expected_amo
                 },
                 collection: [str(uuid.uuid4()) for _ in range(page_size)]
             }
-            url = '{}/{}.json?pageSize={}&totalPages=true&page={}'.format(API_URL, endpoint, page_size, i)
+            url = '{}/{}.json?pageSize={}&page={}&totalPages=True'.format(API_URL, endpoint, page_size, i)
             responses.add(responses.GET, url, json=r, status=200)
 
         # last page containing only 5 objects (overflow value)
@@ -135,7 +135,7 @@ def test_get_paged_generator(api, endpoint, page_size, no_of_pages, expected_amo
             },
             collection: [str(uuid.uuid4()) for _ in range(overflow)]
         }
-        url = '{}/{}.json?pageSize={}&totalPages=true&page={}'.format(API_URL, endpoint, page_size, no_of_pages)
+        url = '{}/{}.json?pageSize={}&page={}&totalPages=True'.format(API_URL, endpoint, page_size, no_of_pages)
         responses.add(responses.GET, url, json=last_page, status=200)
 
         counter = 0
@@ -161,7 +161,7 @@ def test_get_paged_empty(api):
         },
         "organisationUnits": []
     }
-    url = '{}/organisationUnits.json?pageSize={}&totalPages=true&page=1'.format(API_URL, page_size)
+    url = '{}/organisationUnits.json?pageSize={}&page=1&totalPages=True'.format(API_URL, page_size)
     responses.add(responses.GET, url, json=first_page, status=200)
 
     data = api.get_paged('organisationUnits', page_size=50, merge=True)

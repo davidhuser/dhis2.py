@@ -128,7 +128,7 @@ def test_version_to_int(version, expected):
 @responses.activate
 def test_generate_uids(api):
     amount = 13000
-    url = '{}/system/id.json'.format(API_URL, amount)
+    url = '{}/system/id.json'.format(API_URL)
 
     responses.add_passthru(url)
     uids = api.generate_uids(amount)
