@@ -72,10 +72,10 @@ requirements = [
 ]
 
 test_requirements = [
-    'pytest',
-    'pytest-cov',
-    'pytest-rerunfailures',
-    'responses'
+    'pytest==3.9.2',
+    'pytest-cov==2.6.2',
+    'pytest-rerunfailures==4.2',
+    'responses==0.10.2'
 ]
 
 about = {}
