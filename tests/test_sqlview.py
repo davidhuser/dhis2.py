@@ -91,6 +91,7 @@ dataelementid,name,valueType\n
 
 @responses.activate
 def test_get_sqlview_variable_query_execute_throws(api, sql_view_query):  # noqa
+    responses.add(responses.POST, '{}/execute'.format(sql_view_query), status=200)
     with pytest.raises(exceptions.ClientException):
         for _ in api.get_sqlview(SQL_VIEW, execute=True, var={'valueType': 'INTEGER'}):
             continue
