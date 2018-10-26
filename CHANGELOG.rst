@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+1.7.2
+------
+- maintenance & testing environment: pin test dependencies, CI tests
+
 1.7.1
 ------
 - allow ``delete()`` to have params
