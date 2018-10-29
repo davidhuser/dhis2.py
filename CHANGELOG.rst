@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+1.7.3
+------
+- update *requests* to 2.20.0 due to `CVE-2018-18074 <https://nvd.nist.gov/vuln/detail/CVE-2018-18074>`_
+
 1.7.2
 ------
 - maintenance & testing environment: pin test dependencies, CI tests
