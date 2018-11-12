@@ -276,14 +276,16 @@ class Dhis(object):
         json = kwargs['data'] if 'data' in kwargs else json
         return self._make_request('patch', endpoint, data=json, params=params)
 
-    def delete(self, endpoint, params=None):
+    def delete(self, endpoint, json=None, params=None, **kwargs):
         """
         DELETE from DHIS2
         :param endpoint: DHIS2 API endpoint
+        :param json: HTTP payload
         :param params: HTTP parameters (dict)
         :return: requests.Response object
         """
-        return self._make_request('delete', endpoint, params=params)
+        json = kwargs['data'] if 'data' in kwargs else json
+        return self._make_request('delete', endpoint, data=json, params=params)
 
     def get_paged(self, endpoint, params=None, page_size=50, merge=False):
         """
