@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+1.8.0
+-----
+- allow ``delete()`` to have payload
+
 1.7.3
 ------
 - update *requests* to 2.20.0 due to `CVE-2018-18074 <https://nvd.nist.gov/vuln/detail/CVE-2018-18074>`_
