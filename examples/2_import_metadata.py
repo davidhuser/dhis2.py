@@ -1,4 +1,4 @@
-from dhis2 import Api, APIException, setup_logger, logger, load_json
+from dhis2 import Api, RequestException, setup_logger, logger, load_json
 
 """
 Import a metadata JSON file from your computer.
@@ -18,7 +18,7 @@ def main():
     try:
         # import metadata
         api.post('metadata.json', params={'preheatCache': False, 'strategy': 'CREATE'}, json=data)
-    except APIException as e:
+    except RequestException as e:
         logger.error("Import failed: {}".format(e))
     else:
         logger.info("Import successful!")

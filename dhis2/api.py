@@ -20,7 +20,7 @@ except ImportError:
 import requests
 from csv import DictReader
 
-from .exceptions import ClientException, APIException
+from .exceptions import ClientException, RequestException
 from .utils import (
     load_json,
     chunk_number,
@@ -158,14 +158,14 @@ class Api(object):
     @staticmethod
     def _validate_response(response):
         """
-        Return response if ok, raise APIException if not ok
+        Return response if ok, raise RequestException if not ok
         :param response: requests.response object
         :return: requests.response object
         """
         try:
             response.raise_for_status()
         except requests.RequestException:
-            raise APIException(
+            raise RequestException(
                 code=response.status_code,
                 url=response.url,
                 description=response.text)
@@ -199,7 +199,7 @@ class Api(object):
         :param method: HTTP method
         :param endpoint: DHIS2 API endpoint
         :param kwargs: keyword args
-        :return: response if ok, APIException if not
+        :return: response if ok, RequestException if not
         """
         if isinstance(kwargs.get('file_type'), string_types):
             file_type = kwargs['file_type'].lower()

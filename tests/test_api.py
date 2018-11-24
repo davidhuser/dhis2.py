@@ -108,7 +108,7 @@ def test_client_server_errors(api, status_code):
 
     responses.add(responses.GET, url, body='something failed', status=status_code)
 
-    with pytest.raises(exceptions.APIException) as e:
+    with pytest.raises(exceptions.RequestException) as e:
         api.get(endpoint='dataElements/foo')
     assert e.value.code == status_code
     assert e.value.url == url
