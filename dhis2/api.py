@@ -404,7 +404,7 @@ class Api(object):
         """
         Create DHIS2 UIDs
         :param amount: the number of UIDs to generate
-        :param local: create UIDs locally (no API calls to generate). A tiny probability of a collision exists.
+        :param local: create UIDs locally (no API calls to generate).
         :return: list of UIDs
         """
         if not isinstance(amount, int) or amount < 1:

@@ -131,7 +131,7 @@ def test_generate_uids(api):
     url = '{}/system/id.json'.format(API_URL)
 
     responses.add_passthru(url)
-    uids = api.generate_uids(amount)
+    uids = api.generate_uids(amount, local=False)
     assert isinstance(uids, list)
     assert len(uids) == amount
 
@@ -139,7 +139,7 @@ def test_generate_uids(api):
 @responses.activate
 def test_generate_uids_locally(api):
     amount = 1000
-    uids = api.generate_uids(amount, local=True)
+    uids = api.generate_uids(amount)
     assert isinstance(uids, list)
     assert len(uids) == amount
     assert len(set(uids)) == len(uids)
