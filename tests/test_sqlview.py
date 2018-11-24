@@ -2,7 +2,7 @@ import pytest
 import responses
 import time
 
-from dhis2 import exceptions, Dhis
+from dhis2 import exceptions, Api
 
 from .common import API_URL, BASEURL
 
@@ -12,12 +12,12 @@ SQL_VIEW = 'YOaOY605rzh'
 
 @pytest.fixture  # BASE FIXTURE
 def api():
-    return Dhis(BASEURL, 'admin', 'district')
+    return Api(BASEURL, 'admin', 'district')
 
 
 @pytest.fixture  # BASE FIXTURE
 def api_with_api_version():
-    return Dhis(BASEURL, 'admin', 'district', api_version=30)
+    return Api(BASEURL, 'admin', 'district', api_version=30)
 
 
 @pytest.fixture

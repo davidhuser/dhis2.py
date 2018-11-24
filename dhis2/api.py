@@ -4,7 +4,7 @@
 dhis2.api
 ~~~~~~~~~
 
-This module implements DHIS2 API operations via the Dhis class.
+This module implements DHIS2 API operations via the Api class.
 """
 
 import codecs
@@ -31,11 +31,11 @@ from .utils import (
 )
 
 
-class Dhis(object):
+class Api(object):
 
     def __init__(self, server, username, password, api_version=None, user_agent=None):
         """
-        Dhis API class
+        Api API class
         :param server: baseurl, e.g. 'play.dhis2.org/demo'
         :param username: DHIS2 username
         :param password: DHIS2 password
@@ -137,9 +137,9 @@ class Dhis(object):
         - DHIS_HOME
         - Home folder
         :param location: authentication file path
-        :param api_version: see Dhis
-        :param user_agent: see Dhis
-        :return: Dhis instance
+        :param api_version: see Api
+        :param user_agent: see Api
+        :return: Api instance
         """
         location = search_auth_file() if not location else location
 

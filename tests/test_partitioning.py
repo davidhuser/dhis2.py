@@ -1,13 +1,13 @@
 import pytest
 import responses
 
-from dhis2 import exceptions, Dhis
+from dhis2 import exceptions, Api
 from .common import BASEURL, API_URL
 
 
 @pytest.fixture  # BASE FIXTURE
 def api():
-    return Dhis(BASEURL, 'admin', 'district')
+    return Api(BASEURL, 'admin', 'district')
 
 
 @pytest.mark.parametrize("payload,threshold,expected", [

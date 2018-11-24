@@ -10,7 +10,7 @@ import pytest
 import responses
 import unicodecsv as csv
 
-from dhis2 import exceptions, Dhis
+from dhis2 import exceptions, Api
 from dhis2.utils import (
     load_csv,
     load_json,
@@ -29,7 +29,7 @@ PY3 = sys.version_info[0] == 3
 
 @pytest.fixture  # BASE FIXTURE
 def api():
-    return Dhis(BASEURL, 'admin', 'district')
+    return Api(BASEURL, 'admin', 'district')
 
 
 @pytest.fixture

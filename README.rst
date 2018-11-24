@@ -44,9 +44,9 @@ Create an API object:
 
 .. code:: python
 
-    from dhis2 import Dhis
+    from dhis2 import Api
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+    api = Api('play.dhis2.org/demo', 'admin', 'district')
 
 Then run requests on it:
 
@@ -74,7 +74,7 @@ Usage
 =====
 
 
-Dhis instance creation
+Api instance creation
 -----------------------
 
 Authentication in code
@@ -84,9 +84,9 @@ Create an API object
 
 .. code:: python
 
-    from dhis2 import Dhis
+    from dhis2 import Api
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+    api = Api('play.dhis2.org/demo', 'admin', 'district')
 
 optional arguments:
 
@@ -112,9 +112,9 @@ Must have the following structure:
 
 .. code:: python
 
-    from dhis2 import Dhis
+    from dhis2 import Api
 
-    api = Dhis.from_auth_file('path/to/auth.json', api_version=29, user_agent='myApp/1.0')
+    api = Api.from_auth_file('path/to/auth.json', api_version=29, user_agent='myApp/1.0')
 
 
 If no file path is specified, it tries to find a file called ``dish.json`` in:
@@ -228,7 +228,7 @@ Get SQL View data as if you'd open a CSV file, optimized for larger payloads, vi
 *Note:* Returns directly a JSON object, not a requests.response object unlike normal GETs.
 
 Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
-to use the ``stream=True`` parameter of the ``Dhis.get()`` method.
+to use the ``stream=True`` parameter of the ``Api.get()`` method.
 
 
 GET other content types

@@ -1,11 +1,11 @@
-from dhis2 import Dhis, APIException, setup_logger, logger, load_json
+from dhis2 import Api, APIException, setup_logger, logger, load_json
 
 """
 Import a metadata JSON file from your computer.
 """
 
-# Create a Dhis object
-api = Dhis('play.dhis2.org/dev', 'admin', 'district')
+# Create a Api object
+api = Api('play.dhis2.org/dev', 'admin', 'district')
 
 # setup the logger
 setup_logger(include_caller=False)
