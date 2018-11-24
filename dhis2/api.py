@@ -400,7 +400,7 @@ class Api(object):
                 for data in partition_payload(data=json, key=key, thresh=thresh):
                     yield self.post(endpoint, json=data, params=params)
 
-    def generate_uids(self, amount, local=False):
+    def generate_uids(self, amount, local=True):
         """
         Create DHIS2 UIDs
         :param amount: the number of UIDs to generate
