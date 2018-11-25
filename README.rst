@@ -348,7 +348,7 @@ Via a normal list, loaded fully into memory:
 Generate UIDs
 ^^^^^^^^^^^^^
 
-Create UIDs on the server (not limited to 10000):
+Create UIDs:
 
 .. code:: python
 
@@ -356,7 +356,21 @@ Create UIDs on the server (not limited to 10000):
     print(uids)
     # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
 
-If you want UIDs generated locally (no server calls), add ``local=True``.
+If you want UIDs generated on the server, add ``local=False``.
+
+
+Validate UID
+^^^^^^^^^^^^
+
+.. code:: python
+
+    uid = 'MmwcGkxy876'
+    print(is_valid_uid(uid))
+    # True
+
+    uid = 25329
+    print(is_valid_uid(uid))
+    # False
 
 
 Clean an object

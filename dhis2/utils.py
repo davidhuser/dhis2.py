@@ -10,6 +10,7 @@ but also can be loaded externally, e.g. from dhis2.utils import create_uid()
 
 import json
 import os
+import re
 import random
 import string
 from six import string_types, iteritems
@@ -140,6 +141,16 @@ def create_uid():
     # rest must be letters or numbers
     rest = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
     return first + rest
+
+
+def is_valid_uid(uid):
+    """
+    :return: True if it is a valid DHIS2 UID, False if not
+    """
+    pattern = r'^[A-Za-z][A-Za-z0-9]{10}$'
+    if not isinstance(uid, string_types):
+        return False
+    return bool(re.compile(pattern).match(uid))
 
 
 def pretty_json(obj):

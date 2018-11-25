@@ -18,6 +18,7 @@ from dhis2.utils import (
     partition_payload,
     version_to_int,
     create_uid,
+    is_valid_uid,
     pretty_json,
     clean_obj
 )
@@ -157,6 +158,14 @@ def test_generate_uids_amount_not_int(api, amount):
 def test_create_uids():
     uid_regex = r"^[A-Za-z][A-Za-z0-9]{10}$"
     assert all([re.match(uid_regex, uid) for uid in [create_uid() for _ in range(100000)]])
+
+
+@pytest.mark.parametrize("uid_list,result", [
+    ({'RAQaLoYJEuS', 'QTIquqiULFK', 'NqkDeV7vRTK', 'NyghHtH5oNm'}, True),
+    ({'RAQaLoYJEu', '', None, 123456}, False),
+])
+def test_is_uid(uid_list, result):
+    assert all([is_valid_uid(uid) is result for uid in uid_list])
 
 
 @pytest.mark.parametrize("obj", [
