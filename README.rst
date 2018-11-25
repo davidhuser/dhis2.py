@@ -180,18 +180,16 @@ Via a normal list, loaded fully into memory:
 
     data = list(load_csv('/path/to/file.csv'))
 
-Generate UIDs
-^^^^^^^^^^^^^
+Generate UID
+^^^^^^^^^^^^
 
-Create UIDs:
+Create UID:
 
 .. code:: python
 
-    uids = api.generate_uids(20000)
-    print(uids)
-    # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
-
-If you want UIDs generated on the server, add ``local=False``.
+    uid = generate_uid()
+    print(uid)
+    # 'Rp268JB6Ne4'
 
 
 Validate UID

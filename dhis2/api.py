@@ -23,19 +23,25 @@ from csv import DictReader
 from .exceptions import ClientException, RequestException
 from .utils import (
     load_json,
-    chunk_number,
     partition_payload,
     search_auth_file,
-    version_to_int,
-    create_uid
+    version_to_int
 )
 
 
 class Api(object):
+    """A Python interface to the DHIS2 API
 
+    Example usage:
+
+    from dhis2 import Api
+
+    api = Api('play.dhis2.org/demo', 'admin', 'district')
+
+    """
     def __init__(self, server, username, password, api_version=None, user_agent=None):
         """
-        Api API class
+
         :param server: baseurl, e.g. 'play.dhis2.org/demo'
         :param username: DHIS2 username
         :param password: DHIS2 password
@@ -399,22 +405,3 @@ class Api(object):
             else:
                 for data in partition_payload(data=json, key=key, thresh=thresh):
                     yield self.post(endpoint, json=data, params=params)
-
-    def generate_uids(self, amount, local=True):
-        """
-        Create DHIS2 UIDs
-        :param amount: the number of UIDs to generate
-        :param local: create UIDs locally (no API calls to generate).
-        :return: list of UIDs
-        """
-        if not isinstance(amount, int) or amount < 1:
-            raise ClientException("`amount` must be integer > 0")
-
-        uids = []
-        if local:
-            uids = [create_uid() for _ in range(amount)]
-        else:
-            for limit in chunk_number(amount):
-                codes = self.get('system/id', params={'limit': limit}).json()['codes']
-                uids.extend(codes)
-        return uids

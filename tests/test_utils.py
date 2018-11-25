@@ -7,17 +7,15 @@ import tempfile
 from types import GeneratorType
 
 import pytest
-import responses
 import unicodecsv as csv
 
 from dhis2 import exceptions, Api
 from dhis2.utils import (
     load_csv,
     load_json,
-    chunk_number,
     partition_payload,
     version_to_int,
-    create_uid,
+    generate_uid,
     is_valid_uid,
     pretty_json,
     clean_obj
@@ -80,17 +78,6 @@ def test_load_json_not_found():
         load_json('nothere.json')
 
 
-@pytest.mark.parametrize("amount,expected", [
-    (100, [100]),
-    (10000, [10000]),
-    (13000, [10000, 3000]),
-    (23000, [10000, 10000, 3000])
-])
-def test_chunk_number(amount, expected):
-    c = chunk_number(amount)
-    assert set(c) == set(expected)
-
-
 @pytest.mark.parametrize("payload,threshold,expected", [
     (
             {"dataElements": [1, 2, 3, 4, 5, 6, 7, 8]},
@@ -126,38 +113,9 @@ def test_version_to_int(version, expected):
     assert version_to_int(version) == expected
 
 
-@responses.activate
-def test_generate_uids(api):
-    amount = 13000
-    url = '{}/system/id.json'.format(API_URL)
-
-    responses.add_passthru(url)
-    uids = api.generate_uids(amount, local=False)
-    assert isinstance(uids, list)
-    assert len(uids) == amount
-
-
-@responses.activate
-def test_generate_uids_locally(api):
-    amount = 1000
-    uids = api.generate_uids(amount)
-    assert isinstance(uids, list)
-    assert len(uids) == amount
-    assert len(set(uids)) == len(uids)
-    assert len(responses.calls) == 0
-
-
-@pytest.mark.parametrize("amount", [
-    None, -1, 0, 100.5
-])
-def test_generate_uids_amount_not_int(api, amount):
-    with pytest.raises(exceptions.ClientException):
-        api.generate_uids(amount)
-
-
-def test_create_uids():
+def test_generate_uids():
     uid_regex = r"^[A-Za-z][A-Za-z0-9]{10}$"
-    assert all([re.match(uid_regex, uid) for uid in [create_uid() for _ in range(100000)]])
+    assert all([re.match(uid_regex, uid) for uid in [generate_uid() for _ in range(100000)]])
 
 
 @pytest.mark.parametrize("uid_list,result", [
