@@ -8,6 +8,8 @@ pytest = "*"
 pytest-cov = "*"
 pytest-rerunfailures = "*"
 responses = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
 
 [packages]
 unicodecsv = "*"
