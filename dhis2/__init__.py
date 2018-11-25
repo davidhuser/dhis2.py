@@ -19,7 +19,8 @@ from .utils import (
     load_json,
     load_csv,
     pretty_json,
-    clean_obj
+    clean_obj,
+    is_valid_uid
 )
 from .logger import setup_logger
 from logzero import logger as logger
@@ -35,7 +36,8 @@ __all__ = (
     'load_json',
     'load_csv',
     'pretty_json',
-    'clean_obj'
+    'clean_obj',
+    'is_valid_uid'
 )
 
 
