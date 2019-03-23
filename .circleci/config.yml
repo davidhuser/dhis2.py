@@ -11,7 +11,8 @@ jobs:
         environment:
           PIPENV_VENV_IN_PROJECT: true
 
-    working_directory: ~/repo
+    working_directory: ~/dhis2py
+    parallelism: 4
 
     steps:
       - checkout
