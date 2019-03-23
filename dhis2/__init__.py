@@ -20,6 +20,7 @@ from .utils import (
     load_csv,
     pretty_json,
     clean_obj,
+    generate_uid,
     is_valid_uid
 )
 from .logger import setup_logger
@@ -37,6 +38,7 @@ __all__ = (
     'load_csv',
     'pretty_json',
     'clean_obj',
+    'generate_uid',
     'is_valid_uid'
 )
 
