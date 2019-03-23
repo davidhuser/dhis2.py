@@ -12,7 +12,6 @@ jobs:
           PIPENV_VENV_IN_PROJECT: true
 
     working_directory: ~/dhis2py
-    parallelism: 4
 
     steps:
       - checkout
