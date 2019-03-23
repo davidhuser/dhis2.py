@@ -2,6 +2,12 @@
 CHANGELOG
 =========
 
+2.0.0
+-----
+- ``Dhis`` class was renamed to ``Api``
+- ``APIException`` was renamed to ``RequestException``
+- ``generate_uids`` was completely removed. Use ``generate_uid`` for a single UID, not requiring an existing ``Api`` instance.
+
 1.8.0
 -----
 - allow ``delete()`` to have payload

@@ -4,7 +4,7 @@
 dhis2.api
 ~~~~~~~~~
 
-This module implements DHIS2 API operations via the Dhis class.
+This module implements DHIS2 API operations via the Api class.
 """
 
 import codecs
@@ -20,22 +20,28 @@ except ImportError:
 import requests
 from csv import DictReader
 
-from .exceptions import ClientException, APIException
+from .exceptions import ClientException, RequestException
 from .utils import (
     load_json,
-    chunk_number,
     partition_payload,
     search_auth_file,
-    version_to_int,
-    create_uid
+    version_to_int
 )
 
 
-class Dhis(object):
+class Api(object):
+    """A Python interface to the DHIS2 API
 
+    Example usage:
+
+    from dhis2 import Api
+
+    api = Api('play.dhis2.org/demo', 'admin', 'district')
+
+    """
     def __init__(self, server, username, password, api_version=None, user_agent=None):
         """
-        Dhis API class
+
         :param server: baseurl, e.g. 'play.dhis2.org/demo'
         :param username: DHIS2 username
         :param password: DHIS2 password
@@ -137,9 +143,9 @@ class Dhis(object):
         - DHIS_HOME
         - Home folder
         :param location: authentication file path
-        :param api_version: see Dhis
-        :param user_agent: see Dhis
-        :return: Dhis instance
+        :param api_version: see Api
+        :param user_agent: see Api
+        :return: Api instance
         """
         location = search_auth_file() if not location else location
 
@@ -158,14 +164,14 @@ class Dhis(object):
     @staticmethod
     def _validate_response(response):
         """
-        Return response if ok, raise APIException if not ok
+        Return response if ok, raise RequestException if not ok
         :param response: requests.response object
         :return: requests.response object
         """
         try:
             response.raise_for_status()
         except requests.RequestException:
-            raise APIException(
+            raise RequestException(
                 code=response.status_code,
                 url=response.url,
                 description=response.text)
@@ -199,7 +205,7 @@ class Dhis(object):
         :param method: HTTP method
         :param endpoint: DHIS2 API endpoint
         :param kwargs: keyword args
-        :return: response if ok, APIException if not
+        :return: response if ok, RequestException if not
         """
         if isinstance(kwargs.get('file_type'), string_types):
             file_type = kwargs['file_type'].lower()
@@ -399,22 +405,3 @@ class Dhis(object):
             else:
                 for data in partition_payload(data=json, key=key, thresh=thresh):
                     yield self.post(endpoint, json=data, params=params)
-
-    def generate_uids(self, amount, local=False):
-        """
-        Create DHIS2 UIDs
-        :param amount: the number of UIDs to generate
-        :param local: create UIDs locally (no API calls to generate). A tiny probability of a collision exists.
-        :return: list of UIDs
-        """
-        if not isinstance(amount, int) or amount < 1:
-            raise ClientException("`amount` must be integer > 0")
-
-        uids = []
-        if local:
-            uids = [create_uid() for _ in range(amount)]
-        else:
-            for limit in chunk_number(amount):
-                codes = self.get('system/id', params={'limit': limit}).json()['codes']
-                uids.extend(codes)
-        return uids

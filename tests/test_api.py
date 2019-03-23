@@ -9,19 +9,19 @@ import pytest
 import responses
 
 from dhis2 import exceptions
-from dhis2.api import Dhis
+from dhis2.api import Api
 
 from .common import BASEURL, API_URL
 
 
 @pytest.fixture  # BASE FIXTURE
 def api():
-    return Dhis(BASEURL, 'admin', 'district')
+    return Api(BASEURL, 'admin', 'district')
 
 
 @pytest.fixture  # BASE FIXTURE
 def api_with_api_version():
-    return Dhis(BASEURL, 'admin', 'district', api_version=30)
+    return Api(BASEURL, 'admin', 'district', api_version=30)
 
 # ------------------
 # GENERAL API STUFF
@@ -108,7 +108,7 @@ def test_client_server_errors(api, status_code):
 
     responses.add(responses.GET, url, body='something failed', status=status_code)
 
-    with pytest.raises(exceptions.APIException) as e:
+    with pytest.raises(exceptions.RequestException) as e:
         api.get(endpoint='dataElements/foo')
     assert e.value.code == status_code
     assert e.value.url == url

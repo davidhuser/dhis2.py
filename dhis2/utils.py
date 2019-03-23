@@ -5,11 +5,11 @@ dhis2.utils
 ~~~~~~~~~~~
 
 This module provides utility functions that are used within dhis2.py
-but also can be loaded externally, e.g. from dhis2.utils import create_uid()
 """
 
 import json
 import os
+import re
 import random
 import string
 from six import string_types, iteritems
@@ -57,19 +57,6 @@ def load_json(path):
             return json.load(json_file)
     except (OSError, IOError):
         raise ClientException("File not found: {}".format(path))
-
-
-def chunk_number(num, thresh=10000):
-    """
-    Chunk a number into a list of numbers
-    :param num: the number to chunk
-    :param thresh: the maximum value of a chunk. 10000 is the max limit for system/id endpoint.
-    :return: a generator where __next__ is the next number
-    """
-    while num:
-        chunk = min(num, thresh)
-        yield chunk
-        num -= chunk
 
 
 def partition_payload(data, key, thresh):
@@ -129,7 +116,7 @@ def version_to_int(value):
         return
 
 
-def create_uid():
+def generate_uid():
     """
     Create DHIS2 UID matching to Regex
     ^[A-Za-z][A-Za-z0-9]{10}$
@@ -140,6 +127,16 @@ def create_uid():
     # rest must be letters or numbers
     rest = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(10))
     return first + rest
+
+
+def is_valid_uid(uid):
+    """
+    :return: True if it is a valid DHIS2 UID, False if not
+    """
+    pattern = r'^[A-Za-z][A-Za-z0-9]{10}$'
+    if not isinstance(uid, string_types):
+        return False
+    return bool(re.compile(pattern).match(uid))
 
 
 def pretty_json(obj):

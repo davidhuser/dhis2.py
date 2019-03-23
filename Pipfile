@@ -1,4 +1,5 @@
 [[source]]
+name = "pypi"
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 
@@ -7,12 +8,14 @@ pytest = "*"
 pytest-cov = "*"
 pytest-rerunfailures = "*"
 responses = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
 
 [packages]
 unicodecsv = "*"
 requests = "*"
 logzero = "*"
-pygments = "*"
+Pygments = "*"
 six = "*"
 
 [scripts]

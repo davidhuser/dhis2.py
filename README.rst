@@ -44,9 +44,9 @@ Create an API object:
 
 .. code:: python
 
-    from dhis2 import Dhis
+    from dhis2 import Api
 
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
+    api = Api('play.dhis2.org/demo', 'admin', 'district')
 
 Then run requests on it:
 
@@ -74,177 +74,12 @@ Usage
 =====
 
 
-Dhis instance creation
------------------------
-
-Authentication in code
-^^^^^^^^^^^^^^^^^^^^^^
-
-Create an API object
-
-.. code:: python
-
-    from dhis2 import Dhis
-
-    api = Dhis('play.dhis2.org/demo', 'admin', 'district')
-
-optional arguments:
-
-- ``api_version``: DHIS2 API version
-- ``user_agent``: submit your own User-Agent header. This is useful if you need to parse e.g. Nginx logs later.
-
-
-Authentication from file
-^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Load from a auth JSON file in order to not store credentials in scripts.
-Must have the following structure:
-
-.. code:: json
-
-    {
-      "dhis": {
-        "baseurl": "http://localhost:8080",
-        "username": "admin",
-        "password": "district"
-      }
-    }
-
-.. code:: python
-
-    from dhis2 import Dhis
-
-    api = Dhis.from_auth_file('path/to/auth.json', api_version=29, user_agent='myApp/1.0')
-
-
-If no file path is specified, it tries to find a file called ``dish.json`` in:
-
-1. the ``DHIS_HOME`` environment variable
-2. your Home folder
-
-
-Get info about the DHIS2 instance
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-API version as a string:
-
-.. code:: python
-
-    print(api.version)
-    # '2.30'
-
-API version as an integer:
-
-.. code:: python
-
-    print(api.version_int)
-    # 30
-
-API revision / build:
-
-.. code:: python
-
-    print(api.revision)
-    # '17f7f0b'
-
-API URL:
-
-.. code:: python
-
-    print(api.api_url)
-    # 'https://play.dhis2.org/demo/api/30'
-
-Base URL:
-
-.. code:: python
-
-    print(api.base_url)
-    # 'https://play.dhis2.org/demo'
-
-system info (this is persisted across the session):
-
-.. code:: python
-
-    print(api.info)
-    # {
-    #   "lastAnalyticsTableRuntime": "11 m, 51 s",
-    #   "systemId": "eed3d451-4ff5-4193-b951-ffcc68954299",
-    #   "contextPath": "https://play.dhis2.org/2.30",
-    #   ...
-
 
 
 Getting things
 --------------
 
-Normal method: ``api.get()``
 
-Paging
-^^^^^^
-
-Paging for larger GET requests via ``api.get_paged()``
-
-Two possible ways:
-
-a) Process every page as they come in:
-
-.. code:: python
-
-    for page in api.get_paged('organisationUnits', page_size=100):
-        print(page)
-        # { "organisationUnits": [ {...}, {...} ] } (100 organisationUnits)
-
-b) Load all pages before proceeding (this may take a long time) - to do this, do not use ``for`` and add ``merge=True``:
-
-.. code:: python
-
-    all_pages = api.get_paged('organisationUnits', page_size=100, merge=True):
-    print(all_pages)
-    # { "organisationUnits": [ {...}, {...} ] } (all organisationUnits)
-
-*Note:* Returns directly a JSON object, not a requests.response object unlike normal GETs.
-
-SQL Views
-^^^^^^^^^^
-
-Get SQL View data as if you'd open a CSV file, optimized for larger payloads, via ``api.get_sqlview()``
-
-.. code:: python
-
-    # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
-    for row in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
-        print(row)
-        # {'code': 'COC_358963', 'name': '0-11m'}
-
-    # similarly, poll a sqlView of type QUERY:
-    for row in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
-        print(row)
-
-    # if you want a list directly, cast it to a ``list`` or add ``merge=True``:
-    data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
-    # OR
-    # data = api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}, merge=True)
-
-*Note:* Returns directly a JSON object, not a requests.response object unlike normal GETs.
-
-Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
-to use the ``stream=True`` parameter of the ``Dhis.get()`` method.
-
-
-GET other content types
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Usually defaults to JSON but you can get other file types:
-
-.. code:: python
-
-    r = api.get('organisationUnits/Rp268JB6Ne4', file_type='xml')
-    print(r.text)
-    # <?xml version='1.0' encoding='UTF-8'?><organisationUnit ...
-
-    r = api.get('organisationUnits/Rp268JB6Ne4', file_type='pdf')
-    with open('/path/to/file.pdf', 'wb') as f:
-        f.write(r.content)
 
 
 Updating / deleting things
@@ -345,18 +180,40 @@ Via a normal list, loaded fully into memory:
 
     data = list(load_csv('/path/to/file.csv'))
 
-Generate UIDs
-^^^^^^^^^^^^^
+Generate UID
+^^^^^^^^^^^^
 
-Create UIDs on the server (not limited to 10000):
+Create UID:
 
 .. code:: python
 
-    uids = api.generate_uids(20000)
-    print(uids)
-    # ['Rp268JB6Ne4', 'fa7uwpCKIwa', ... ]
+    uid = generate_uid()
+    print(uid)
+    # 'Rp268JB6Ne4'
 
-If you want UIDs generated locally (no server calls), add ``local=True``.
+If you need a list of 1000 UIDs:
+
+.. code:: python
+
+    uids = [generate_uid() for _ in range(1000)]
+
+
+Validate UID
+^^^^^^^^^^^^
+
+.. code:: python
+
+    uid = 'MmwcGkxy876'
+    print(is_valid_uid(uid))
+    # True
+
+    uid = 25329
+    print(is_valid_uid(uid))
+    # False
+
+    uid = 'MmwcGkxy876 '
+    print(is_valid_uid(uid))
+    # False
 
 
 Clean an object
@@ -395,7 +252,7 @@ Submit more keys to remove by wrapping them into a list or set. This works recur
 Print pretty JSON
 ^^^^^^^^^^^^^^^^^
 
-Print easy-readable JSON objects with colors, utilizes `pygments <http://pygments.org/>`_.
+Print easy-readable JSON objects with colors, utilizes `Pygments <http://pygments.org/>`_.
 
 .. code:: python
 
@@ -404,7 +261,7 @@ Print easy-readable JSON objects with colors, utilizes `pygments <http://pygment
     obj = {"dataElements": [{"name": "Accute Flaccid Paralysis (Deaths < 5 yrs)", "id": "FTRrcoaog83", "aggregationType": "SUM"}]}
     pretty_json(obj)
 
-... prints:
+... prints (in a terminal it will have colors):
 
 .. code:: json
 
@@ -436,7 +293,7 @@ Logging utilizes `logzero <https://github.com/metachris/logzero>`_.
     setup_logger(logfile='/var/log/app.log')
 
     logger.info('my log message')
-    logger.warn('missing something')
+    logger.warning('missing something')
     logger.error('something went wrong')
     logger.exception('with stacktrace')
 
@@ -452,7 +309,7 @@ Exceptions
 
 There are two exceptions:
 
-- ``APIException``: DHIS2 didn't like what you requested. See the exception's ``code``, ``url`` and ``description``.
+- ``RequestException``: DHIS2 didn't like what you requested. See the exception's ``code``, ``url`` and ``description``.
 - ``ClientException``: Something didn't work with the client not involving DHIS2.
 
 They both inherit from ``Dhis2PyException``.

@@ -1,4 +1,4 @@
-from dhis2 import Dhis, APIException, setup_logger, logger
+from dhis2 import Api, RequestException, setup_logger, logger
 
 """
 Add "(updated)" to all Data Elements that contain "ANC" in its name.
@@ -6,8 +6,8 @@ Uses the method PUT.
 Print errors if it failed.
 """
 
-# Create a Dhis object
-api = Dhis('play.dhis2.org/dev', 'admin', 'district')
+# Create a Api object
+api = Api('play.dhis2.org/dev', 'admin', 'district')
 
 # setup the logger
 setup_logger()
@@ -36,7 +36,7 @@ def main():
         try:
             # Replace the dataElement on the server
             api.put('dataElements/{}'.format(de['id']), params={'mergeMode': 'REPLACE'}, json=de)
-        except APIException as e:
+        except RequestException as e:
             # Print errors returned from DHIS2
             logger.error("Updating DE '{}' ({}) failed: {}".format(de['name'], de['id'], e))
         else:

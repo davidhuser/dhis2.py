@@ -9,6 +9,28 @@ from setuptools import setup, find_packages, Command
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+requirements = [
+    'requests>=2.21.0,<3.0',
+    'unicodecsv>=0.14.1',
+    'logzero>=1.5.0',
+    'Pygments>=2.2.0',
+    'six'
+]
+
+test_requirements = [
+    'pytest==4.3.1',
+    'pytest-cov==2.6.1',
+    'pytest-rerunfailures==6.0',
+    'responses==0.10.6'
+]
+
+about = {}
+with open(os.path.join(here, 'dhis2', '__version__.py'), 'r', 'utf-8') as f:
+    exec(f.read(), about)
+
+with open('README.rst', 'r', 'utf-8') as f:
+    readme = f.read()
+
 
 class PublishCommand(Command):
     """Support setup.py publish."""
@@ -40,50 +62,12 @@ class PublishCommand(Command):
         self.status('Uploading the package to PyPi via Twine...')
         os.system('twine upload dist/*')
 
+        self.status('Pushing git tags...')
+        os.system('git tag v{0}'.format(about['__version__']))
+        os.system('git push --tags')
+
         sys.exit()
 
-
-class TestCommand(Command):
-    description = 'Run Unit tests.'
-    user_options = []
-
-    @staticmethod
-    def status(s):
-        """Prints things in bold."""
-        print('\033[1m{0}\033[0m'.format(s))
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        self.status('Testing with pytest...')
-        os.system('pipenv run python -m pytest tests')
-
-
-requirements = [
-    'requests>=2.20.0,<3.0',
-    'unicodecsv>=0.14.1',
-    'logzero>=1.5.0',
-    'pygments>=2.2.0',
-    'six'
-]
-
-test_requirements = [
-    'pytest==4.3.1',
-    'pytest-cov==2.6.1',
-    'pytest-rerunfailures==6.0',
-    'responses==0.10.6'
-]
-
-about = {}
-with open(os.path.join(here, 'dhis2', '__version__.py'), 'r', 'utf-8') as f:
-    exec(f.read(), about)
-
-with open('README.rst', 'r', 'utf-8') as f:
-    readme = f.read()
 
 setup(
     name=about['__title__'],
@@ -95,7 +79,7 @@ setup(
     url=about['__url__'],
     keywords='dhis2',
     packages=find_packages(exclude=['tests', 'examples']),
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     install_requires=requirements,
     license=about['__license__'],
     zip_safe=False,
@@ -110,11 +94,9 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: Implementation :: PyPy'
     ),
     cmdclass={
-        'publish': PublishCommand,
-        'test': TestCommand
+        'publish': PublishCommand
     },
     tests_require=test_requirements,
 )

@@ -1,14 +1,14 @@
 from datetime import datetime
 
-from dhis2 import Dhis, setup_logger, logger
+from dhis2 import Api, setup_logger, logger
 
 """
 Log every orgunit but use paging instead of fetching the whole result at once.
 Print a warning if the organisation unit was opened after January 1st 1990.
 """
 
-# Create a Dhis object
-api = Dhis('play.dhis2.org/dev', 'admin', 'district')
+# Create a Api object
+api = Api('play.dhis2.org/dev', 'admin', 'district')
 
 # setup the logger
 setup_logger()

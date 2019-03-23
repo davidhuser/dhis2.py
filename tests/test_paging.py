@@ -3,18 +3,18 @@ import uuid
 import pytest
 import responses
 
-from dhis2 import exceptions, Dhis
+from dhis2 import exceptions, Api
 from .common import API_URL, BASEURL
 
 
 @pytest.fixture  # BASE FIXTURE
 def api():
-    return Dhis(BASEURL, 'admin', 'district')
+    return Api(BASEURL, 'admin', 'district')
 
 
 @pytest.fixture  # BASE FIXTURE
 def api_with_api_version():
-    return Dhis(BASEURL, 'admin', 'district', api_version=29)
+    return Api(BASEURL, 'admin', 'district', api_version=29)
 
 
 @pytest.mark.parametrize("endpoint,page_size,no_of_pages,expected_amount", [
