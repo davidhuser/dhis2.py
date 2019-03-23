@@ -107,6 +107,8 @@ def test_partition_payload(payload, threshold, expected):
     ("2.30", 30),
     ("2.30-SNAPSHOT", 30),
     ("2.30-RC1", 30),
+    ("2.31.1", 31),
+    ("2.31.2", 31),
     ("unknown", None)
 ])
 def test_version_to_int(version, expected):
