@@ -499,11 +499,11 @@ See LICENCE for details.
    :target: https://pypi.org/project/dhis2.py
    :alt: PyPi version
 
-.. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=circle-ci&style=flat-square
+.. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=build-linux&style=flat-square
    :target: https://circleci.com/gh/davidhuser/dhis2.py
    :alt: CircleCI build
 
-.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor%20ci&style=flat-square
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=build-windows&style=flat-square
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
    :alt: Appveyor build
 
