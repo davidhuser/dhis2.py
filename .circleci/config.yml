@@ -17,10 +17,9 @@ jobs:
       - checkout
 
       - run:
-          name: install pipenv and dependencies
           command: |
             pip install --upgrade pip
-            pip install pipenv tox
+            pip install tox
 
       - run:
           name: run tests
