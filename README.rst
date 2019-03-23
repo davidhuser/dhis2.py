@@ -3,7 +3,7 @@ dhis2.py
 
 |Latest version| |Build| |BuildWin| |Coverage| |LGTM| |CodeClimate|
 
-A Python library for `DHIS2 <https://dhis2.org>`_ wrapping `requests <https://github.com/requests/requests>`_
+A Python library for `DHIS2 <https://dhis2.org>`_ wrapping `requests <http://docs.python-requests.org/en/master/user/quickstart/>`_
 for **general-purpose API interaction** with DHIS2. It attempts to be **useful for any data/metadata import tasks**
 including various utilities like file loading, UID generation and logging. A strong focus is on JSON.
 
@@ -16,22 +16,9 @@ Supported and tested on Python 2 and 3 on Linux/macOS, Windows and DHIS2 version
 Installation
 =============
 
-with ``pipenv``
-----------------
-
-Simply use `pipenv <https://docs.pipenv.org>`_:
-
 .. code:: bash
 
-    pipenv install dhis2.py --upgrade
-
-
-with ``pip``
-------------
-
-.. code:: bash
-
-    pip install dhis2.py --upgrade
+    pip install dhis2.py
 
 For instructions on installing Python / pip for your operating system see `The Hitchhiker's Guide to
 Python <http://docs.python-guide.org/en/latest/starting/installation/>`_.
@@ -40,7 +27,7 @@ Python <http://docs.python-guide.org/en/latest/starting/installation/>`_.
 Quickstart
 ==========
 
-Create an API object:
+Create an ``Api`` object:
 
 .. code:: python
 
@@ -69,16 +56,87 @@ Then run requests on it:
 
 see below for more methods.
 
+They all return a *Response* object from `requests <http://docs.python-requests.org/en/master/user/quickstart/>`_
+except noted otherwise. This means methods and attributes are equally available
+(e.g. ``Response.url``, ``Response.text``, ``Response.status_code`` etc.).
 
 Usage
 =====
 
 
-
-
 Getting things
 --------------
 
+Normal method: ``api.get()``
+
+Paging
+^^^^^^
+
+Paging for larger GET requests via ``api.get_paged()``
+
+Two possible ways:
+
+a) Process every page as they come in:
+
+.. code:: python
+
+    for page in api.get_paged('organisationUnits', page_size=100):
+        print(page)
+        # { "organisationUnits": [ {...}, {...} ] } (100 organisationUnits)
+
+b) Load all pages before proceeding (this may take a long time) - to do this, do not use ``for`` and add ``merge=True``:
+
+.. code:: python
+
+    all_pages = api.get_paged('organisationUnits', page_size=100, merge=True):
+    print(all_pages)
+    # { "organisationUnits": [ {...}, {...} ] } (all organisationUnits)
+
+*Note:* Returns directly a JSON object, not a requests.Response object unlike normal GETs.
+
+
+SQL Views
+^^^^^^^^^^
+
+Get SQL View data as if you'd open a CSV file, optimized for larger payloads, via ``api.get_sqlview()``
+
+.. code:: python
+
+    # poll a sqlView of type VIEW or MATERIALIZED_VIEW:
+    for row in api.get_sqlview('YOaOY605rzh', execute=True, criteria={'name': '0-11m'}):
+        print(row)
+        # {'code': 'COC_358963', 'name': '0-11m'}
+
+    # similarly, poll a sqlView of type QUERY:
+    for row in api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}):
+        print(row)
+
+    # if you want a list directly, cast it to a ``list`` or add ``merge=True``:
+    data = list(api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}))
+    # OR
+    # data = api.get_sqlview('qMYMT0iUGkG', var={'valueType': 'INTEGER'}, merge=True)
+
+*Note:* Returns directly a JSON object, not a requests.response object unlike normal GETs.
+
+Beginning of 2.26 you can also use normal filtering on sqlViews. In that case, it's recommended
+to use the ``stream=True`` parameter of the ``Dhis.get()`` method.
+
+
+
+GET other content types
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Usually defaults to JSON but you can get other file types:
+
+.. code:: python
+
+    r = api.get('organisationUnits/Rp268JB6Ne4', file_type='xml')
+    print(r.text)
+    # <?xml version='1.0' encoding='UTF-8'?><organisationUnit ...
+
+    r = api.get('organisationUnits/Rp268JB6Ne4', file_type='pdf')
+    with open('/path/to/file.pdf', 'wb') as f:
+        f.write(r.content)
 
 
 
@@ -183,7 +241,7 @@ Via a normal list, loaded fully into memory:
 Generate UID
 ^^^^^^^^^^^^
 
-Create UID:
+Create a DHIS2 UID:
 
 .. code:: python
 
@@ -191,7 +249,7 @@ Create UID:
     print(uid)
     # 'Rp268JB6Ne4'
 
-If you need a list of 1000 UIDs:
+To create a list of 1000 UIDs:
 
 .. code:: python
 
@@ -200,6 +258,8 @@ If you need a list of 1000 UIDs:
 
 Validate UID
 ^^^^^^^^^^^^
+
+Check if something is a valid DHIS2 UID:
 
 .. code:: python
 
@@ -219,35 +279,75 @@ Validate UID
 Clean an object
 ^^^^^^^^^^^^^^^^
 
-Useful for removing e.g. all ``user`` or ``userGroupAccesses`` from an object.
+Useful for deep-removing certain keys in an object,
+e.g. remove all sharing by recursively removing all ``user`` and ``userGroupAccesses`` fields.
 
 .. code:: python
 
     from dhis2 import clean_obj
 
-    # obj = {
-    #   "dataElements": [
-    #       {
-    #           "name": "GL- DE001",
-    #           "user": {
-    #               "id": "gONaRemoveThis"
-    #           }
-    #       }
-    #   ]
-    # }
+    metadata = {
+        "dataElements": [
+            {
+                "name": "ANC 1st visit",
+                "id": "fbfJHSPpUQD",
+                "publicAccess": "rw------",
+                "userGroupAccesses": [
+                    {
+                        "access": "r-r-----",
+                        "userGroupUid": "Rg8wusV7QYi",
+                        "displayName": "HIV Program Coordinators",
+                        "id": "Rg8wusV7QYi"
+                    },
+                    {
+                        "access": "rwr-----",
+                        "userGroupUid": "qMjBflJMOfB",
+                        "displayName": "Family Planning Program",
+                        "id": "qMjBflJMOfB"
+                    }
+                ]
+            }
+        ],
+        "dataSets": [
+            {
+                "name": "ART monthly summary",
+                "id": "lyLU2wR22tC",
+                "publicAccess": "rwr-----",
+                "userGroupAccesses": [
+                    {
+                        "access": "r-rw----",
+                        "userGroupUid": "GogLpGmkL0g",
+                        "displayName": "_DATASET_Child Health Program Manager",
+                        "id": "GogLpGmkL0g"
+                    }
+                ]
+            }
+        ]
+    }
 
-    cleaned = clean_obj(obj, 'user')
-    print(cleaned)
 
-    # obj = {
-    #     "dataElements": [
-    #         {
-    #             "name": "GL- DE001",
-    #         }
-    #     ]
-    # }
+    cleaned = clean_obj(metadata, ['userGroupAccesses', 'publicAccess'])
+    pretty_json(cleaned)
 
-Submit more keys to remove by wrapping them into a list or set. This works recursively.
+Which would eventually recursively remove all keys matching to ``userGroupAccesses`` or ``publicAccess``:
+
+.. code:: json
+
+    {
+      "dataElements": [
+        {
+          "name": "ANC 1st visit",
+          "id": "fbfJHSPpUQD"
+        }
+      ],
+      "dataSets": [
+        {
+          "name": "ART monthly summary",
+          "id": "lyLU2wR22tC"
+        }
+      ]
+    }
+
 
 Print pretty JSON
 ^^^^^^^^^^^^^^^^^
