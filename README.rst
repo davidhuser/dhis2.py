@@ -191,6 +191,12 @@ Create UID:
     print(uid)
     # 'Rp268JB6Ne4'
 
+If you need a list of 1000 UIDs:
+
+.. code:: python
+
+    uids = [generate_uid() for _ in range(1000)]
+
 
 Validate UID
 ^^^^^^^^^^^^
@@ -202,6 +208,10 @@ Validate UID
     # True
 
     uid = 25329
+    print(is_valid_uid(uid))
+    # False
+
+    uid = 'MmwcGkxy876 '
     print(is_valid_uid(uid))
     # False
 
@@ -242,7 +252,7 @@ Submit more keys to remove by wrapping them into a list or set. This works recur
 Print pretty JSON
 ^^^^^^^^^^^^^^^^^
 
-Print easy-readable JSON objects with colors, utilizes `pygments <http://pygments.org/>`_.
+Print easy-readable JSON objects with colors, utilizes `Pygments <http://pygments.org/>`_.
 
 .. code:: python
 
@@ -251,7 +261,7 @@ Print easy-readable JSON objects with colors, utilizes `pygments <http://pygment
     obj = {"dataElements": [{"name": "Accute Flaccid Paralysis (Deaths < 5 yrs)", "id": "FTRrcoaog83", "aggregationType": "SUM"}]}
     pretty_json(obj)
 
-... prints:
+... prints (in a terminal it will have colors):
 
 .. code:: json
 
@@ -283,7 +293,7 @@ Logging utilizes `logzero <https://github.com/metachris/logzero>`_.
     setup_logger(logfile='/var/log/app.log')
 
     logger.info('my log message')
-    logger.warn('missing something')
+    logger.warning('missing something')
     logger.error('something went wrong')
     logger.exception('with stacktrace')
 
