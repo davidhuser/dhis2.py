@@ -492,16 +492,16 @@ License
 dhis2.py's source is provided under MIT license.
 See LICENCE for details.
 
-* Copyright (c), 2018, David Huser
+* Copyright (c), 2019, David Huser
 
 
 .. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip&style=flat-square
    :target: https://pypi.org/project/dhis2.py
    :alt: PyPi version
 
-.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis%20ci&style=flat-square
-   :target: https://travis-ci.org/davidhuser/dhis2.py
-   :alt: Travis build
+.. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=circle-ci&style=flat-square
+   :target: https://circleci.com/gh/davidhuser/dhis2.py
+   :alt: CircleCI build
 
 .. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor%20ci&style=flat-square
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py

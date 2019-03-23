@@ -7,10 +7,6 @@ environment:
       PYTHON_VERSION: "2.7.x"
       PYTHON_ARCH: "64"
 
-    - PYTHON: "C:\\Python34-x64"
-      PYTHON_VERSION: "3.4.x"
-      PYTHON_ARCH: "64"
-
     - PYTHON: "C:\\Python35-x64"
       PYTHON_VERSION: "3.5.x"
       PYTHON_ARCH: "64"
@@ -37,10 +33,9 @@ install:
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
-  # install pip 9 (10.1.0) has a bug
   - "python -m pip install --upgrade pip --user"
   - "python -m pip install pipenv --user"
-  - "python -m pipenv install --dev --skip-lock"
+  - "python -m pipenv install --dev"
   - "python -m pipenv install funcsigs --dev"
 
 test_script:
