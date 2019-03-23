@@ -6,7 +6,7 @@ def test_setup_logger_default():
     from dhis2 import logger, setup_logger
     setup_logger()
     logger.info("info")
-    logger.warn("warn")
+    logger.warning("warn")
     logger.debug("debug")
     logger.error("error")
 
@@ -18,7 +18,7 @@ def test_setup_logger_to_file():
 
     setup_logger(logfile=filename)
     logger.info("info")
-    logger.warn("warn")
+    logger.warning("warn")
     logger.debug("debug")
     logger.error("error")
 
@@ -26,7 +26,6 @@ def test_setup_logger_to_file():
 
 
 def test_set_log_format():
-    from dhis2 import logger, setup_logger
     from dhis2.logger import _set_log_format
 
     color_true_caller_true = '%(color)s* %(levelname)1s%(end_color)s  %(asctime)s,%(msecs)03d  %(message)s [%(module)s:%(lineno)d]'  # noqa

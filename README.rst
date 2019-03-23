@@ -339,23 +339,23 @@ License
 dhis2.py's source is provided under MIT license.
 See LICENCE for details.
 
-* Copyright (c), 2018, David Huser
+* Copyright (c), 2019, David Huser
 
 
 .. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=pip&style=flat-square
    :target: https://pypi.org/project/dhis2.py
    :alt: PyPi version
 
-.. |Build| image:: https://img.shields.io/travis/davidhuser/dhis2.py/master.svg?label=travis%20ci&style=flat-square
-   :target: https://travis-ci.org/davidhuser/dhis2.py
-   :alt: Travis build
+.. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=build-linux&style=flat-square
+   :target: https://circleci.com/gh/davidhuser/dhis2.py
+   :alt: CircleCI build
 
-.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=appveyor%20ci&style=flat-square
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=build-windows&style=flat-square
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
    :alt: Appveyor build
 
-.. |Coverage| image:: https://img.shields.io/coveralls/davidhuser/dhis2.py/master.svg?style=flat-square
-   :target: https://coveralls.io/github/davidhuser/dhis2.py?branch=master
+.. |Coverage| image:: https://img.shields.io/codecov/c/github/davidhuser/dhis2.py.svg?style=flat-square
+   :target: https://codecov.io/gh/davidhuser/dhis2.py
    :alt: Test coverage
 
 .. |LGTM| image:: https://img.shields.io/lgtm/grade/python/g/davidhuser/dhis2.py.svg?label=code%20quality&style=flat-square
