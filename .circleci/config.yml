@@ -21,7 +21,6 @@ jobs:
           command: |
             pip install --upgrade pip
             pip install pipenv tox
-            pipenv install --dev
 
       - run:
           name: run tests
