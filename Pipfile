@@ -15,7 +15,7 @@ sphinx-rtd-theme = "*"
 unicodecsv = "*"
 requests = "*"
 logzero = "*"
-pygments = "*"
+Pygments = "*"
 six = "*"
 
 [scripts]
