@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+2.0.1
+-----
+- Maintenance release for documentation
+
 2.0.0
 -----
 - ``Dhis`` class was renamed to ``Api``
