@@ -19,7 +19,7 @@ jobs:
           name: install pip, tox, codecov
           command: |
             pip install --upgrade pip
-            pip install tox codecov
+            pip install tox codecov pathlib2
 
       - run:
           name: run unit tests
