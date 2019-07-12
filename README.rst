@@ -20,8 +20,7 @@ Installation
 
     pip install dhis2.py
 
-For instructions on installing Python / pip for your operating system see `The Hitchhiker's Guide to
-Python <http://docs.python-guide.org/en/latest/starting/installation/>`_.
+For instructions on installing Python / pip for your operating system see `realpython.com/installing-python <https://realpython.com/installing-python>`_.
 
 
 Quickstart
