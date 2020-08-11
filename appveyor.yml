@@ -42,7 +42,6 @@ install:
   - "python -Wignore -m pip install tox --user"
 
   - "python -Wignore -m pip install pipenv --user"
-  - "rm Pipfile.lock"
   - ps: $PIPENV_QUIET="true"
   - "python -Wignore -m pipenv install --dev"
 
