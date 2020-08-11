@@ -7,7 +7,7 @@ A Python library for `DHIS2 <https://dhis2.org>`_ wrapping `requests <http://doc
 for **general-purpose API interaction** with DHIS2. It attempts to be **useful for any data/metadata import and export tasks**
 including various utilities like file loading, UID generation and logging. A strong focus is on JSON.
 
-Supported and tested on Python 2 and 3 on Linux/macOS, Windows and DHIS2 versions >= 2.25.
+Supported and tested on Linux/macOS, Windows and DHIS2 versions >= 2.25. Python 3.5+ is required.
 
 .. contents::
 .. section-numbering::
