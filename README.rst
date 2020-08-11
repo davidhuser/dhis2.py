@@ -559,7 +559,7 @@ See LICENCE for details.
    :target: https://pepy.tech/project/dhis2.py
    :alt: Downloads
 
-.. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=Linux%20build&style=flat-square
+.. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=Linux%20build
    :target: https://circleci.com/gh/davidhuser/dhis2.py
    :alt: CircleCI build
 
