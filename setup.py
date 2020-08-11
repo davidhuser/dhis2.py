@@ -13,15 +13,14 @@ requirements = [
     'requests>=2.21.0,<3.0',
     'unicodecsv>=0.14.1',
     'logzero>=1.5.0',
-    'Pygments>=2.2.0',
-    'six'
+    'Pygments>=2.2.0'
 ]
 
 test_requirements = [
-    'pytest==4.3.1',
-    'pytest-cov==2.6.1',
-    'pytest-rerunfailures==6.0',
-    'responses==0.10.6'
+    'pytest==6.0.1',
+    'pytest-cov==2.10.0',
+    'pytest-rerunfailures==9.0',
+    'responses==0.10.16'
 ]
 
 about = {}
@@ -79,7 +78,7 @@ setup(
     url=about['__url__'],
     keywords='dhis2',
     packages=find_packages(exclude=['tests', 'examples']),
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
+    python_requires="!=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     install_requires=requirements,
     license=about['__license__'],
     zip_safe=False,
@@ -88,12 +87,11 @@ setup(
         'Intended Audience :: Developers',
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ),
     cmdclass={
         'publish': PublishCommand

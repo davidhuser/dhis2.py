@@ -16,6 +16,8 @@ Supported and tested on Python 2 and 3 on Linux/macOS, Windows and DHIS2 version
 Installation
 =============
 
+Python 3.5+ is required.
+
 .. code:: bash
 
     pip install dhis2.py

@@ -8,14 +8,10 @@ This module implements DHIS2 API operations via the Api class.
 """
 
 import codecs
-from six import string_types
 from contextlib import closing
 from itertools import chain
 
-try:
-    from urllib.parse import urlparse, urlunparse  # py3
-except ImportError:
-    from urlparse import urlparse, urlunparse  # py2
+from urllib.parse import urlparse, urlunparse
 
 import requests
 from csv import DictReader
@@ -187,9 +183,9 @@ class Api(object):
         :param data: payload
         :param params: HTTP parameters
         """
-        if not isinstance(endpoint, string_types) or endpoint.strip() == '':
+        if not isinstance(endpoint, str) or endpoint.strip() == '':
             raise ClientException("Must submit `endpoint` for DHIS2 API")
-        if not isinstance(file_type, string_types) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
+        if not isinstance(file_type, str) or file_type.lower() not in ('json', 'csv', 'xml', 'pdf', 'xlsx'):
             raise ClientException("Invalid file_type: {}".format(file_type))
         if params:
             if not isinstance(params, (dict, list)):
@@ -207,7 +203,7 @@ class Api(object):
         :param kwargs: keyword args
         :return: response if ok, RequestException if not
         """
-        if isinstance(kwargs.get('file_type'), string_types):
+        if isinstance(kwargs.get('file_type'), str):
             file_type = kwargs['file_type'].lower()
         else:
             file_type = 'json'
@@ -303,7 +299,7 @@ class Api(object):
         :return: generator OR a normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
         try:
-            if not isinstance(page_size, (string_types, int)) or int(page_size) < 1:
+            if not isinstance(page_size, (str, int)) or int(page_size) < 1:
                 raise ValueError
         except ValueError:
             raise ClientException("page_size must be > 1")

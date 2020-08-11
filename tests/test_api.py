@@ -1,9 +1,6 @@
 import json
 
-try:
-    from urllib.parse import urlencode  # py2
-except ImportError:
-    from urllib import urlencode  # py2
+from urllib.parse import urlencode  # py2
 
 import pytest
 import responses

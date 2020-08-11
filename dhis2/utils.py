@@ -12,7 +12,6 @@ import os
 import re
 import random
 import string
-from six import string_types, iteritems
 
 from unicodecsv import DictReader
 from pygments import highlight
@@ -134,7 +133,7 @@ def is_valid_uid(uid):
     :return: True if it is a valid DHIS2 UID, False if not
     """
     pattern = r'^[A-Za-z][A-Za-z0-9]{10}$'
-    if not isinstance(uid, string_types):
+    if not isinstance(uid, str):
         return False
     return bool(re.compile(pattern).match(uid))
 
@@ -144,7 +143,7 @@ def pretty_json(obj):
     Print JSON with indentation and colours
     :param obj: the object to print - can be a dict or a string
     """
-    if isinstance(obj, string_types):
+    if isinstance(obj, str):
         try:
             obj = json.loads(obj)
         except ValueError:
@@ -161,7 +160,7 @@ def clean_obj(obj, remove):
     :param obj: the dict to remove keys from
     :param remove: keys to remove - can be a string or iterable
     """
-    if isinstance(remove, string_types):
+    if isinstance(remove, str):
         remove = [remove]
     try:
         iter(remove)
@@ -171,7 +170,7 @@ def clean_obj(obj, remove):
         if isinstance(obj, dict):
             obj = {
                 key: clean_obj(value, remove)
-                for key, value in iteritems(obj)
+                for key, value in obj.items()
                 if key not in remove
             }
         elif isinstance(obj, list):

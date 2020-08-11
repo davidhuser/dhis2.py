@@ -16,7 +16,6 @@ unicodecsv = "*"
 requests = "*"
 logzero = "*"
 Pygments = "*"
-six = "*"
 
 [scripts]
 tests = "python -m pytest --cov=dhis2 --cov-report term-missing tests -vv"
