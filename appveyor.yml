@@ -42,4 +42,4 @@ install:
   - "python -Wignore -m pip install tox --user"
 
 test_script:
-  - tox
+  - "python -Wignore -m tox"
