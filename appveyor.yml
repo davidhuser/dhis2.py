@@ -38,13 +38,13 @@ install:
   - "python --version"
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
-  - ps: python -Wignore -m pip install --upgrade pip --user
-  - ps: python -Wignore -m pip install tox --user
+  - "python -Wignore -m pip install --upgrade pip --user"
+  - "python -Wignore -m pip install tox --user"
 
-  - ps: python -Wignore -m pip install pipenv --user
-  - ps: rm Pipfile.lock
+  - "ps: python -Wignore -m pip install pipenv --user"
+  - "rm Pipfile.lock"
   - ps: $PIPENV_QUIET="true"
-  - ps: python -Wignore -m pipenv install --dev
+  - "python -Wignore -m pipenv install --dev"
 
 test_script:
   - tox
