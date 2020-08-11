@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+2.0.3
+-----
+- Drop Python 2.7 support
+
 2.0.2
 -----
 - Maintenance release for documentation

@@ -551,30 +551,30 @@ See LICENCE for details.
 * Copyright (c), 2019, David Huser
 
 
-.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=PyPi&style=flat-square
+.. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=PyPi
    :target: https://pypi.org/project/dhis2.py
    :alt: PyPi version
    
-.. |Downloads| image:: https://img.shields.io/pypi/dm/dhis2-py.svg?label=Downloads&style=flat-square
-   :target: https://pypi.org/project/dhis2.py
+.. |Downloads| image:: https://static.pepy.tech/badge/dhis2-py/month
+   :target: https://pepy.tech/project/dhis2.py
    :alt: Downloads
 
 .. |Build| image:: https://img.shields.io/circleci/project/github/davidhuser/dhis2.py/master.svg?label=Linux%20build&style=flat-square
    :target: https://circleci.com/gh/davidhuser/dhis2.py
    :alt: CircleCI build
 
-.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=Windows%20build&style=flat-square
+.. |BuildWin| image:: https://img.shields.io/appveyor/ci/davidhuser/dhis2-py.svg?label=Windows%20build
    :target: https://ci.appveyor.com/project/davidhuser/dhis2-py
    :alt: Appveyor build
 
-.. |Coverage| image:: https://img.shields.io/codecov/c/github/davidhuser/dhis2.py.svg?label=Coverage&style=flat-square
+.. |Coverage| image:: https://img.shields.io/codecov/c/github/davidhuser/dhis2.py.svg?label=Coverage
    :target: https://codecov.io/gh/davidhuser/dhis2.py
    :alt: Test coverage
 
-.. |LGTM| image:: https://img.shields.io/lgtm/grade/python/g/davidhuser/dhis2.py.svg?label=Code%20quality&style=flat-square
+.. |LGTM| image:: https://img.shields.io/lgtm/grade/python/g/davidhuser/dhis2.py.svg?label=Code%20quality
    :target: https://lgtm.com/projects/g/davidhuser/dhis2.py
    :alt: Code quality
 
-.. |CodeClimate| image:: https://img.shields.io/codeclimate/maintainability/davidhuser/dhis2.py.svg?label=Maintainability&style=flat-square
+.. |CodeClimate| image:: https://img.shields.io/codeclimate/maintainability/davidhuser/dhis2.py.svg?label=Maintainability
    :target: https://codeclimate.com/github/davidhuser/dhis2.py/maintainability
    :alt: Code maintainability
