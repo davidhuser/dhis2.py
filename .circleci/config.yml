@@ -14,7 +14,7 @@ jobs:
 
     steps:
     
-      - run: apt-get -qq update; apt-get -y install git
+      - run: apt-get -qq update; apt-get -y install openssh-client git
 
       - checkout
             
