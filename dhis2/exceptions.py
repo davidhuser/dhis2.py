@@ -25,16 +25,12 @@ class RequestException(Dhis2PyException, requests.RequestException):
 
     def __repr__(self):
         return "Dhis2ApiException({}, '{}', '{}')".format(
-            self.code,
-            self.url,
-            self.description
+            self.code, self.url, self.description
         )
 
     def __str__(self):
-        return 'code: {}, url: {}, description: {}'.format(
-            self.code,
-            self.url,
-            self.description
+        return "code: {}, url: {}, description: {}".format(
+            self.code, self.url, self.description
         )
 
 

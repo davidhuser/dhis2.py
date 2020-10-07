@@ -18,26 +18,32 @@ def _set_log_format(color, include_caller):
     :param include_caller: At the end, put a [caller:line-of-code], e.g. [script:123]
     :return: string of log format
     """
-    level_name = '* %(levelname)1s'
-    time = '%(asctime)s,%(msecs)03d'
-    message = '%(message)s'
-    color_start = '%(color)s'
-    color_end = '%(end_color)s'
-    caller = '[%(module)s:%(lineno)d]'
+    level_name = "* %(levelname)1s"
+    time = "%(asctime)s,%(msecs)03d"
+    message = "%(message)s"
+    color_start = "%(color)s"
+    color_end = "%(end_color)s"
+    caller = "[%(module)s:%(lineno)d]"
 
     if color:
         if include_caller:
-            return '{}{}{}  {}  {} {}'.format(color_start, level_name, color_end, time, message, caller)
+            return "{}{}{}  {}  {} {}".format(
+                color_start, level_name, color_end, time, message, caller
+            )
         else:
-            return '{}{}{}  {}  {}'.format(color_start, level_name, color_end, time, message)
+            return "{}{}{}  {}  {}".format(
+                color_start, level_name, color_end, time, message
+            )
     else:
         if include_caller:
-            return '{}  {}  {} {}'.format(level_name, time, message, caller)
+            return "{}  {}  {} {}".format(level_name, time, message, caller)
         else:
-            return '{}  {}  {}'.format(level_name, time, message)
+            return "{}  {}  {}".format(level_name, time, message)
 
 
-def setup_logger(logfile=None, backup_count=20, log_level=logging.INFO, include_caller=True):
+def setup_logger(
+    logfile=None, backup_count=20, log_level=logging.INFO, include_caller=True
+):
     """
     Setup logzero logger. if logfile is specified, create additional file logger
     :param logfile: path to log file destination
@@ -47,12 +53,19 @@ def setup_logger(logfile=None, backup_count=20, log_level=logging.INFO, include_
     """
     formatter = logzero.LogFormatter(
         fmt=_set_log_format(color=True, include_caller=include_caller),
-        datefmt='%Y-%m-%d %H:%M:%S'
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
     logzero.setup_default_logger(formatter=formatter)
 
     if logfile:
         formatter = logzero.LogFormatter(
             fmt=_set_log_format(color=False, include_caller=True),
-            datefmt='%Y-%m-%d %H:%M:%S')
-        logzero.logfile(logfile, formatter=formatter, loglevel=log_level, maxBytes=int(1e7), backupCount=backup_count)
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+        logzero.logfile(
+            logfile,
+            formatter=formatter,
+            loglevel=log_level,
+            maxBytes=int(1e7),
+            backupCount=backup_count,
+        )

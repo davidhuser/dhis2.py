@@ -21,28 +21,29 @@ from .utils import (
     pretty_json,
     clean_obj,
     generate_uid,
-    is_valid_uid
+    is_valid_uid,
 )
 from .logger import setup_logger
 from logzero import logger as logger
 
 
 __all__ = (
-    'Api',
-    'Dhis2PyException',
-    'RequestException',
-    'ClientException',
-    'setup_logger',
-    'logger',
-    'load_json',
-    'load_csv',
-    'pretty_json',
-    'clean_obj',
-    'generate_uid',
-    'is_valid_uid'
+    "Api",
+    "Dhis2PyException",
+    "RequestException",
+    "ClientException",
+    "setup_logger",
+    "logger",
+    "load_json",
+    "load_csv",
+    "pretty_json",
+    "clean_obj",
+    "generate_uid",
+    "is_valid_uid",
 )
 
 
 # Set default logging handler to avoid "No handler found" warnings.
 import logging
+
 logging.getLogger(__name__).addHandler(logging.NullHandler())
