@@ -8,14 +8,15 @@ pytest = "*"
 pytest-cov = "*"
 pytest-rerunfailures = "*"
 responses = "*"
-sphinx = "*"
-sphinx-rtd-theme = "*"
+mypy = "*"
+black = "==20.8b1"
+flake8 = "*"
+pre-commit = "*"
 
 [packages]
-unicodecsv = "*"
 requests = "*"
 logzero = "*"
 Pygments = "*"
 
 [scripts]
-tests = "python -m pytest --cov=dhis2 --cov-report term-missing tests -vv"
+tests = "python -m pytest --cov=dhis2 --cov-fail-under=100 --cov-report term-missing tests -vv"

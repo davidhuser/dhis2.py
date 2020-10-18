@@ -542,13 +542,25 @@ Feedback welcome!
     pipenv install --dev
     pipenv run tests
 
+    # install pre-commit hooks
+    pipenv run pre-commit install
+
+    # run auto-formatter
+    pipenv run black dhis2
+
+    # run type annotation check
+    pipenv run mypy dhis2
+
+    # run flake8 style guide enforcement
+    pipenv run flake8
+
 License
 =======
 
 dhis2.py's source is provided under MIT license.
 See LICENCE for details.
 
-* Copyright (c), 2019, David Huser
+* Copyright (c), 2020, David Huser
 
 
 .. |Latest version| image:: https://img.shields.io/pypi/v/dhis2.py.svg?label=PyPi
