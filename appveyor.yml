@@ -1,25 +1,25 @@
-build: off
-
 environment:
   matrix:
-
-    - PYTHON: "C:\\Python27-x64"
-      PYTHON_VERSION: "2.7.x"
-      PYTHON_ARCH: "64"
-
-    - PYTHON: "C:\\Python35-x64"
-      PYTHON_VERSION: "3.5.x"
-      PYTHON_ARCH: "64"
 
     - PYTHON: "C:\\Python36-x64"
       PYTHON_VERSION: "3.6.x"
       PYTHON_ARCH: "64"
+      TOXENV: py36
 
     - PYTHON: "C:\\Python37-x64"
       PYTHON_VERSION: "3.7.x"
       PYTHON_ARCH: "64"
+      TOXENV: py37
+
+    - PYTHON: "C:\\Python38-x64"
+      PYTHON_VERSION: "3.8.x"
+      PYTHON_ARCH: "64"
+      TOXENV: py38
+
+build: off
 
 install:
+
   # Install Python (from the official .msi of http://python.org) and pip when
   # not already installed.
   - ps: if (-not(Test-Path($env:PYTHON))) { & _appveyor\install.ps1 }
@@ -34,9 +34,7 @@ install:
   - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
 
   - "python -m pip install --upgrade pip --user"
-  - "python -m pip install pipenv --user"
-  - "python -m pipenv install --dev"
-  - "python -m pipenv install funcsigs --dev"
+  - "python -m pip install tox --user"
 
 test_script:
-  - "python -m pipenv run python -m pytest tests"
+  - "python -Wignore -m tox"
