@@ -2,9 +2,10 @@
 CHANGELOG
 =========
 
-2.0.3
+2.1.0
 -----
-- Drop Python 2.7 support
+- Drop Python 2.7 support, Python 3.5+ is required
+- Internal: use type annotations, flake8, mypy, and black
 
 2.0.2
 -----
