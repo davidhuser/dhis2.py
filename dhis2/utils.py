@@ -7,13 +7,15 @@ dhis2.utils
 This module provides utility functions that are used within dhis2.py
 """
 
+from csv import DictReader
 import json
 import os
 import re
 import random
 import string
+from typing import Collection, Optional, Union, Generator
+from pathlib import Path
 
-from unicodecsv import DictReader
 from pygments import highlight
 from pygments.lexers.data import JsonLexer
 from pygments.formatters.terminal import TerminalFormatter
@@ -21,7 +23,9 @@ from pygments.formatters.terminal import TerminalFormatter
 from .exceptions import ClientException
 
 
-def load_csv(path, delimiter=","):
+def load_csv(
+    path: Union[str, os.PathLike, Path], delimiter: str = ","
+) -> Generator[dict, dict, None]:
     """
     Load CSV file from path and yield CSV rows
 
@@ -37,7 +41,7 @@ def load_csv(path, delimiter=","):
     :return: a generator where __next__ is a row of the CSV
     """
     try:
-        with open(path, "rb") as csvfile:
+        with open(path, "r") as csvfile:
             reader = DictReader(csvfile, delimiter=delimiter)
             for row in reader:
                 yield row
@@ -45,7 +49,7 @@ def load_csv(path, delimiter=","):
         raise ClientException("File not found: {}".format(path))
 
 
-def load_json(path):
+def load_json(path: Union[str, os.PathLike, Path]) -> dict:
     """
     Load JSON file from path
     :param path: file path
@@ -58,7 +62,7 @@ def load_json(path):
         raise ClientException("File not found: {}".format(path))
 
 
-def partition_payload(data, key, thresh):
+def partition_payload(data: dict, key: str, thresh: int) -> Generator[dict, dict, None]:
     """
     Yield partitions of a payload
 
@@ -80,7 +84,7 @@ def partition_payload(data, key, thresh):
         yield {key: data[i : i + thresh]}
 
 
-def search_auth_file(filename="dish.json"):
+def search_auth_file(filename: str = "dish.json") -> str:
     """
     Search filename in
     - A) DHIS_HOME (env variable)
@@ -100,7 +104,7 @@ def search_auth_file(filename="dish.json"):
     )
 
 
-def version_to_int(value):
+def version_to_int(value: str) -> Optional[int]:
     """
     Convert version info to integer
     :param value: the version received from system/info, e.g. "2.28"
@@ -114,10 +118,10 @@ def version_to_int(value):
     try:
         return int(value.split(".")[1])
     except (ValueError, IndexError):
-        return
+        return None
 
 
-def generate_uid():
+def generate_uid() -> str:
     """
     Create DHIS2 UID matching to Regex
     ^[A-Za-z][A-Za-z0-9]{10}$
@@ -132,7 +136,7 @@ def generate_uid():
     return first + rest
 
 
-def is_valid_uid(uid):
+def is_valid_uid(uid: str) -> bool:
     """
     :return: True if it is a valid DHIS2 UID, False if not
     """
@@ -142,7 +146,7 @@ def is_valid_uid(uid):
     return bool(re.compile(pattern).match(uid))
 
 
-def pretty_json(obj):
+def pretty_json(obj: Union[str, dict, list]) -> None:
     """
     Print JSON with indentation and colours
     :param obj: the object to print - can be a dict or a string
@@ -156,7 +160,9 @@ def pretty_json(obj):
     print(highlight(json_str, JsonLexer(), TerminalFormatter()))
 
 
-def clean_obj(obj, remove):
+def clean_obj(
+    obj: Union[list, dict], remove: Union[Collection, str]
+) -> Union[list, dict]:
     """
     Recursively remove keys from list/dict/dict-of-lists/list-of-keys/nested ...,
      e.g. remove all sharing keys or remove all 'user' fields

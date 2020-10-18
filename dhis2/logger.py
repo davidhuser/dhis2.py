@@ -8,10 +8,12 @@ This module sets up logzero loggers.
 """
 
 import logging
+from typing import Any
+
 import logzero
 
 
-def _set_log_format(color, include_caller):
+def _set_log_format(color: bool, include_caller: bool) -> str:
     """
     Set log format
     :param color: Log message is colored
@@ -42,8 +44,11 @@ def _set_log_format(color, include_caller):
 
 
 def setup_logger(
-    logfile=None, backup_count=20, log_level=logging.INFO, include_caller=True
-):
+    logfile: str = None,
+    backup_count: int = 20,
+    log_level: Any = logging.INFO,
+    include_caller: bool = True,
+) -> None:
     """
     Setup logzero logger. if logfile is specified, create additional file logger
     :param logfile: path to log file destination

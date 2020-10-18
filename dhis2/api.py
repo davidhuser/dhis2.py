@@ -10,6 +10,7 @@ This module implements DHIS2 API operations via the Api class.
 import codecs
 from contextlib import closing
 from itertools import chain
+from typing import Union, Optional, Generator, List, Any, Iterator
 
 from urllib.parse import urlparse, urlunparse
 
@@ -31,7 +32,14 @@ class Api(object):
 
     """
 
-    def __init__(self, server, username, password, api_version=None, user_agent=None):
+    def __init__(
+        self,
+        server: str,
+        username: str,
+        password: str,
+        api_version: Union[int, str] = None,
+        user_agent: str = None,
+    ) -> None:
         """
 
         :param server: baseurl, e.g. 'play.dhis2.org/demo'
@@ -58,12 +66,10 @@ class Api(object):
         if user_agent:
             self.session.headers["user-agent"] = user_agent
 
-    @property
-    def base_url(self):
+    def get_base_url(self) -> Optional[str]:
         return self._base_url
 
-    @base_url.setter
-    def base_url(self, server):
+    def set_base_url(self, server: str) -> None:
         if "/api" in server:
             raise ClientException("Do not include /api/ in the DHIS2 `server` argument")
 
@@ -81,14 +87,14 @@ class Api(object):
             url = server
 
         o = urlparse(url)
-        self._base_url = urlunparse((o.scheme, o.netloc, o.path, "", "", ""))
+        self._base_url = "{}".format(
+            urlunparse((o.scheme, o.netloc, o.path, "", "", ""))
+        )
 
-    @property
-    def api_version(self):
+    def get_api_version(self) -> Optional[int]:
         return self._api_version
 
-    @api_version.setter
-    def api_version(self, number):
+    def set_api_version(self, number: Union[str, int]) -> None:
         if number:
             try:
                 i = int(number)
@@ -103,32 +109,36 @@ class Api(object):
         else:
             self._api_version = None
 
-    @property
-    def api_url(self):
+    def get_api_url(self) -> str:
         if self._api_version:
             return "{}/api/{}".format(self._base_url, self._api_version)
         else:
             return "{}/api".format(self._base_url)
 
-    @property
-    def info(self):
+    def get_info(self) -> dict:
         if not self._info:
             self._info = self.get("system/info").json()
         return self._info
 
-    @property
-    def version(self):
+    def get_version(self) -> str:
         return self._version if self._version else self.info["version"]
 
-    @property
-    def revision(self):
+    def get_revision(self) -> str:
         return self._revision if self._revision else self.info["revision"]
 
-    @property
-    def version_int(self):
+    def get_version_int(self) -> Optional[int]:
         if not self._version_int:
-            self._version_int = version_to_int(self.version)
+            self._version_int = version_to_int(self.version)  # type: ignore
         return self._version_int
+
+    # using property class to allow for type hinting of property (instead of @property)
+    base_url = property(get_base_url, set_base_url)
+    api_version = property(get_api_version, set_api_version)
+    api_url = property(get_api_url)
+    info = property(get_info)
+    version = property(get_version)
+    revision = property(get_revision)
+    version_int = property(get_version_int)
 
     def __str__(self):
         s = (
@@ -139,7 +149,12 @@ class Api(object):
         return s
 
     @classmethod
-    def from_auth_file(cls, location=None, api_version=None, user_agent=None):
+    def from_auth_file(
+        cls,
+        location: str = None,
+        api_version: Union[int, str] = None,
+        user_agent: str = None,
+    ) -> "Api":
         """
         Alternative constructor to load from JSON file.
         If auth_file_path is not specified, it tries to find `dish.json` in:
@@ -171,7 +186,7 @@ class Api(object):
             )
 
     @staticmethod
-    def _validate_response(response):
+    def _validate_response(response: requests.Response) -> requests.Response:
         """
         Return response if ok, raise RequestException if not ok
         :param response: requests.response object
@@ -187,7 +202,12 @@ class Api(object):
             return response
 
     @staticmethod
-    def _validate_request(endpoint, file_type="json", data=None, params=None):
+    def _validate_request(
+        endpoint: str,
+        file_type: str = "json",
+        data: dict = None,
+        params: Union[dict, List[tuple]] = None,
+    ) -> None:
         """
         Validate request before calling API
         :param endpoint: API endpoint
@@ -209,7 +229,7 @@ class Api(object):
             if not isinstance(params, (dict, list)):
                 raise ClientException(
                     "`params` must be a dict or list of tuples, not {}".format(
-                        params.__class__.__name__
+                        params.__class__.__name__  # type: ignore
                     )
                 )
             if isinstance(params, list) and not all(
@@ -218,10 +238,12 @@ class Api(object):
                 raise ClientException("`params` list must all be tuples")
         if data and not isinstance(data, dict):
             raise ClientException(
-                "`data` must be a dict, not {}".format(data.__class__.__name__)
+                "`data` must be a dict, not {}".format(data.__class__.__name__)  # type: ignore
             )
 
-    def _make_request(self, method, endpoint, **kwargs):
+    def _make_request(
+        self, method: str, endpoint: str, **kwargs: Any
+    ) -> requests.Response:
         """
         Do the actual request with supplied HTTP method
         :param method: HTTP method
@@ -261,7 +283,13 @@ class Api(object):
 
         return self._validate_response(r)
 
-    def get(self, endpoint, file_type="json", params=None, stream=False):
+    def get(
+        self,
+        endpoint: str,
+        file_type: str = "json",
+        params: Union[dict, List[tuple]] = None,
+        stream: bool = False,
+    ) -> requests.Response:
         """
         GET from DHIS2
         :param endpoint: DHIS2 API endpoint
@@ -274,7 +302,13 @@ class Api(object):
             "get", endpoint, params=params, file_type=file_type, stream=stream
         )
 
-    def post(self, endpoint, json=None, params=None, **kwargs):
+    def post(
+        self,
+        endpoint: str,
+        json: dict = None,
+        params: Union[dict, List[tuple]] = None,
+        **kwargs: Any
+    ) -> requests.Response:
         """POST to DHIS2
         :param endpoint: DHIS2 API endpoint
         :param json: HTTP payload
@@ -284,7 +318,13 @@ class Api(object):
         json = kwargs["data"] if "data" in kwargs else json
         return self._make_request("post", endpoint, data=json, params=params)
 
-    def put(self, endpoint, json=None, params=None, **kwargs):
+    def put(
+        self,
+        endpoint: str,
+        json: dict = None,
+        params: Union[dict, List[tuple]] = None,
+        **kwargs: Any
+    ) -> requests.Response:
         """
         PUT to DHIS2
         :param endpoint: DHIS2 API endpoint
@@ -295,7 +335,13 @@ class Api(object):
         json = kwargs["data"] if "data" in kwargs else json
         return self._make_request("put", endpoint, data=json, params=params)
 
-    def patch(self, endpoint, json=None, params=None, **kwargs):
+    def patch(
+        self,
+        endpoint: str,
+        json: dict = None,
+        params: Union[dict, List[tuple]] = None,
+        **kwargs: Any
+    ) -> requests.Response:
         """
         PATCH to DHIS2
         :param endpoint: DHIS2 API endpoint
@@ -306,7 +352,13 @@ class Api(object):
         json = kwargs["data"] if "data" in kwargs else json
         return self._make_request("patch", endpoint, data=json, params=params)
 
-    def delete(self, endpoint, json=None, params=None, **kwargs):
+    def delete(
+        self,
+        endpoint: str,
+        json: dict = None,
+        params: Union[dict, List[tuple]] = None,
+        **kwargs: Any
+    ) -> requests.Response:
         """
         DELETE from DHIS2
         :param endpoint: DHIS2 API endpoint
@@ -317,7 +369,13 @@ class Api(object):
         json = kwargs["data"] if "data" in kwargs else json
         return self._make_request("delete", endpoint, data=json, params=params)
 
-    def get_paged(self, endpoint, params=None, page_size=50, merge=False):
+    def get_paged(
+        self,
+        endpoint: str,
+        params: Union[dict, List[tuple]] = None,
+        page_size: Union[int, str] = 50,
+        merge: bool = False,
+    ) -> Union[Generator[dict, dict, None], dict]:
         """
         GET with paging (for large payloads).
         :param page_size: how many objects per page
@@ -337,22 +395,22 @@ class Api(object):
             raise ClientException(
                 "Can't set paging manually in `params` when using `get_paged`"
             )
-        params["pageSize"] = page_size
-        params["page"] = 1
-        params["totalPages"] = True
+        params["pageSize"] = page_size  # type: ignore
+        params["page"] = 1  # type: ignore
+        params["totalPages"] = True  # type: ignore
 
         collection = endpoint.split("/")[
             0
         ]  # only use e.g. events when submitting events/query as endpoint
 
-        def page_generator():
+        def page_generator() -> Generator[dict, dict, None]:
             """Yield pages"""
             page = self.get(endpoint=endpoint, file_type="json", params=params).json()
             page_count = page["pager"]["pageCount"]
             yield page
 
             while page["pager"]["page"] < page_count:
-                params["page"] += 1
+                params["page"] += 1  # type: ignore
                 page = self.get(
                     endpoint=endpoint, file_type="json", params=params
                 ).json()
@@ -366,7 +424,14 @@ class Api(object):
                 data.append(p[collection])
             return {collection: list(chain.from_iterable(data))}
 
-    def get_sqlview(self, uid, execute=False, var=None, criteria=None, merge=False):
+    def get_sqlview(
+        self,
+        uid: str,
+        execute: bool = False,
+        var: dict = None,
+        criteria: dict = None,
+        merge: bool = False,
+    ) -> Union[Generator, List[dict]]:
         """
         GET SQL View data
         :param uid: sqlView UID
@@ -387,8 +452,8 @@ class Api(object):
                 raise ClientException(
                     "Use a dict to submit variables: e.g. var={'key1': 'value1', 'key2': 'value2'}"
                 )
-            var = ["{}:{}".format(k, v) for k, v in var.items()]
-            params["var"] = var
+            var = ["{}:{}".format(k, v) for k, v in var.items()]  # type: ignore
+            params["var"] = var  # type: ignore
             if execute:
                 raise ClientException(
                     "SQL view of type QUERY, no view to create (no execute=True)"
@@ -400,13 +465,13 @@ class Api(object):
                     raise ClientException(
                         "Use a dict to submit criteria: { 'col1': 'value1', 'col2': 'value2' }"
                     )
-                criteria = ["{}:{}".format(k, v) for k, v in criteria.items()]
-                params["criteria"] = criteria
+                criteria = ["{}:{}".format(k, v) for k, v in criteria.items()]  # type: ignore
+                params["criteria"] = criteria  # type: ignore
 
             if execute:  # materialize
                 self.post("sqlViews/{}/execute".format(uid))
 
-        def page_generator():
+        def page_generator() -> Generator[dict, dict, None]:
             with closing(
                 self.get(
                     "sqlViews/{}/data".format(uid),
@@ -429,7 +494,13 @@ class Api(object):
         else:
             return list(page_generator())
 
-    def post_partitioned(self, endpoint, json, params=None, thresh=1000):
+    def post_partitioned(
+        self,
+        endpoint: str,
+        json: dict,
+        params: Union[dict, List[tuple]] = None,
+        thresh: int = 1000,
+    ) -> Iterator[requests.Response]:
         """
         Post a payload in chunks to prevent 'Request Entity Too Large' Timeout errors
         :param endpoint: the API endpoint to use
