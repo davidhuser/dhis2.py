@@ -545,9 +545,6 @@ Feedback welcome!
     # install pre-commit hooks
     pipenv run pre-commit install
 
-    # run auto-formatter
-    pipenv run black dhis2
-
     # run type annotation check
     pipenv run mypy dhis2
 
