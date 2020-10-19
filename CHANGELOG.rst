@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+2.1.2
+-----
+- Bugfix: set `python_requires` correctly in setup.py
+
 2.1.1
 -----
 - Maintenance release: drop `black` from dev-packages
