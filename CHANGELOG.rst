@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+2.1.1
+-----
+- Maintenance release: drop `black` from dev-packages
+
 2.1.0
 -----
 - Drop Python 2.7 and 3.5 support, Python 3.6+ is required
