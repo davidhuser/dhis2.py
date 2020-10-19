@@ -9,7 +9,6 @@ pytest-cov = "*"
 pytest-rerunfailures = "*"
 responses = "*"
 mypy = "*"
-black = "==20.8b1"
 flake8 = "*"
 pre-commit = "*"
 
