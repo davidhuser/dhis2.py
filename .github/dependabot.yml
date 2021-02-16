@@ -3,7 +3,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "pipenv" # See documentation for possible values
+  - package-ecosystem: "pip" 
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
