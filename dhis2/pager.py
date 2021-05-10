@@ -1,9 +1,7 @@
 from itertools import chain
 from typing import Union, List, Generator, Callable
 
-
-class PagerException(Exception):
-    """Paging exceptions."""
+from dhis2 import ClientException
 
 
 class Pager:
@@ -22,11 +20,11 @@ class Pager:
             if not isinstance(page_size, (str, int)) or int(page_size) < 1:
                 raise ValueError
         except ValueError:
-            raise PagerException("page_size must be > 1")
+            raise ClientException("page_size must be > 1")
 
         params = {} if not params else params
         if "paging" in params:
-            raise PagerException(
+            raise ClientException(
                 "Can't set paging manually in `params` when using `get_paged`"
             )
         params["pageSize"] = page_size  # type: ignore

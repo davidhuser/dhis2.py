@@ -17,7 +17,7 @@ import requests
 from csv import DictReader
 
 from .exceptions import ClientException, RequestException
-from .pager import CollectionPager, PagerException, AnalyticsPager, Pager
+from .pager import CollectionPager, AnalyticsPager, Pager
 from .utils import load_json, partition_payload, search_auth_file, version_to_int
 
 
@@ -385,27 +385,24 @@ class Api(object):
         :return: generator OR a normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
 
-        try:
-            pager: Pager
-            if endpoint == "analytics":
-                pager = AnalyticsPager(
-                    get=self.get,
-                    endpoint=endpoint,
-                    params=params,
-                    page_size=page_size,
-                    merge=merge,
-                )
-            else:
-                pager = CollectionPager(
-                    get=self.get,
-                    endpoint=endpoint,
-                    params=params,
-                    page_size=page_size,
-                    merge=merge,
-                )
-            return pager.page()
-        except PagerException as e:
-            raise ClientException(str(e))
+        pager: Pager
+        if endpoint == "analytics":
+            pager = AnalyticsPager(
+                get=self.get,
+                endpoint=endpoint,
+                params=params,
+                page_size=page_size,
+                merge=merge,
+            )
+        else:
+            pager = CollectionPager(
+                get=self.get,
+                endpoint=endpoint,
+                params=params,
+                page_size=page_size,
+                merge=merge,
+            )
+        return pager.page()
 
     def get_sqlview(
         self,
