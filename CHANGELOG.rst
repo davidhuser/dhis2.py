@@ -2,6 +2,10 @@
 CHANGELOG
 =========
 
+2.2.0
+-----
+- allow a `timeout` parameter to prevent requests from waiting indefinitely on a response (see `here <https://docs.python-requests.org/en/master/user/quickstart/#timeouts>`_)
+
 2.1.1
 -----
 - Maintenance release: drop `black` from dev-packages
