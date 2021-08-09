@@ -166,7 +166,17 @@ system info (this is persisted across the session):
 Getting things
 --------------
 
-Normal method: ``api.get()``
+Normal method: ``api.get()``, e.g.
+
+.. code:: python
+
+    r = api.get('organisationUnits/Rp268JB6Ne4', params={'fields': 'id,name'})
+    data = r.json()
+
+Parameters:
+
+- `timeout`: to override the timeout value (default: 5 seconds) in order to prevent the client to wait indefinitely on a server response.
+
 
 Paging
 ^^^^^^

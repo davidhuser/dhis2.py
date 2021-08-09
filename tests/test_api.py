@@ -262,3 +262,12 @@ def test_json_arg_valid(api):
     responses.add(responses.POST, url, json=data, status=204)
     api.post(endpoint, data=data)
     api.post(endpoint, json=data)
+
+
+@responses.activate
+def test_kwargs(api):
+    endpoint = "dataElements"
+    url = "{}/{}.json".format(API_URL, endpoint)
+    responses.add(responses.GET, url, status=200)
+    api.get(endpoint, timeout=1)
+    assert len(responses.calls) == 1
