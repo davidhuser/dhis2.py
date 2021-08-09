@@ -5,6 +5,11 @@ CHANGELOG
 2.2.0
 -----
 - allow a `timeout` parameter to prevent requests from waiting indefinitely on a response (see `here <https://docs.python-requests.org/en/master/user/quickstart/#timeouts>`_)
+=======
+
+2.1.2
+-----
+- Bugfix: set `python_requires` correctly in setup.py
 
 2.1.1
 -----
