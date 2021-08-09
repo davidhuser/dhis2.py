@@ -258,25 +258,27 @@ class Api(object):
         params = kwargs.get("params")
 
         data = kwargs.get("data", kwargs.get("json", None))
+        timeout = kwargs.get("timeout")
+
         url = "{}/{}".format(self.api_url, endpoint)
         self._validate_request(endpoint, file_type, data, params)
 
         if method == "get":
             stream = kwargs.get("stream", False)
             url = "{}.{}".format(url, file_type)
-            r = self.session.get(url, params=params, stream=stream)
+            r = self.session.get(url, params=params, stream=stream, timeout=timeout)
 
         elif method == "post":
-            r = self.session.post(url=url, json=data, params=params)
+            r = self.session.post(url=url, json=data, params=params, timeout=timeout)
 
         elif method == "put":
-            r = self.session.put(url=url, json=data, params=params)
+            r = self.session.put(url=url, json=data, params=params, timeout=timeout)
 
         elif method == "patch":
-            r = self.session.patch(url=url, json=data, params=params)
+            r = self.session.patch(url=url, json=data, params=params, timeout=timeout)
 
         elif method == "delete":
-            r = self.session.delete(url=url, params=params)
+            r = self.session.delete(url=url, params=params, timeout=timeout)
 
         else:
             raise ClientException("Non-supported HTTP method: {}".format(method))
@@ -289,6 +291,7 @@ class Api(object):
         file_type: str = "json",
         params: Union[dict, List[tuple]] = None,
         stream: bool = False,
+        timeout: int = 5
     ) -> requests.Response:
         """
         GET from DHIS2
@@ -296,10 +299,11 @@ class Api(object):
         :param file_type: DHIS2 API File Type (json, xml, csv), defaults to JSON
         :param params: HTTP parameters
         :param stream: use requests' stream parameter
+        :param timeout: request timeout in seconds
         :return: requests.Response object
         """
         return self._make_request(
-            "get", endpoint, params=params, file_type=file_type, stream=stream
+            "get", endpoint, params=params, file_type=file_type, stream=stream, timeout=timeout
         )
 
     def post(
