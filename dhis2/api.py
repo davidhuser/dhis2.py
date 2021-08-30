@@ -291,7 +291,7 @@ class Api(object):
         file_type: str = "json",
         params: Union[dict, List[tuple]] = None,
         stream: bool = False,
-        timeout: int = 5
+        timeout: int = None
     ) -> requests.Response:
         """
         GET from DHIS2

@@ -21,6 +21,7 @@ def main():
             "metadata.json",
             params={"preheatCache": False, "strategy": "CREATE"},
             json=data,
+            timeout=(3, 30)
         )
     except RequestException as e:
         logger.error("Import failed: {}".format(e))

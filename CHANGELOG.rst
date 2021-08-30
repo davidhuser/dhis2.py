@@ -2,10 +2,15 @@
 CHANGELOG
 =========
 
+2.2.1
+-----
+- no default `timeout` parameter value (previous: 5 seconds). Implementations are advised to set this per connection (see requests documentation).
+
+
 2.2.0
 -----
 - allow a `timeout` parameter to prevent requests from waiting indefinitely on a response (see `here <https://docs.python-requests.org/en/master/user/quickstart/#timeouts>`_)
-=======
+
 
 2.1.2
 -----
