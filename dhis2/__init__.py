@@ -6,7 +6,7 @@ dhis2.py - Python wrapper for DHIS2
 
 A Python library for DHIS2 wrapping requests (github.com/requests/requests)
 
-:copyright: (c) 2018 by David Huser
+:copyright: (c) 2021 by David Huser
 :license: MIT, see LICENSE for more details.
 """
 
@@ -19,6 +19,7 @@ from .utils import (
     clean_obj,
     generate_uid,
     is_valid_uid,
+    import_response_ok
 )
 from .logger import setup_logger
 from logzero import logger as logger
@@ -37,6 +38,7 @@ __all__ = (
     "clean_obj",
     "generate_uid",
     "is_valid_uid",
+    "import_response_ok"
 )
 
 

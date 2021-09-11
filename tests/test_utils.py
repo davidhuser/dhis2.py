@@ -8,8 +8,10 @@ import tempfile
 from types import GeneratorType
 
 import pytest
+from requests import Response
 
 from dhis2 import exceptions, Api
+from dhis2.exceptions import ClientException
 from dhis2.utils import (
     load_csv,
     load_json,
@@ -19,8 +21,8 @@ from dhis2.utils import (
     is_valid_uid,
     pretty_json,
     clean_obj,
+    import_response_ok
 )
-
 from .common import BASEURL
 
 
@@ -243,3 +245,206 @@ def test_remove_keys(obj, key_to_clean, expected):
 def test_remove_keys_invalid(obj, key_to_clean, expected):
     with pytest.raises(exceptions.ClientException):
         _ = clean_obj(obj, key_to_clean) == expected
+
+
+def test_import_response_ok_status_error():
+    response = {
+        "description": "The import process failed: java.lang.String cannot be cast to java.lang.Boolean",
+        "importCount": {
+            "deleted": 0,
+            "ignored": 0,
+            "imported": 0,
+            "updated": 0
+        },
+        "responseType": "ImportSummary",
+        "status": "ERROR"
+    }
+    assert import_response_ok(response) is False
+
+
+def test_import_response_ok_count_ignored():
+    response = {
+        "description": "The import process failed: java.lang.String cannot be cast to java.lang.Boolean",
+        "importCount": {
+            "deleted": 0,
+            "ignored": 1,
+            "imported": 0,
+            "updated": 0
+        },
+        "responseType": "ImportSummary",
+        "status": "SUCCESS"
+    }
+    assert import_response_ok(response) is False
+
+
+def test_import_response_ok_no_change():
+    response = {
+        "description": "The import process failed: java.lang.String cannot be cast to java.lang.Boolean",
+        "importCount": {
+            "deleted": 0,
+            "ignored": 0,
+            "imported": 0,
+            "updated": 0
+        },
+        "responseType": "ImportSummary",
+        "status": "SUCCESS"
+    }
+    assert import_response_ok(response) is False
+
+
+def test_import_response_ok_status_success():
+    response = {
+        "description": "The import process failed: java.lang.String cannot be cast to java.lang.Boolean",
+        "importCount": {
+            "deleted": 0,
+            "ignored": 0,
+            "imported": 0,
+            "updated": 1
+        },
+        "responseType": "ImportSummary",
+        "status": "SUCCESS"
+    }
+    assert import_response_ok(response) is True
+
+
+def test_import_response_ok_status_ok():
+    response = {
+        "description": "Status ok",
+        "importCount": {
+            "deleted": 0,
+            "ignored": 0,
+            "imported": 0,
+            "updated": 1
+        },
+        "responseType": "ImportSummary",
+        "status": "OK"
+    }
+    assert import_response_ok(response) is True
+
+
+def test_import_response_ok_metadata():
+    response = {
+        "stats": {
+            "created": 0,
+            "deleted": 0,
+            "ignored": 0,
+            "total": 1,
+            "updated": 1
+        },
+        "status": "OK",
+        "typeReports": [
+            {
+                "klass": "org.hisp.dhis.dataset.DataSet",
+                "objectReports": [],
+                "stats": {
+                    "created": 0,
+                    "deleted": 0,
+                    "ignored": 0,
+                    "total": 1,
+                    "updated": 1
+                }
+            }
+        ]
+    }
+    assert import_response_ok(response)
+
+def test_import_response_ok_event():
+    response = {
+        "deleted": 0,
+        "ignored": 13,
+        "importSummaries": [
+            {
+                "conflicts": [],
+                "description": "Event.orgUnit does not point to a valid organisation unit: bS2F7wCpPsj",
+                "importCount": {
+                    "deleted": 0,
+                    "ignored": 1,
+                    "imported": 0,
+                    "updated": 0
+                },
+                "reference": "GL5ef5j2rX5",
+                "responseType": "ImportSummary",
+                "status": "ERROR"
+            },
+            {
+                "conflicts": [],
+                "description": "Event.orgUnit does not point to a valid organisation unit: bS2F7wCpPsj",
+                "importCount": {
+                    "deleted": 0,
+                    "ignored": 1,
+                    "imported": 0,
+                    "updated": 0
+                },
+                "reference": "dyXsEQMOlTd",
+                "responseType": "ImportSummary",
+                "status": "ERROR"
+            }
+        ],
+        "imported": 0,
+        "responseType": "ImportSummaries",
+        "status": "ERROR",
+        "total": 13,
+        "updated": 0
+    }
+    assert import_response_ok(response) is False
+
+
+def test_import_response_ok_tracked_entity_instances():
+    response = {
+        "httpStatus": "Conflict",
+        "httpStatusCode": 409,
+        "message": "An error occurred, please check import summary.",
+        "response": {
+            "deleted": 0,
+            "ignored": 1,
+            "importSummaries": [
+                {
+                    "conflicts": [
+                        {
+                            "object": "OrganisationUnit",
+                            "value": "Org unit ImspTQwCqd does not exist"
+                        }
+                    ],
+                    "enrollments": {
+                        "deleted": 0,
+                        "ignored": 0,
+                        "importSummaries": [],
+                        "imported": 0,
+                        "responseType": "ImportSummaries",
+                        "status": "SUCCESS",
+                        "total": 0,
+                        "updated": 0
+                    },
+                    "importCount": {
+                        "deleted": 0,
+                        "ignored": 1,
+                        "imported": 0,
+                        "updated": 0
+                    },
+                    "reference": "AHgGHO6ZH9b",
+                    "responseType": "ImportSummary",
+                    "status": "ERROR"
+                }
+            ],
+            "imported": 0,
+            "responseType": "ImportSummaries",
+            "status": "ERROR",
+            "total": 5,
+            "updated": 4
+        },
+        "status": "ERROR"
+}
+    assert import_response_ok(response) is False
+
+
+@pytest.mark.parametrize("response", [
+    {"no status": "hello"},
+    False,
+    None,
+    {"status": [1, 2, 3]},
+    {"status": {"importCount"}},
+    {1: 3}
+])
+def test_import_response_ok_invalid_response(response):
+    with pytest.raises(ClientException):
+        import_response_ok(response)
