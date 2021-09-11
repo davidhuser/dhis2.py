@@ -485,6 +485,34 @@ Print easy-readable JSON objects with colors, utilizes `Pygments <http://pygment
     }
 
 
+Check import response
+^^^^^^^^^^^^^^^^^^^^^^
+
+Check the importSummary response from e.g. `/api/dataValues` or `/api/metadata` import. Returns true if import went well,
+false if there are ignored values or the status reports not a OK or SUCCESS.
+This can be useful if the response returns a 200 OK but the summary reports ignored data.
+
+.. code:: python
+
+    from dhis2 import import_response_ok
+
+    # response as e.g. from response = api.post('metadata', data=payload).json()
+    response = {
+        "description": "The import process failed: java.lang.String cannot be cast to java.lang.Boolean",
+        "importCount": {
+            "deleted": 0,
+            "ignored": 1,
+            "imported": 0,
+            "updated": 0
+        },
+        "responseType": "ImportSummary",
+        "status": "WARNING"
+    }
+
+    import_successful = import_response_ok(response)
+    print(import_successful)
+    # False
+
 Logging
 -------
 

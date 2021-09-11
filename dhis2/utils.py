@@ -188,3 +188,66 @@ def clean_obj(
         elif isinstance(obj, list):
             obj = [clean_obj(item, remove) for item in obj if item not in remove]
         return obj
+
+
+class ImportSummary:
+    """Class to track the import status and statistics"""
+
+    def __init__(self, status_ok: bool, imported: int, deleted: int, ignored: int, updated: int):
+        self.status_ok = status_ok
+        self.imported = imported
+        self.deleted = deleted
+        self.ignored = ignored
+        self.updated = updated
+
+    @classmethod
+    def from_response(cls, status, data) -> 'ImportSummary':
+        import_key = 'imported' if 'imported' in data else 'created'  # 'created' is used in metadata import
+        status_flag = status in ('OK', 'SUCCESS')
+        return cls(
+            status_ok=status_flag,
+            imported=int(data[import_key]),
+            deleted=int(data['deleted']),
+            ignored=int(data['ignored']),
+            updated=int(data['updated'])
+        )
+
+
+def import_response_ok(response: dict) -> bool:
+    """
+    Assess DHIS2 response for import of events / trackedEntityInstances / metadata / dataValues.
+    Useful if a `requests.Response` returns HTTP 200 OK but the response dict reports ignored values.
+    :param response: The response of an import request.
+    :return: True if response indicates success request and no ignored values
+    """
+    if not isinstance(response, dict):
+        raise ClientException("Cannot parse import stats: `response` must be of type dict")
+
+    if not response.get('status'):
+        raise ClientException("Cannot parse import stats: no 'status' detected")
+    status = response['status']
+
+    if 'importCount' in response:
+        # data values import
+        summary = ImportSummary.from_response(status, response['importCount'])
+
+    elif 'stats' in response:
+        # metadata import
+        summary = ImportSummary.from_response(status, response['stats'])
+
+    elif all(s in response for s in ('imported', 'deleted', 'ignored', 'updated')):
+        # events import
+        summary = ImportSummary.from_response(status, response)
+
+    elif 'response' in response and all(s in response['response'] for s in ('imported', 'deleted', 'ignored', 'updated')):
+        # tracked entity instances import
+        summary = ImportSummary.from_response(status, response['response'])
+
+    else:
+        raise ClientException("Cannot parse import stats: no 'stats' detected")
+
+    return all([
+        summary.status_ok,
+        summary.imported > 0 or summary.updated > 0 or summary.deleted > 0,
+        summary.ignored == 0
+    ])
