@@ -24,6 +24,7 @@ Python 3.6+ is required.
 
 For instructions on installing Python / pip for your operating system see `realpython.com/installing-python <https://realpython.com/installing-python>`_.
 
+Note: this project is **not** related with the module `dhis2 <https://pypi.org/project/dhis2/>`__ which is installed with ``pip install dhis2``. However, the import statement is for example ``from dhis2 import Api`` which is similar to the other ``dhis2`` module.
 
 Quickstart
 ==========
