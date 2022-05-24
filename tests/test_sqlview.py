@@ -62,18 +62,7 @@ name,code,attr\n
         assert isinstance(row, dict)
         assert row == expected[index]
 
-
-def test_get_sqlview_criteria(api, sql_view_view):
-    with pytest.raises(exceptions.ClientException):
-        for _ in api.get_sqlview(SQL_VIEW, True, criteria="code:name"):
-            continue
-
-
-def test_get_sqlview_criteria_none(api, sql_view_view):
-    for _ in api.get_sqlview(SQL_VIEW, True):
-        continue
-
-
+        
 @responses.activate
 def test_get_sqlview_variable_query(api, sql_view_query):
 
