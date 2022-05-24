@@ -17,5 +17,5 @@ def override_environ(**kwargs):
         os.environ.update(save_env)
 
 
-BASEURL = "https://play.dhis2.org/2.34"
+BASEURL = "https://play.dhis2.org/demo"
 API_URL = "{}/api".format(BASEURL)
