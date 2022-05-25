@@ -9,7 +9,6 @@ This module implements DHIS2 API operations via the Api class.
 
 import codecs
 from contextlib import closing
-from itertools import chain
 from typing import Union, Optional, Generator, List, Any, Iterator
 
 from urllib.parse import urlparse, urlunparse
@@ -18,6 +17,7 @@ import requests
 from csv import DictReader
 
 from .exceptions import ClientException, RequestException
+from .pager import CollectionPager, AnalyticsPager, Pager
 from .utils import load_json, partition_payload, search_auth_file, version_to_int
 
 
@@ -388,45 +388,25 @@ class Api(object):
         :param merge: If true, return a list containing all pages instead of one page. Defaults to False.
         :return: generator OR a normal DHIS2 response dict, e.g. {"organisationUnits": [...]}
         """
-        try:
-            if not isinstance(page_size, (str, int)) or int(page_size) < 1:
-                raise ValueError
-        except ValueError:
-            raise ClientException("page_size must be > 1")
 
-        params = {} if not params else params
-        if "paging" in params:
-            raise ClientException(
-                "Can't set paging manually in `params` when using `get_paged`"
+        pager: Pager
+        if endpoint == "analytics":
+            pager = AnalyticsPager(
+                get=self.get,
+                endpoint=endpoint,
+                params=params,
+                page_size=page_size,
+                merge=merge,
             )
-        params["pageSize"] = page_size  # type: ignore
-        params["page"] = 1  # type: ignore
-        params["totalPages"] = True  # type: ignore
-
-        collection = endpoint.split("/")[
-            0
-        ]  # only use e.g. events when submitting events/query as endpoint
-
-        def page_generator() -> Generator[dict, dict, None]:
-            """Yield pages"""
-            page = self.get(endpoint=endpoint, file_type="json", params=params).json()
-            page_count = page["pager"]["pageCount"]
-            yield page
-
-            while page["pager"]["page"] < page_count:
-                params["page"] += 1  # type: ignore
-                page = self.get(
-                    endpoint=endpoint, file_type="json", params=params
-                ).json()
-                yield page
-
-        if not merge:
-            return page_generator()
         else:
-            data = []
-            for p in page_generator():
-                data.append(p[collection])
-            return {collection: list(chain.from_iterable(data))}
+            pager = CollectionPager(
+                get=self.get,
+                endpoint=endpoint,
+                params=params,
+                page_size=page_size,
+                merge=merge,
+            )
+        return pager.page()
 
     def get_sqlview(
         self,

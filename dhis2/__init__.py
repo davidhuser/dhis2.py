@@ -10,8 +10,8 @@ A Python library for DHIS2 wrapping requests (github.com/requests/requests)
 :license: MIT, see LICENSE for more details.
 """
 
-from .api import Api
 from .exceptions import Dhis2PyException, RequestException, ClientException
+from .api import Api
 from .utils import (
     load_json,
     load_csv,

@@ -1,0 +1,7 @@
+version: "3.8"
+
+services:
+  dhis2:
+    build: .
+    volumes:
+      - .:/code

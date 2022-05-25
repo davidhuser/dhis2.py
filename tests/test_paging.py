@@ -1,4 +1,5 @@
 import uuid
+from urllib.parse import urlencode
 
 import pytest
 import responses
@@ -202,3 +203,127 @@ def test_paging_with_params(api):
     with pytest.raises(exceptions.ClientException):
         params = {"paging": False}
         api.get_paged("organisationUnits", params=params)
+
+
+@responses.activate
+def test_paging_analytics(api):
+    dx = "eTDtyyaSA7f;FbKK4ofIv5R"
+    pe = "2016Q1;2016Q2"
+    ou = "ImspTQPwCqd"
+    r_base = {
+        "headers": [
+            {"name": "dx", "column": "Data", "meta": True, "type": "java.lang.String"},
+            {
+                "name": "pe",
+                "column": "Period",
+                "meta": True,
+                "type": "java.lang.String",
+            },
+            {
+                "name": "value",
+                "column": "Value",
+                "meta": False,
+                "type": "java.lang.Double",
+            },
+        ],
+        "height": 2,
+        "metaData": {
+            "pe": ["2016Q1", "2016Q2"],
+            "ou": ["ImspTQPwCqd"],
+            "names": {
+                "2016Q1": "Jan to Mar 2016",
+                "2016Q2": "Apr to Jun 2016",
+                "FbKK4ofIv5R": "Measles Coverage <1 y",
+                "ImspTQPwCqd": "Sierra Leone",
+                "eTDtyyaSA7f": "Fully Immunized Coverage",
+            },
+            "pager": {
+                "total": 4,
+                "pageSize": 2,
+                "pageCount": 2
+            },
+        },
+        "width": 3,
+    }
+
+    # first page
+    responses.add(
+        responses.GET,
+        "{}/analytics.json?{}&page={}&pageSize=2&totalPages=True".format(
+            API_URL,
+            urlencode(
+                [
+                    ("dimension", "dx:{}".format(dx)),
+                    ("dimension", "pe:{}".format(pe)),
+                    ("filter", "ou:{}".format(ou)),
+                ],
+            ),
+            1,
+        ),
+        match_querystring=True,
+        json={
+            **r_base,
+            "metaData": {
+                **r_base["metaData"],
+                "pager": {
+                    **r_base["metaData"]["pager"],
+                    "page": 1
+                }
+            },
+            "rows": [
+                ["eTDtyyaSA7f", "2016Q2", "81.1"],
+                ["eTDtyyaSA7f", "2016Q1", "74.7"],
+            ],
+
+        },
+        status=200,
+    )
+
+    # Second page
+    responses.add(
+        responses.GET,
+        "{}/analytics.json?{}&page={}&pageSize=2&totalPages=True".format(
+            API_URL,
+            urlencode(
+                [
+                    ("dimension", "dx:{}".format(dx)),
+                    ("dimension", "pe:{}".format(pe)),
+                    ("filter", "ou:{}".format(ou)),
+                ],
+            ),
+            2,
+        ),
+        match_querystring=True,
+        json={
+            **r_base,
+            "metaData": {
+                **r_base["metaData"],
+                "pager": {
+                    **r_base["metaData"]["pager"],
+                    "page": 2
+                }
+            },
+            "rows": [
+                ["FbKK4ofIv5R", "2016Q2", "88.9"],
+                ["FbKK4ofIv5R", "2016Q1", "84.0"],
+            ],
+        },
+        status=200,
+    )
+
+    data = api.get_paged(
+        "analytics",
+        params={
+            "dimension": [
+                "dx:{}".format(dx),
+                "pe:{}".format(pe),
+            ],
+            "filter": [
+                "ou:{}".format(ou),
+            ]
+        },
+        merge=True,
+        page_size=2,
+    )
+    assert len(data["rows"]) == 4
+    assert len(responses.calls) == 2
