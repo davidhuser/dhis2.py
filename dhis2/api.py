@@ -36,10 +36,10 @@ class Api(object):
         self,
         server: str,
         username: str,
-            password: str = None,
-            api_access_token: str = None,
-            api_version: Union[int, str] = None,
-            user_agent: str = None,
+        password: str = None,
+        api_access_token: str = None,
+        api_version: Union[int, str] = None,
+        user_agent: str = None,
     ) -> None:
         """
 
